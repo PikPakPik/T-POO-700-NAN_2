@@ -7,6 +7,19 @@ defmodule TimeManagerWeb.Router do
 
   scope "/api", TimeManagerWeb do
     pipe_through :api
+
+    scope "/users" do
+      resources "/", UserController, except: [:new, :edit, :create]
+    end
+
+    scope "/clocks" do
+      resources "/", ClockController, except: [:new, :edit, :create]
+    end
+
+    scope "/workingtime" do
+      resources "/", WorkingTimeController, except: [:new, :edit, :create]
+    end
+
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
