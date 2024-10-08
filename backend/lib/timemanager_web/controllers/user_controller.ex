@@ -6,8 +6,8 @@ defmodule TimeManagerWeb.UserController do
 
   action_fallback TimeManagerWeb.FallbackController
 
-  def index(conn, _params) do
-    users = Users.list_users()
+  def index(conn, params) do
+    users = Users.list_users(params)
     render(conn, :index, users: users)
   end
 
@@ -43,11 +43,6 @@ defmodule TimeManagerWeb.UserController do
 
   def get_user(conn, %{"id" => id}) do
     user = Users.get_user!(id)
-    render(conn, :show, user: user)
-  end
-
-  def get_user_by_email_and_username(conn, %{"email" => email, "username" => username}) do
-    user = Users.get_user_by_email_and_username(email, username)
     render(conn, :show, user: user)
   end
 end

@@ -12,9 +12,10 @@ defmodule TimeManagerWeb.Router do
       resources "/", UserController, except: [:new, :edit]
     end
 
-    scope "/clocks" do
-      resources "/:user_id", ClockController, except: [:new, :edit, :create]
-    end
+  scope "/clocks" do
+    resources "/", ClockController, except: [:new, :edit]
+    post "/:userID", ClockController, :create
+  end
 
     scope "/workingtime" do
       resources "/", WorkingTimeController, except: [:new, :show, :create, :edit]

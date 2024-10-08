@@ -17,8 +17,20 @@ defmodule TimeManager.Users do
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
+  def list_users(params) do
+    query = from u in User
+
+    conditions = true
+
+    conditions =
+      Enum.reduce(["username", "email"], conditions, fn field, acc ->
+        case Map.get(params, field) do
+          nil -> acc
+          value -> dynamic([u], ilike(field(u, ^String.to_existing_atom(field)), ^value) and ^acc)
+        end
+      end)
+
+    Repo.all(from u in query, where: ^conditions)
   end
 
   @doc """
@@ -100,9 +112,5 @@ defmodule TimeManager.Users do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
-  end
-
-  def get_user_by_email_and_username(email, username) do
-    Repo.get_by(User, email: email, username: username)
   end
 end
