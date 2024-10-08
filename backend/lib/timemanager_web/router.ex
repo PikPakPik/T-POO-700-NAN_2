@@ -12,19 +12,37 @@ defmodule TimeManagerWeb.Router do
       resources "/", UserController, except: [:new, :edit]
     end
 
-  scope "/clocks" do
-    resources "/", ClockController, except: [:new, :edit, :show]
-    post "/:userID", ClockController, :create
-    get "/:userID", ClockController, :show
-  end
+    scope "/clocks" do
+      resources "/", ClockController, only: [:index, :delete]
+      post "/:userID", ClockController, :clock_in_out_user
+      get "/:userID", ClockController, :get_user_clock
+    end
 
     scope "/workingtime" do
       resources "/", WorkingTimeController, except: [:new, :show, :create, :edit]
       get "/:userID", WorkingTimeController, :show_user_times
       get "/:userID/:id", WorkingTimeController, :show_user_time
-      post "/:userID", WorkingTimeController, :create
+      post "/:userID", WorkingTimeController, :create_user_time
     end
 
+  end
+
+  scope "/api/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI,
+      otp_app: :timemanager,
+      swagger_file: "swagger.json"
+  end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "1.0",
+        title: "Time Manager API"
+      },
+      definitions: TimeManagerWeb.SwaggerDef.global_definitions,
+      consumes: ["application/json"],
+      produces: ["application/json"]
+    }
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

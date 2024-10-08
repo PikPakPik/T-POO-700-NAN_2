@@ -1,16 +1,39 @@
 defmodule TimeManagerWeb.UserController do
   use TimeManagerWeb, :controller
+  use PhoenixSwagger
 
   alias TimeManager.Users
   alias TimeManager.Users.User
+  alias TimeManagerWeb.SwaggerDef
 
   action_fallback TimeManagerWeb.FallbackController
 
+  def swagger_definitions do
+    SwaggerDef.user_definitions()
+  end
+
+  swagger_path(:index) do
+    summary("List Users")
+    description("List all users in the database.")
+
+    response(200, "OK", Schema.ref(:UsersResponse))
+  end
   def index(conn, params) do
     users = Users.list_users(params)
     render(conn, :index, users: users)
   end
 
+  swagger_path(:create) do
+    summary("Create User")
+    description("Create a new user.")
+
+    parameters do
+      user(:body, Schema.ref(:UserRequest), "The user details")
+    end
+
+    response(201, "Created Successfully", Schema.ref(:UserResponse))
+    response(422, "Unprocessable Entity", Schema.ref(:UnprocessableEntityResponse))
+  end
   def create(conn, %{"user" => user_params}) do
     with {:ok, %User{} = user} <- Users.create_user(user_params) do
       conn
@@ -20,11 +43,36 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
+  swagger_path(:show) do
+    summary("Show User")
+    description("Show an user by his ID")
+    parameter(:id, :path, :integer, "User ID", required: true, example: 123)
+
+
+
+    response(200, "OK", Schema.ref(:UserResponse))
+    response(404, "Not found", Schema.ref(:NotFoundResponse))
+  end
   def show(conn, %{"id" => id}) do
     user = Users.get_user!(id)
     render(conn, :show, user: user)
   end
 
+  swagger_path(:update) do
+    summary("Update user")
+    description("Update attributes of a user")
+
+    parameters do
+      id(:path, :integer, "User ID", required: true, example: 3)
+      user(:body, Schema.ref(:UserRequest), "The user details (can be partial)")
+    end
+
+
+
+    response(200, "Updated Successfully", Schema.ref(:UserResponse))
+    response(404, "Not found", Schema.ref(:NotFoundResponse))
+    response(422, "Unprocessable Entity", Schema.ref(:UnprocessableEntityResponse))
+  end
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Users.get_user!(id)
 
@@ -33,6 +81,14 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
+  swagger_path(:delete) do
+    summary("Delete user")
+    description("Delete a user by ID")
+    parameter(:id, :path, :integer, "User ID", required: true, example: 3)
+
+    response(204, "No Content")
+    response(404, "Not found", Schema.ref(:NotFoundResponse))
+  end
   def delete(conn, %{"id" => id}) do
     user = Users.get_user!(id)
 

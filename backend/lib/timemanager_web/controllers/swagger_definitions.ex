@@ -1,0 +1,221 @@
+defmodule TimeManagerWeb.SwaggerDef do
+  use PhoenixSwagger
+
+  def global_definitions do
+    %{
+      ErrorReason: swagger_schema do
+        title("ErrorReason")
+        description("An error")
+
+        properties do
+          _type(:string, "Error type")
+          message(:string, "Error message")
+          stack(Schema.array(:string), "Error stack trace. Only in debug mode")
+        end
+
+        example(%{
+          _type: "Elixir.Ecto.NoResultsError",
+          message: "expected at least one result but got none"
+        })
+      end,
+      NotFoundResponse: swagger_schema do # 404
+        title("NotFoundResponse")
+        description("Resource not found")
+
+        properties do
+          reason(:ErrorReason, "Error reason")
+        end
+      end,
+      UnprocessableEntityResponse: swagger_schema do # 422
+        title("UnprocessableEntityResponse")
+        description("Unprocessable entity")
+
+        properties do
+          reason(:ErrorReason, "Error reason")
+        end
+      end
+    }
+  end
+
+  def user_definitions do
+    %{
+        User: swagger_schema do
+          title("User")
+          description("User schema")
+
+          properties do
+            id(:integer, "User ID")
+            username(:string, "User username")
+            email(:string, "Email address", format: :email)
+          end
+
+          example(%{
+            id: 1,
+            username: "JohnDoe",
+            email: "john@doe.com",
+          })
+        end,
+        UserDetailed: swagger_schema do
+          title("UserDetailed")
+          description("User schema with its associations")
+
+          properties do
+            id(:integer, "User ID")
+            username(:string, "User username")
+            email(:string, "Email address", format: :email)
+            clock(Schema.ref(:Clock), "User clock", "x-nullable": true)
+            working_times(Schema.array(:WorkingTime), "User working times")
+          end
+
+          example(%{
+            id: 1,
+            username: "JohnDoe",
+            email: "john@doe.com",
+            clock: %{
+              id: 1,
+              user_id: 1,
+              time: "2024-10-08 10:05:01",
+              status: false
+            },
+            working_times: [
+              %{
+                id: 1,
+                user_id: 1,
+                start: "2024-10-08 10:05:01",
+                end: "2024-10-08 10:05:01",
+              }
+            ]
+          })
+        end,
+        UserRequest: swagger_schema do
+          title("UserRequest")
+          description("PUT body for updating a user")
+          property(:user, Schema.ref(:User), "The user details")
+
+          example(%{
+            user: %{
+              username: "JohnDoe",
+              email: "john@doe.com",
+            }
+          })
+        end,
+        UserResponse:
+        swagger_schema do
+          title("UserResponse")
+          description("Response schema for single user")
+          property(:data, Schema.ref(:UserDetailed), "The user details")
+        end,
+        UsersResponse:
+        swagger_schema do
+          title("UsersResponse")
+          description("Response schema for multiple users")
+          property(:data, Schema.array(:User), "The users list")
+        end
+    }
+  end
+
+  def clock_definitions do
+    %{
+      Clock: swagger_schema do
+        title("Clock")
+        description("Clock schema")
+
+        properties do
+          id(:integer, "Clock ID")
+          user_id(:integer, "User ID")
+          time(:string, "Clock time", format: :utc_datetime)
+          status(:boolean, "Clock status")
+        end
+
+        example(%{
+          id: 1,
+          user_id: 1,
+          time: "2024-10-08 10:05:01",
+          status: false
+        })
+
+      end,
+      WorkingTimeRequest: swagger_schema do
+        title("WorkingTimeRequest")
+        description("Request body when creating a working time")
+
+        properties do
+          user_id(:integer, "Associated user id")
+          start(:string, "Working time start time", format: :utc_datetime)
+          end_(:string, "Working time end time", format: :utc_datetime)
+        end
+
+        example(%{
+          working_time: %{
+            user_id: 1,
+            start: "2024-10-08 10:05:01",
+            end: "2024-10-08 10:05:01",
+          }
+        })
+      end,
+      ClocksResponse:
+      swagger_schema do
+        title("ClocksReponse")
+        description("Response schema for multiple clocks")
+        property(:data, Schema.array(:Clock), "The clocks details")
+      end,
+      ClockResponse:
+      swagger_schema do
+        title("ClockResponse")
+        description("Response schema for single clock")
+        property(:data, Schema.ref(:Clock), "The clock details")
+      end
+    }
+  end
+
+  def working_time_definitions do
+    %{
+      WorkingTime: swagger_schema do
+        title("WorkingTime")
+        description("Working time schema")
+
+        properties do
+          id(:integer, "Working time ID")
+          user_id(:integer, "User ID")
+          start(:string, "Working time start time", format: :utc_datetime)
+          end_(:string, "Working time end time", format: :utc_datetime)
+        end
+
+        example(%{
+          id: 1,
+          user_id: 1,
+          start: "2024-10-08 10:05:01",
+          end: "2024-10-08 10:05:01"
+        })
+
+      end,
+      UserWorkingTimeRequest: swagger_schema do
+        title("UserWorkingTimeRequest")
+        description("Request body when creating a user working time")
+
+        properties do
+          start(:string, "Working time start time", format: :utc_datetime)
+          end_(:string, "Workinng time end time", format: :utc_datetime)
+        end
+
+        example(%{
+          working_time: %{
+            start: "2024-10-08 10:05:01",
+            end: "2024-10-08 10:05:01",
+          }
+        })
+      end,
+      WorkingTimeResponse: swagger_schema do
+        title("WorkingTimeResponse")
+        description("Response schema for single working time")
+        property(:data, Schema.ref(:WorkingTime), "The working time details")
+      end,
+      WorkingTimesResponse:
+      swagger_schema do
+        title("WorkingTimesResponse")
+        description("Response schema for multiple working times")
+        property(:data, Schema.array(:WorkingTime), "The working times list")
+      end
+    }
+  end
+end

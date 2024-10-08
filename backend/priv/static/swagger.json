@@ -1,0 +1,926 @@
+{
+  "info": {
+    "version": "1.0",
+    "title": "Time Manager API"
+  },
+  "host": "localhost:4000",
+  "definitions": {
+    "User": {
+      "description": "User schema",
+      "example": {
+        "email": "john@doe.com",
+        "id": 1,
+        "username": "JohnDoe"
+      },
+      "properties": {
+        "email": {
+          "description": "Email address",
+          "format": "email",
+          "type": "string"
+        },
+        "id": {
+          "description": "User ID",
+          "type": "integer"
+        },
+        "username": {
+          "description": "User username",
+          "type": "string"
+        }
+      },
+      "title": "User",
+      "type": "object"
+    },
+    "Clock": {
+      "description": "Clock schema",
+      "example": {
+        "id": 1,
+        "status": false,
+        "time": "2024-10-08 10:05:01",
+        "user_id": 1
+      },
+      "properties": {
+        "id": {
+          "description": "Clock ID",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Clock status",
+          "type": "boolean"
+        },
+        "time": {
+          "description": "Clock time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
+        }
+      },
+      "title": "Clock",
+      "type": "object"
+    },
+    "WorkingTime": {
+      "description": "Working time schema",
+      "example": {
+        "end": "2024-10-08 10:05:01",
+        "id": 1,
+        "start": "2024-10-08 10:05:01",
+        "user_id": 1
+      },
+      "properties": {
+        "end_": {
+          "description": "Working time end time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "id": {
+          "description": "Working time ID",
+          "type": "integer"
+        },
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
+        }
+      },
+      "title": "WorkingTime",
+      "type": "object"
+    },
+    "ErrorReason": {
+      "description": "An error",
+      "example": {
+        "_type": "Elixir.Ecto.NoResultsError",
+        "message": "expected at least one result but got none"
+      },
+      "properties": {
+        "_type": {
+          "description": "Error type",
+          "type": "string"
+        },
+        "message": {
+          "description": "Error message",
+          "type": "string"
+        },
+        "stack": {
+          "description": "Error stack trace. Only in debug mode",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "title": "ErrorReason",
+      "type": "object"
+    },
+    "NotFoundResponse": {
+      "description": "Resource not found",
+      "properties": {
+        "reason": {
+          "description": "Error reason",
+          "type": "ErrorReason"
+        }
+      },
+      "title": "NotFoundResponse",
+      "type": "object"
+    },
+    "UnprocessableEntityResponse": {
+      "description": "Unprocessable entity",
+      "properties": {
+        "reason": {
+          "description": "Error reason",
+          "type": "ErrorReason"
+        }
+      },
+      "title": "UnprocessableEntityResponse",
+      "type": "object"
+    },
+    "UserDetailed": {
+      "description": "User schema with its associations",
+      "example": {
+        "clock": {
+          "id": 1,
+          "status": false,
+          "time": "2024-10-08 10:05:01",
+          "user_id": 1
+        },
+        "email": "john@doe.com",
+        "id": 1,
+        "username": "JohnDoe",
+        "working_times": [
+          {
+            "end": "2024-10-08 10:05:01",
+            "id": 1,
+            "start": "2024-10-08 10:05:01",
+            "user_id": 1
+          }
+        ]
+      },
+      "properties": {
+        "clock": {
+          "$ref": "#/definitions/Clock",
+          "description": "User clock",
+          "x-nullable": true
+        },
+        "email": {
+          "description": "Email address",
+          "format": "email",
+          "type": "string"
+        },
+        "id": {
+          "description": "User ID",
+          "type": "integer"
+        },
+        "username": {
+          "description": "User username",
+          "type": "string"
+        },
+        "working_times": {
+          "description": "User working times",
+          "items": {
+            "$ref": "#/definitions/WorkingTime"
+          },
+          "type": "array"
+        }
+      },
+      "title": "UserDetailed",
+      "type": "object"
+    },
+    "UserRequest": {
+      "description": "PUT body for updating a user",
+      "example": {
+        "user": {
+          "email": "john@doe.com",
+          "username": "JohnDoe"
+        }
+      },
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User",
+          "description": "The user details"
+        }
+      },
+      "title": "UserRequest",
+      "type": "object"
+    },
+    "UserResponse": {
+      "description": "Response schema for single user",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/UserDetailed",
+          "description": "The user details"
+        }
+      },
+      "title": "UserResponse",
+      "type": "object"
+    },
+    "UsersResponse": {
+      "description": "Response schema for multiple users",
+      "properties": {
+        "data": {
+          "description": "The users list",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "type": "array"
+        }
+      },
+      "title": "UsersResponse",
+      "type": "object"
+    },
+    "WorkingTimeRequest": {
+      "description": "Request body when creating a working time",
+      "example": {
+        "working_time": {
+          "end": "2024-10-08 10:05:01",
+          "start": "2024-10-08 10:05:01",
+          "user_id": 1
+        }
+      },
+      "properties": {
+        "end_": {
+          "description": "Working time end time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Associated user id",
+          "type": "integer"
+        }
+      },
+      "title": "WorkingTimeRequest",
+      "type": "object"
+    },
+    "WorkingTimeResponse": {
+      "description": "Response schema for single working time",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/WorkingTime",
+          "description": "The working time details"
+        }
+      },
+      "title": "WorkingTimeResponse",
+      "type": "object"
+    },
+    "WorkingTimesResponse": {
+      "description": "Response schema for multiple working times",
+      "properties": {
+        "data": {
+          "description": "The working times list",
+          "items": {
+            "$ref": "#/definitions/WorkingTime"
+          },
+          "type": "array"
+        }
+      },
+      "title": "WorkingTimesResponse",
+      "type": "object"
+    },
+    "UserWorkingTimeRequest": {
+      "description": "Request body when creating a user working time",
+      "example": {
+        "working_time": {
+          "end": "2024-10-08 10:05:01",
+          "start": "2024-10-08 10:05:01"
+        }
+      },
+      "properties": {
+        "end_": {
+          "description": "Workinng time end time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
+          "type": "string"
+        }
+      },
+      "title": "UserWorkingTimeRequest",
+      "type": "object"
+    },
+    "ClocksResponse": {
+      "description": "Response schema for multiple clocks",
+      "properties": {
+        "data": {
+          "description": "The clocks details",
+          "items": {
+            "$ref": "#/definitions/Clock"
+          },
+          "type": "array"
+        }
+      },
+      "title": "ClocksReponse",
+      "type": "object"
+    },
+    "ClockResponse": {
+      "description": "Response schema for single clock",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Clock",
+          "description": "The clock details"
+        }
+      },
+      "title": "ClockResponse",
+      "type": "object"
+    }
+  },
+  "paths": {
+    "/api/clocks": {
+      "get": {
+        "description": "List all clocks in the database.",
+        "operationId": "TimeManagerWeb.ClockController.index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ClocksResponse"
+            }
+          }
+        },
+        "summary": "List Clocks",
+        "tags": [
+          "Clock"
+        ]
+      }
+    },
+    "/api/clocks/{id}": {
+      "delete": {
+        "description": "Delete a clock by ID.",
+        "operationId": "TimeManagerWeb.ClockController.delete",
+        "parameters": [
+          {
+            "description": "Clock ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 3
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content - Deleted Successfully"
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Delete Clock",
+        "tags": [
+          "Clock"
+        ]
+      }
+    },
+    "/api/clocks/{userID}": {
+      "get": {
+        "description": "Show a clock by User ID.",
+        "operationId": "TimeManagerWeb.ClockController.get_user_clock",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userID",
+            "required": true,
+            "type": "integer",
+            "x-example": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ClockResponse"
+            }
+          }
+        },
+        "summary": "Show Clock",
+        "tags": [
+          "Clock"
+        ]
+      },
+      "post": {
+        "description": "Clock in or out a user.",
+        "operationId": "TimeManagerWeb.ClockController.clock_in_out_user",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created Successfully",
+            "schema": {
+              "$ref": "#/definitions/ClockResponse"
+            }
+          }
+        },
+        "summary": "Clock in or out user",
+        "tags": [
+          "Clock"
+        ]
+      }
+    },
+    "/api/users": {
+      "get": {
+        "description": "List all users in the database.",
+        "operationId": "TimeManagerWeb.UserController.index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UsersResponse"
+            }
+          }
+        },
+        "summary": "List Users",
+        "tags": [
+          "User"
+        ]
+      },
+      "post": {
+        "description": "Create a new user.",
+        "operationId": "TimeManagerWeb.UserController.create",
+        "parameters": [
+          {
+            "description": "The user details",
+            "in": "body",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created Successfully",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          }
+        },
+        "summary": "Create User",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/api/users/{id}": {
+      "delete": {
+        "description": "Delete a user by ID",
+        "operationId": "TimeManagerWeb.UserController.delete",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 3
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Delete user",
+        "tags": [
+          "User"
+        ]
+      },
+      "get": {
+        "description": "Show an user by his ID",
+        "operationId": "TimeManagerWeb.UserController.show",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 123
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Show User",
+        "tags": [
+          "User"
+        ]
+      },
+      "patch": {
+        "description": "Update attributes of a user",
+        "operationId": "TimeManagerWeb.UserController.update",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 3
+          },
+          {
+            "description": "The user details (can be partial)",
+            "in": "body",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          }
+        },
+        "summary": "Update user",
+        "tags": [
+          "User"
+        ]
+      },
+      "put": {
+        "description": "Update attributes of a user",
+        "operationId": "TimeManagerWeb.UserController.update",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 3
+          },
+          {
+            "description": "The user details (can be partial)",
+            "in": "body",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated Successfully",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          }
+        },
+        "summary": "Update user",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/api/workingtime": {
+      "get": {
+        "description": "List all working times.",
+        "operationId": "TimeManagerWeb.WorkingTimeController.index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkingTimesResponse"
+            }
+          }
+        },
+        "summary": "List Working times",
+        "tags": [
+          "WorkingTime"
+        ]
+      }
+    },
+    "/api/workingtime/{id}": {
+      "delete": {
+        "description": "Delete a working time by ID.",
+        "operationId": "TimeManagerWeb.WorkingTimeController.delete",
+        "parameters": [
+          {
+            "description": "Working time ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content - Deleted Successfully"
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Delete Working time",
+        "tags": [
+          "WorkingTime"
+        ]
+      },
+      "patch": {
+        "description": "Update a working time entry.",
+        "operationId": "TimeManagerWeb.WorkingTimeController.update",
+        "parameters": [
+          {
+            "description": "Working time ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Working time object",
+            "in": "body",
+            "name": "working_time",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WorkingTimeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkingTimeResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Update working time",
+        "tags": [
+          "WorkingTime"
+        ]
+      },
+      "put": {
+        "description": "Update a working time entry.",
+        "operationId": "TimeManagerWeb.WorkingTimeController.update",
+        "parameters": [
+          {
+            "description": "Working time ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Working time object",
+            "in": "body",
+            "name": "working_time",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WorkingTimeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkingTimeResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Update working time",
+        "tags": [
+          "WorkingTime"
+        ]
+      }
+    },
+    "/api/workingtime/{userID}": {
+      "get": {
+        "description": "List working times of a given user.",
+        "operationId": "TimeManagerWeb.WorkingTimeController.show_user_times",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Period start (default to no limit)",
+            "format": "utc_datetime",
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "type": "string",
+            "x-example": "2023-02-04 11:24:45"
+          },
+          {
+            "description": "Period end (default to no limit)",
+            "format": "utc_datetime",
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "type": "string",
+            "x-example": "2023-02-14 16:28:42"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkingTimesResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "List user working times",
+        "tags": [
+          "WorkingTime"
+        ]
+      },
+      "post": {
+        "description": "Create a user working time entry.",
+        "operationId": "TimeManagerWeb.WorkingTimeController.create_user_time",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Working time object",
+            "in": "body",
+            "name": "working_time",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WorkingTimeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkingTimeResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Create user working time",
+        "tags": [
+          "WorkingTime"
+        ]
+      }
+    },
+    "/api/workingtime/{userID}/{id}": {
+      "get": {
+        "description": "Show a specific user working time entry.",
+        "operationId": "TimeManagerWeb.WorkingTimeController.show_user_time",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Working time ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkingTimeResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Show user working time",
+        "tags": [
+          "WorkingTime"
+        ]
+      }
+    }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0"
+}
