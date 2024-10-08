@@ -18,6 +18,7 @@ defmodule TimeManagerWeb.Router do
 
     scope "/workingtime" do
       resources "/", WorkingTimeController, except: [:new, :edit, :create]
+      get "/:userID/:id", WorkingTimeController, :show_user_time
     end
 
   end
