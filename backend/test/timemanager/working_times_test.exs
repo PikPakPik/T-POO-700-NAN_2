@@ -2,9 +2,11 @@ defmodule TimeManager.WorkingTimesTest do
   use TimeManager.DataCase
 
   alias TimeManager.WorkingTimes
+  alias TimeManager.Users
 
   describe "workingtimes" do
     alias TimeManager.WorkingTimes.WorkingTime
+    alias TimeManager.Users.User
 
     import TimeManager.WorkingTimesFixtures
 
@@ -21,9 +23,13 @@ defmodule TimeManager.WorkingTimesTest do
     end
 
     test "create_working_time/1 with valid data creates a working_time" do
-      valid_attrs = %{start: ~U[2024-10-07 07:55:00Z], end: ~U[2024-10-07 07:55:00Z]}
+      valid_user = %{username: "toto", email: "toto@mail.com"}
+      assert {:ok, %User{} = user} = Users.create_user(valid_user)
+      assert user.username == "toto"
+      assert user.email == "toto@mail.com"
 
-      assert {:ok, %WorkingTime{} = working_time} = WorkingTimes.create_working_time(valid_attrs)
+      valid_workingTime = %{start: ~U[2024-10-07 07:55:00Z], end: ~U[2024-10-07 07:55:00Z], user_id: user.id}
+      assert {:ok, %WorkingTime{} = working_time} = WorkingTimes.create_working_time(valid_workingTime)
       assert working_time.start == ~U[2024-10-07 07:55:00Z]
       assert working_time.end == ~U[2024-10-07 07:55:00Z]
     end

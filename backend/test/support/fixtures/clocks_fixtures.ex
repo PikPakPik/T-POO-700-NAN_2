@@ -8,11 +8,20 @@ defmodule TimeManager.ClocksFixtures do
   Generate a clock.
   """
   def clock_fixture(attrs \\ %{}) do
+    {:ok, user} =
+      attrs
+      |> Enum.into(%{
+        email: "toto@mail.com",
+        username: "toto"
+      })
+      |> TimeManager.Users.create_user()
+
     {:ok, clock} =
       attrs
       |> Enum.into(%{
         status: true,
-        time: ~U[2024-10-07 07:55:00Z]
+        time: NaiveDateTime.utc_now(),
+        user_id: user.id
       })
       |> TimeManager.Clocks.create_clock()
 

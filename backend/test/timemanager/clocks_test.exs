@@ -2,11 +2,13 @@ defmodule TimeManager.ClocksTest do
   use TimeManager.DataCase
 
   alias TimeManager.Clocks
+  alias TimeManager.Users
 
   describe "clocks" do
     alias TimeManager.Clocks.Clock
 
     import TimeManager.ClocksFixtures
+    alias TimeManager.Users.User
 
     @invalid_attrs %{status: nil, time: nil}
 
@@ -21,9 +23,13 @@ defmodule TimeManager.ClocksTest do
     end
 
     test "create_clock/1 with valid data creates a clock" do
-      valid_attrs = %{status: true, time: ~U[2024-10-07 07:55:00Z]}
+      valid_user = %{username: "toto", email: "toto@mail.com"}
+      assert {:ok, %User{} = user} = Users.create_user(valid_user)
+      assert user.username == "toto"
+      assert user.email == "toto@mail.com"
 
-      assert {:ok, %Clock{} = clock} = Clocks.create_clock(valid_attrs)
+      valid_clocks = %{status: true, time: ~U[2024-10-07 07:55:00Z], user_id: user.id}
+      assert {:ok, %Clock{} = clock} = Clocks.create_clock(valid_clocks)
       assert clock.status == true
       assert clock.time == ~U[2024-10-07 07:55:00Z]
     end

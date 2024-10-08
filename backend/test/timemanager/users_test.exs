@@ -12,7 +12,10 @@ defmodule TimeManager.UsersTest do
 
     test "list_users/0 returns all users" do
       user = user_fixture()
-      assert Users.list_users() == [user]
+      params = %{toto: "toto", mail: "toto@mail.com"}
+      assert Users.list_users(params) == [user]
+      nilParams = %{}
+      assert Users.list_users(nilParams) == [user]
     end
 
     test "get_user!/1 returns the user with given id" do
@@ -21,11 +24,11 @@ defmodule TimeManager.UsersTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      valid_attrs = %{username: "some username", email: "some email"}
+      valid_attrs = %{username: "toto", email: "toto@mail.com"}
 
       assert {:ok, %User{} = user} = Users.create_user(valid_attrs)
-      assert user.username == "some username"
-      assert user.email == "some email"
+      assert user.username == "toto"
+      assert user.email == "toto@mail.com"
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -34,11 +37,11 @@ defmodule TimeManager.UsersTest do
 
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
-      update_attrs = %{username: "some updated username", email: "some updated email"}
+      update_attrs = %{username: "titi", email: "titiEtGrominet@mail.com"}
 
       assert {:ok, %User{} = user} = Users.update_user(user, update_attrs)
-      assert user.username == "some updated username"
-      assert user.email == "some updated email"
+      assert user.username == "titi"
+      assert user.email == "titiEtGrominet@mail.com"
     end
 
     test "update_user/2 with invalid data returns error changeset" do

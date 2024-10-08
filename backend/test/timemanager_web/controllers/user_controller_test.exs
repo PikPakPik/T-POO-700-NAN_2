@@ -6,12 +6,12 @@ defmodule TimeManagerWeb.UserControllerTest do
   alias TimeManager.Users.User
 
   @create_attrs %{
-    username: "some username",
-    email: "some email"
+    username: "toto",
+    email: "toto@mail.com"
   }
   @update_attrs %{
-    username: "some updated username",
-    email: "some updated email"
+    username: "titi",
+    email: "titiEtGrominet@mail.com"
   }
   @invalid_attrs %{username: nil, email: nil}
 
@@ -35,8 +35,8 @@ defmodule TimeManagerWeb.UserControllerTest do
 
       assert %{
                "id" => ^id,
-               "email" => "some email",
-               "username" => "some username"
+               "email" => "toto@mail.com",
+               "username" => "toto"
              } = json_response(conn, 200)["data"]
     end
 
@@ -57,8 +57,8 @@ defmodule TimeManagerWeb.UserControllerTest do
 
       assert %{
                "id" => ^id,
-               "email" => "some updated email",
-               "username" => "some updated username"
+               "email" => "titiEtGrominet@mail.com",
+               "username" => "titi"
              } = json_response(conn, 200)["data"]
     end
 
