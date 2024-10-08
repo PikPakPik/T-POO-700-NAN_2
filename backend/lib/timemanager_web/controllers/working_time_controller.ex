@@ -11,8 +11,9 @@ defmodule TimeManagerWeb.WorkingTimeController do
     render(conn, :index, workingtimes: workingtimes)
   end
 
-  def create(conn, %{"working_time" => working_time_params}) do
-    with {:ok, %WorkingTime{} = working_time} <- WorkingTimes.create_working_time(working_time_params) do
+  def create(conn, %{"userID" => user_id, "working_time" => working_time_params}) do
+    working_time_params_with_user = Map.put(working_time_params, "user_id", user_id)
+    with {:ok, %WorkingTime{} = working_time} <- WorkingTimes.create_working_time(working_time_params_with_user) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/workingtimes/#{working_time}")
