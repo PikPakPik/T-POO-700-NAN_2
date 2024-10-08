@@ -17,8 +17,20 @@ defmodule TimeManager.Users do
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
+  def list_users(params) do
+    query = from u in User
+
+    conditions = true
+
+    conditions =
+      Enum.reduce(["username", "email"], conditions, fn field, acc ->
+        case Map.get(params, field) do
+          nil -> acc
+          value -> dynamic([u], ilike(field(u, ^String.to_existing_atom(field)), ^value) and ^acc)
+        end
+      end)
+
+    Repo.all(from u in query, where: ^conditions)
   end
 
   @doc """
