@@ -37,6 +37,28 @@ defmodule TimeManager.WorkingTimes do
   """
   def get_working_time!(id), do: Repo.get!(WorkingTime, id)
 
+  def get_user_working_time!(userID, id), do: Repo.one!(from w in WorkingTime, where: w.id == ^id and w.user_id == ^userID)
+
+
+  def get_user_working_times!(params) do
+    query = from w in WorkingTime, where: w.user_id == ^Map.get(params, "userID")
+
+    conditions = true
+    conditions =
+      case Map.get(params, "start") do
+        nil -> conditions
+        start_time -> dynamic([w], w.start > ^start_time)
+      end
+
+    conditions =
+      case Map.get(params, "end") do
+        nil -> conditions
+        end_time -> dynamic([w], w.end < ^end_time and ^conditions)
+      end
+
+    Repo.all(from query, where: ^conditions)
+  end
+
   @doc """
   Creates a working_time.
 
