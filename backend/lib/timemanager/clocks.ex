@@ -37,6 +37,12 @@ defmodule TimeManager.Clocks do
   """
   def get_clock!(id), do: Repo.get!(Clock, id)
 
+  def list_clocks_by_user_id(user_id) do
+    Clock
+    |> where(user_id: ^user_id)
+    |> Repo.all()
+  end
+
   @doc """
   Creates a clock.
 
