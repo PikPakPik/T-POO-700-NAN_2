@@ -1,11 +1,11 @@
-defmodule TimeManager.Accounts.Clock do
+defmodule TimeManager.Clocks.Clock do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "clocks" do
     field :status, :boolean, default: false
     field :time, :utc_datetime
-    belongs_to :user, TimeManager.Accounts.User
+    belongs_to :user, TimeManager.Users.User
 
     timestamps(type: :utc_datetime)
   end
@@ -13,7 +13,7 @@ defmodule TimeManager.Accounts.Clock do
   @doc false
   def changeset(clock, attrs) do
     clock
-    |> cast(attrs, [:time, :status])
+    |> cast(attrs, [:time, :status, :user])
     |> validate_required([:time, :status, :user])
   end
 end

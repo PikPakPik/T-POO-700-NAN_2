@@ -10,7 +10,7 @@ defmodule TimeManager.Application do
     children = [
       TimeManagerWeb.Telemetry,
       TimeManager.Repo,
-      {DNSCluster, query: Application.get_env(:app, :dns_cluster_query) || :ignore},
+      {DNSCluster, query: Application.get_env(:timemanager, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: TimeManager.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: TimeManager.Finch},

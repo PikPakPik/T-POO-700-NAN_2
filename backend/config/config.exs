@@ -7,13 +7,13 @@
 # General application configuration
 import Config
 
-config :app,
+config :timemanager,
   namespace: TimeManager,
   ecto_repos: [TimeManager.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :app, TimeManagerWeb.Endpoint,
+config :timemanager, TimeManagerWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
@@ -21,7 +21,7 @@ config :app, TimeManagerWeb.Endpoint,
     layout: false
   ],
   pubsub_server: TimeManager.PubSub,
-  live_view: [signing_salt: "KkmVCgVZ"]
+  live_view: [signing_salt: "vWSZTYXK"]
 
 # Configures the mailer
 #
@@ -30,12 +30,12 @@ config :app, TimeManagerWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :app, TimeManager.Mailer, adapter: Swoosh.Adapters.Local
+config :timemanager, TimeManager.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
-  app: [
+  timemanager: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -45,7 +45,7 @@ config :esbuild,
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.4.3",
-  app: [
+  timemanager: [
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css
