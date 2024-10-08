@@ -7,7 +7,7 @@ Before launching the TimeManager platform, ensure you have the following install
 1. Elixir (version 1.14 or later)
 2. Erlang (version 24 or later)
 3. Phoenix Framework (version 1.7 or later)
-4. PostgreSQL (version 17 or later)
+4. PostgreSQL (version 14 or later)
 
 To start your Phoenix server:
 
@@ -20,13 +20,18 @@ To start your Phoenix server:
 
 2. Migrate database, run `mix ecto.migrate`
 
-## Testing Routes with Postman
+3. Populate database with data, run `mix run priv/repo/seeds.exs`
+
+## Testing Routes with Postman OR Swagger
 
 1. Download and install Postman Agent.
 
 2. Import the TimeManager API collection, the collection includes pre-configured requests for Users, Clocks, and Working Times endpoints (Routes.postman_collection.json).
 
 3. Ensure your Phoenix server is running locally before testing.
+
+(If you want to use Swagger)
+_Go to http://localhost:4000/api/swagger_
 
 4. Execute requests to test the API functionality.
 
