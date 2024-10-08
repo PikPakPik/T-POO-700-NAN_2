@@ -101,4 +101,8 @@ defmodule TimeManager.Users do
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
+
+  def get_user_by_email_and_username(email, username) do
+    Repo.get_by(User, email: email, username: username)
+  end
 end

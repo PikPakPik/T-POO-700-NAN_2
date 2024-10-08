@@ -40,4 +40,14 @@ defmodule TimeManagerWeb.UserController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def get_user(conn, %{"id" => id}) do
+    user = Users.get_user!(id)
+    render(conn, :show, user: user)
+  end
+
+  def get_user_by_email_and_username(conn, %{"email" => email, "username" => username}) do
+    user = Users.get_user_by_email_and_username(email, username)
+    render(conn, :show, user: user)
+  end
 end
