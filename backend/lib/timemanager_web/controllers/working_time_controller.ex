@@ -60,8 +60,10 @@ defmodule TimeManagerWeb.WorkingTimeController do
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
   def show_user_times(conn, params) do
-    working_times = WorkingTimes.get_user_working_times!(params)
-    render(conn, "index.json", workingtimes: working_times)
+    case working_times = WorkingTimes.get_user_working_times!(params) do
+      [] -> {:error, :not_found}
+      working_times -> render(conn, "index.json", workingtimes: working_times)
+    end
   end
 
   swagger_path(:show_user_time) do
@@ -77,8 +79,10 @@ defmodule TimeManagerWeb.WorkingTimeController do
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
   def show_user_time(conn, %{"id" => id, "userID" => userID}) do
-    working_time = WorkingTimes.get_user_working_time!(userID, id)
-    render(conn, :show, working_time: working_time)
+    case working_time = WorkingTimes.get_user_working_time!(userID, id) do
+      nil -> {:error, :not_found}
+      working_time -> render(conn, :show, working_time: working_time)
+    end
   end
 
   swagger_path(:update) do

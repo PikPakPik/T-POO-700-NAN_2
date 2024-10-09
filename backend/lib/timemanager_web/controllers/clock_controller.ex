@@ -30,9 +30,6 @@ defmodule TimeManagerWeb.ClockController do
     parameters do
       userID(:path, :integer, "User ID", required: true, example: 1)
     end
-
-
-
     response(201, "Created Successfully", Schema.ref(:ClockResponse))
   end
   def clock_in_out_user(conn, %{"userID" => userID}) do
@@ -44,27 +41,24 @@ defmodule TimeManagerWeb.ClockController do
       |> render(:show, clock: clock)
     end
   end
-
   swagger_path(:get_user_clock) do
     summary("Show Clock")
     description("Show a clock by User ID.")
     parameter(:userID, :path, :integer, "User ID", required: true, example: 3)
 
-
-
     response(200, "OK", Schema.ref(:ClockResponse))
   end
   def get_user_clock(conn, %{"userID" => user_id}) do
-    clocks = Clocks.list_clocks_by_user_id(user_id)
-    render(conn, :index, clocks: clocks)
+    case clocks = Clocks.list_clocks_by_user_id(user_id) do
+      [] -> {:error, :not_found}
+      clocks -> render(conn, :index, clocks: clocks)
+    end
   end
 
   swagger_path(:delete) do
     summary("Delete Clock")
     description("Delete a clock by ID.")
     parameter(:id, :path, :integer, "Clock ID", required: true, example: 3)
-
-
 
     response(204, "No Content - Deleted Successfully")
     response(404, "Not found", Schema.ref(:NotFoundResponse))

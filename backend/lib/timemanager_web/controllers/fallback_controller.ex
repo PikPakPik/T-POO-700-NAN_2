@@ -18,7 +18,7 @@ defmodule TimeManagerWeb.FallbackController do
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
-    |> put_view(html: TimeManagerWeb.ErrorHTML, json: TimeManagerWeb.ErrorJSON)
-    |> render(:"404")
+    |> put_view(json: TimeManagerWeb.ErrorJSON)
+    |> render("404.json", %{message: "Resource not found"})
   end
 end

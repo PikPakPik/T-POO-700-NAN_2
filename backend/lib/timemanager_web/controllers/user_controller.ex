@@ -19,8 +19,10 @@ defmodule TimeManagerWeb.UserController do
     response(200, "OK", Schema.ref(:UsersResponse))
   end
   def index(conn, params) do
-    users = Users.list_users(params)
-    render(conn, :index, users: users)
+    case users = Users.list_users(params) do
+      [] -> {:error, :not_found}
+      user -> render(conn, :index, users: users)
+    end
   end
 
   swagger_path(:create) do
@@ -96,4 +98,5 @@ defmodule TimeManagerWeb.UserController do
       send_resp(conn, :no_content, "")
     end
   end
+
 end
