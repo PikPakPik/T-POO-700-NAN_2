@@ -26,6 +26,23 @@ defmodule TimeManagerWeb.UserControllerTest do
     end
   end
 
+  describe "get user by email and username" do
+    test "retrieves user by email", %{conn: conn} do
+      # create a user
+      conn = post(conn, ~p"/api/users", user: @create_attrs)
+      assert %{"id" => id} = json_response(conn, 201)["data"]
+
+      # get user by email
+      conn = get(conn, ~p"/api/users?email=toto@mail.com")
+      assert [%{"id" => ^id, "email" => "toto@mail.com", "username" => "toto"}] = json_response(conn, 200)["data"]
+
+      # get user by id
+      conn = get(conn, ~p"/api/users/#{id}")
+      assert [%{"id" => ^id, "email" => "toto@mail.com", "username" => "toto"}] = json_response(conn, 200)["data"]
+    end
+  end
+
+
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
       conn = post(conn, ~p"/api/users", user: @create_attrs)
