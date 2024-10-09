@@ -5,29 +5,35 @@
   },
   "host": "localhost:4000",
   "definitions": {
-    "User": {
-      "description": "User schema",
+    "WorkingTime": {
+      "description": "Working time schema",
       "example": {
-        "email": "john@doe.com",
+        "end": "2024-10-08 10:05:01",
         "id": 1,
-        "username": "JohnDoe"
+        "start": "2024-10-08 10:05:01",
+        "user_id": 1
       },
       "properties": {
-        "email": {
-          "description": "Email address",
-          "format": "email",
+        "end_": {
+          "description": "Working time end time",
+          "format": "utc_datetime",
           "type": "string"
         },
         "id": {
-          "description": "User ID",
+          "description": "Working time ID",
           "type": "integer"
         },
-        "username": {
-          "description": "User username",
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
           "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
         }
       },
-      "title": "User",
+      "title": "WorkingTime",
       "type": "object"
     },
     "Clock": {
@@ -60,35 +66,65 @@
       "title": "Clock",
       "type": "object"
     },
-    "WorkingTime": {
-      "description": "Working time schema",
+    "User": {
+      "description": "User schema",
       "example": {
-        "end": "2024-10-08 10:05:01",
+        "email": "john@doe.com",
         "id": 1,
-        "start": "2024-10-08 10:05:01",
-        "user_id": 1
+        "username": "JohnDoe"
       },
       "properties": {
-        "end_": {
-          "description": "Working time end time",
-          "format": "utc_datetime",
+        "email": {
+          "description": "Email address",
+          "format": "email",
           "type": "string"
         },
         "id": {
-          "description": "Working time ID",
-          "type": "integer"
-        },
-        "start": {
-          "description": "Working time start time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "user_id": {
           "description": "User ID",
           "type": "integer"
+        },
+        "username": {
+          "description": "User username",
+          "type": "string"
         }
       },
-      "title": "WorkingTime",
+      "title": "User",
+      "type": "object"
+    },
+    "ClocksResponse": {
+      "description": "Response schema for multiple clocks",
+      "properties": {
+        "data": {
+          "description": "The clocks details",
+          "items": {
+            "$ref": "#/definitions/Clock"
+          },
+          "type": "array"
+        }
+      },
+      "title": "ClocksReponse",
+      "type": "object"
+    },
+    "ClockResponse": {
+      "description": "Response schema for single clock",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Clock",
+          "description": "The clock details"
+        }
+      },
+      "title": "ClockResponse",
+      "type": "object"
+    },
+    "NotFoundResponse": {
+      "description": "Resource not found",
+      "properties": {
+        "reason": {
+          "description": "Error reason",
+          "type": "ErrorReason"
+        }
+      },
+      "title": "NotFoundResponse",
       "type": "object"
     },
     "ErrorReason": {
@@ -115,17 +151,6 @@
         }
       },
       "title": "ErrorReason",
-      "type": "object"
-    },
-    "NotFoundResponse": {
-      "description": "Resource not found",
-      "properties": {
-        "reason": {
-          "description": "Error reason",
-          "type": "ErrorReason"
-        }
-      },
-      "title": "NotFoundResponse",
       "type": "object"
     },
     "UnprocessableEntityResponse": {
@@ -260,6 +285,29 @@
       "title": "WorkingTimeRequest",
       "type": "object"
     },
+    "UserWorkingTimeRequest": {
+      "description": "Request body when creating a user working time",
+      "example": {
+        "working_time": {
+          "end": "2024-10-08 10:05:01",
+          "start": "2024-10-08 10:05:01"
+        }
+      },
+      "properties": {
+        "end_": {
+          "description": "Workinng time end time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
+          "type": "string"
+        }
+      },
+      "title": "UserWorkingTimeRequest",
+      "type": "object"
+    },
     "WorkingTimeResponse": {
       "description": "Response schema for single working time",
       "properties": {
@@ -284,56 +332,14 @@
       },
       "title": "WorkingTimesResponse",
       "type": "object"
-    },
-    "UserWorkingTimeRequest": {
-      "description": "Request body when creating a user working time",
-      "example": {
-        "working_time": {
-          "end": "2024-10-08 10:05:01",
-          "start": "2024-10-08 10:05:01"
-        }
-      },
-      "properties": {
-        "end_": {
-          "description": "Workinng time end time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "start": {
-          "description": "Working time start time",
-          "format": "utc_datetime",
-          "type": "string"
-        }
-      },
-      "title": "UserWorkingTimeRequest",
-      "type": "object"
-    },
-    "ClocksResponse": {
-      "description": "Response schema for multiple clocks",
-      "properties": {
-        "data": {
-          "description": "The clocks details",
-          "items": {
-            "$ref": "#/definitions/Clock"
-          },
-          "type": "array"
-        }
-      },
-      "title": "ClocksReponse",
-      "type": "object"
-    },
-    "ClockResponse": {
-      "description": "Response schema for single clock",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/Clock",
-          "description": "The clock details"
-        }
-      },
-      "title": "ClockResponse",
-      "type": "object"
     }
   },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/api/clocks": {
       "get": {
@@ -916,11 +922,5 @@
       }
     }
   },
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
   "swagger": "2.0"
 }
