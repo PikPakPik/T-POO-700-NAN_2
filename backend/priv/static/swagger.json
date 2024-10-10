@@ -5,37 +5,6 @@
   },
   "host": "localhost:4000",
   "definitions": {
-    "WorkingTime": {
-      "description": "Working time schema",
-      "example": {
-        "end": "2024-10-08 10:05:01",
-        "id": 1,
-        "start": "2024-10-08 10:05:01",
-        "user_id": 1
-      },
-      "properties": {
-        "end_": {
-          "description": "Working time end time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "id": {
-          "description": "Working time ID",
-          "type": "integer"
-        },
-        "start": {
-          "description": "Working time start time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "User ID",
-          "type": "integer"
-        }
-      },
-      "title": "WorkingTime",
-      "type": "object"
-    },
     "ClockResponse": {
       "description": "Response schema for single clock",
       "properties": {
@@ -165,6 +134,37 @@
         }
       },
       "title": "UnprocessableEntityResponse",
+      "type": "object"
+    },
+    "WorkingTime": {
+      "description": "Working time schema",
+      "example": {
+        "end": "2024-10-08 10:05:01",
+        "id": 1,
+        "start": "2024-10-08 10:05:01",
+        "user_id": 1
+      },
+      "properties": {
+        "end_": {
+          "description": "Working time end time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "id": {
+          "description": "Working time ID",
+          "type": "integer"
+        },
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
+        }
+      },
+      "title": "WorkingTime",
       "type": "object"
     },
     "User": {
@@ -443,7 +443,22 @@
       "get": {
         "description": "List all users in the database.",
         "operationId": "TimeManagerWeb.UserController.index",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "Email",
+            "in": "query",
+            "name": "email",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Username",
+            "in": "query",
+            "name": "username",
+            "required": false,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -916,11 +931,11 @@
       }
     }
   },
+  "swagger": "2.0",
   "consumes": [
     "application/json"
   ],
   "produces": [
     "application/json"
-  ],
-  "swagger": "2.0"
+  ]
 }
