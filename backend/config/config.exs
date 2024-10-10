@@ -12,6 +12,11 @@ config :timemanager,
   ecto_repos: [TimeManager.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :cors_plug,
+  origins: "*",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  headers: ["authorization", "content-type"]
+
 # Configures the endpoint
 config :timemanager, TimeManagerWeb.Endpoint,
   url: [host: "localhost"],
