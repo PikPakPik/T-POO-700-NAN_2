@@ -21,10 +21,12 @@
               <p><strong>Email:</strong> {{ userData.email }}</p>
             </div>
           </v-card-text>
-          <v-card-actions class="justify-end">
+          <v-if v-if="userData">
+            <v-card-actions class="justify-end">
             <update-user :user="userData" />
             <delete-user :user="userData" />
-          </v-card-actions>
+            </v-card-actions>
+          </v-if>
         </v-card>
       </v-col>
     </v-row>
