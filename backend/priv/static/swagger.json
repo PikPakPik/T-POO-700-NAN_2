@@ -5,6 +5,37 @@
   },
   "host": "localhost:4000",
   "definitions": {
+    "WorkingTime": {
+      "description": "Working time schema",
+      "example": {
+        "end": "2024-10-08 10:05:01",
+        "id": 1,
+        "start": "2024-10-08 10:05:01",
+        "user_id": 1
+      },
+      "properties": {
+        "end_": {
+          "description": "Working time end time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "id": {
+          "description": "Working time ID",
+          "type": "integer"
+        },
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
+        }
+      },
+      "title": "WorkingTime",
+      "type": "object"
+    },
     "ClockResponse": {
       "description": "Response schema for single clock",
       "properties": {
@@ -134,37 +165,6 @@
         }
       },
       "title": "UnprocessableEntityResponse",
-      "type": "object"
-    },
-    "WorkingTime": {
-      "description": "Working time schema",
-      "example": {
-        "end": "2024-10-08 10:05:01",
-        "id": 1,
-        "start": "2024-10-08 10:05:01",
-        "user_id": 1
-      },
-      "properties": {
-        "end_": {
-          "description": "Working time end time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "id": {
-          "description": "Working time ID",
-          "type": "integer"
-        },
-        "start": {
-          "description": "Working time start time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "User ID",
-          "type": "integer"
-        }
-      },
-      "title": "WorkingTime",
       "type": "object"
     },
     "User": {
@@ -334,12 +334,6 @@
       "type": "object"
     }
   },
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
   "paths": {
     "/api/clocks": {
       "get": {
@@ -922,5 +916,11 @@
       }
     }
   },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "swagger": "2.0"
 }
