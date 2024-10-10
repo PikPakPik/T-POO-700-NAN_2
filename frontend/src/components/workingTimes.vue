@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { readWorkingTime } from '@/src/utils/api/workingtime.ts'
+import { readWorkingTimes } from '@/src/utils/api/workingtime.ts'
 
 export default {
     name: 'workingTimes',
@@ -44,7 +44,7 @@ export default {
 
     methods: {
         getWorkingTimes() {
-            readWorkingTime(this.userID)
+            readWorkingTimes(this.userID)
                 .then(response => {
                     this.workingTimes = response.data.sort((a, b) => {
                         return new Date(a.start) - new Date(b.start);

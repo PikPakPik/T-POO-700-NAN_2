@@ -88,9 +88,13 @@ export class WorkingTimeApi extends Api {
      * @param user_id - The ID of the user whose working time is to be read.
      * @returns A promise that resolves to void.
      */
-    static async readWorkingTime(user_id: number): Promise<void> {
+    static async readWorkingTimes(user_id: number): Promise<void> {
         return WorkingTimeApi.makeRequest('get', `/workingtime/${user_id}`);
+    }
+
+    static async readWorkingTime(user_id: number, id: number): Promise<void> {
+        return WorkingTimeApi.makeRequest('get', `/workingtime/${user_id}/${id}`);
     }
 }
 
-export const { updateWorkingTime, createWorkingTime, deleteWorkingTime, readWorkingTime } = WorkingTimeApi;
+export const { updateWorkingTime, createWorkingTime, deleteWorkingTime, readWorkingTime, readWorkingTimes } = WorkingTimeApi;
