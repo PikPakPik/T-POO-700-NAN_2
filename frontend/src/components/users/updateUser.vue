@@ -86,7 +86,6 @@
           };
           // Appel API pour mettre à jour l'utilisateur
           const response = await userApi.updateUser(this.user.id, userData);
-          console.log('User updated:', response);
           this.showModal = false;
           window.location.reload(); 
         } catch (error) {

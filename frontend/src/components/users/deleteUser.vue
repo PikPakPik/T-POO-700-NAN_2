@@ -57,7 +57,6 @@
         this.error = null;
         try {
           const userId = this.user.id;
-          console.log('Deleting user with ID:', userId);
           await userApi.deleteUser(userId);
           this.showDeleteModal = false;
           this.$router.push('/users');
