@@ -1,13 +1,13 @@
 import { Api } from "./api";
 
-export class UserApi extends Api {
+export class UsersApi extends Api {
     constructor() {
         super();
     }
 
     async getUserByID(userId: string) {
         try {
-            const response = await this.instance.get(`/user/${userId}`);
+            const response = await this.instance.get(`/users/${userId}`);
             return response;
         } catch (error) {
             console.error(error);
@@ -17,7 +17,7 @@ export class UserApi extends Api {
 
     async getUserByMailAndUsername(email: string, username: string) {
         try {
-            const response = this.instance.get(`/user?email=${email}&username=${username}`);
+            const response = this.instance.get(`/users?email=${email}&username=${username}`);
             return response;
         } catch (error) {
             console.error(error);
@@ -25,15 +25,9 @@ export class UserApi extends Api {
         }
     }
 
-    async createUser(username: string, email: string, password: string) {
+    async createUser(userData: { user: { username: string, email: string } }) {
         try {
-            const response = this.instance.post(`/users`, {
-                username: username,
-                email: email,
-                password: password
-            });
-            //const response = this.instance.post(`/user`);
-            console.log('je suis ici', response);
+            const response = this.instance.post(`/users`, userData);
             return response;
         } catch (error) {
             console.error(error);
@@ -41,9 +35,9 @@ export class UserApi extends Api {
         }
     }
 
-    async updateUser(userId: string) {
+    async updateUser(userId: string, userData: { user: { username: string, email: string } }) {
         try {
-            const response = this.instance.put(`/user/${userId}`);
+            const response = this.instance.put(`/users/${userId}`, userData);
             return response;
         } catch (error) {
             console.error(error);
@@ -53,7 +47,7 @@ export class UserApi extends Api {
 
     async deleteUser(userId: string) {
         try {
-            const response = this.instance.delete(`/user/${userId}`);
+            const response = this.instance.delete(`/users/${userId}`);
             return response;
         } catch (error) {
             console.error(error);
