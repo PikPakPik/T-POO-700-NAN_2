@@ -16,6 +16,11 @@ defmodule TimeManagerWeb.UserController do
     summary("List Users")
     description("List all users in the database.")
 
+    parameters do
+      email(:query, :string, "Email")
+      username(:query, :string, "Username")
+    end
+
     response(200, "OK", Schema.ref(:UsersResponse))
   end
   def index(conn, params) do
