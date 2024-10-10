@@ -27,7 +27,7 @@ export class UserApi extends Api {
 
     async createUser(username: string, email: string, password: string) {
         try {
-            const response = this.instance.post(`/user`, {
+            const response = this.instance.post(`/users`, {
                 username: username,
                 email: email,
                 password: password

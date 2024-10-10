@@ -5,10 +5,8 @@ export class Api {
     protected instance: AxiosInstance
 
     constructor() {
-        axios.defaults.withCredentials = true;
-        axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';  // ou configurer l'origine spécifique
         this.instance = axios.create({
-          baseURL: 'http://localhost:4000',
+          baseURL: 'http://localhost:4000/api',
           timeout: 1000,
           headers: {
             'Content-Type': 'application/json',
