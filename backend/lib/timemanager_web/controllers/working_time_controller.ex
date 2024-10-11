@@ -31,8 +31,6 @@ defmodule TimeManagerWeb.WorkingTimeController do
     parameter(:userID, :path, :integer, "User ID", required: true, example: 1)
     parameter(:working_time, :body, Schema.ref(:WorkingTimeRequest), "Working time object", required: true)
 
-
-
     response(201, "OK", Schema.ref(:WorkingTimeResponse))
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
