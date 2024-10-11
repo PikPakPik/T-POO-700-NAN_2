@@ -85,10 +85,10 @@ jobs:
           ${{ runner.os }}-mix-${{ env.cache-name }}-
           ${{ runner.os }}-mix-
 
-    # Step: Download project dependencies. If unchanged, uses
-    # the cached version.
     - name: move to mix folder
       run: cd backend
+    - name: look at the current folder
+      run: ls
 
     # Step: Download project dependencies. If unchanged, uses
     # the cached version.
