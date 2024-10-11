@@ -34,9 +34,10 @@
   </template>
   
   <script>
-  import { UsersApi } from '~/src/utils/api/users';
-  
-  const userApi = new UsersApi();
+  //utils
+  import useUsers from '~/src/utils/user/user';
+
+  const { deleteUser } = useUsers();
   
   export default {
     name: 'deleteUser',
@@ -57,7 +58,7 @@
         this.error = null;
         try {
           const userId = this.user.id;
-          await userApi.deleteUser(userId);
+          await deleteUser(userId);
           this.showDeleteModal = false;
           this.$router.push('/users');
         } catch (error) {

@@ -50,9 +50,10 @@
   </template>
   
   <script>
-  import { UsersApi } from '~/src/utils/api/users'; 
-  
-  const userApi = new UsersApi();
+  //utils
+  import useUsers from '~/src/utils/user/user';
+
+  const { updateUser } = useUsers();
   
   export default {
     name: 'updateUser',
@@ -78,14 +79,8 @@
       async updateUser() {
         this.error = null;
         try {
-          const userData = {
-            user: {
-              username: this.localUser.username,
-              email: this.localUser.email
-            }
-          };
           // Appel API pour mettre à jour l'utilisateur
-          const response = await userApi.updateUser(this.user.id, userData);
+          await updateUser(this.user.id, this.localUser.username, this.localUser.email);
           this.showModal = false;
           window.location.reload(); 
         } catch (error) {

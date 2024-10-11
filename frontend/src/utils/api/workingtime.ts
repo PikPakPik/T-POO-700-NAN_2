@@ -23,7 +23,6 @@ export class WorkingTimeApi extends Api {
         try {
             const api = new WorkingTimeApi();
             const response = await api.instance[method](url, data);
-            console.log(response.data);
             return response.data;
         } catch (error) {
             console.error(`Error in ${method} request:`, error);

@@ -39,9 +39,10 @@
   </template>
   
   <script>
-  import { UsersApi } from '~/src/utils/api/users'; 
-  
-  const userApi = new UsersApi();
+  //utils
+  import useUsers from '~/src/utils/user/user';
+
+  const { createUser } = useUsers();
   
   export default {
     name: 'createUser',
@@ -64,17 +65,10 @@
       async createUser() {
         this.error = null;
         try {
-            const userData = {
-                user: {
-                    username: this.username,
-                    email: this.email
-                }
-            };
 
-            // Appel à l'API pour créer l'utilisateur
-            const response = await userApi.createUser(userData);
+            const response = await createUser(this.username, this.email);
             
-            this.$router.push('/users/' + response.data.data.id);
+            this.$router.push('/users/' + response.id);
         } catch (error) {
             console.error('Error creating user:', error);
             this.error = "Échec de la création de l'utilisateur.";

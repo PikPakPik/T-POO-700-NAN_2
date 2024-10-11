@@ -334,6 +334,12 @@
       "type": "object"
     }
   },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/api/clocks": {
       "get": {
@@ -931,11 +937,5 @@
       }
     }
   },
-  "swagger": "2.0",
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ]
+  "swagger": "2.0"
 }

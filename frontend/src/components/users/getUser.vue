@@ -39,12 +39,12 @@ import updateUser from '~/src/components/users/updateUser.vue';
 import deleteUser from '~/src/components/users/deleteUser.vue';
 
 //utils
-import { UsersApi } from '~/src/utils/api/users';
+import useUsers from '~/src/utils/user/user';
 
-const userApi = new UsersApi();
+const { getUser } = useUsers();
 
 export default {
-  name: 'getUser',
+  name: 'userProfile',
   components: {
     updateUser,
     deleteUser
@@ -54,6 +54,7 @@ export default {
       userData: null,
       error: null,
       loading: true,
+      userID: this.$route.params.users[0],
     };
   },
   mounted() {
@@ -62,9 +63,8 @@ export default {
   methods: {
     async fetchUserData() {
       try {
-        const userId = this.$route.params.users[0];
-        const response = await userApi.getUserByID(userId);
-        this.userData = response.data.data;
+        const response = await getUser(this.userID);
+        this.userData = response;
         this.loading = false;
       } catch (error) {
         this.error = 'Échec du chargement des données utilisateur';
