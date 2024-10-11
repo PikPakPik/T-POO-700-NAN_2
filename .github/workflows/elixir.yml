@@ -85,30 +85,26 @@ jobs:
           ${{ runner.os }}-mix-${{ env.cache-name }}-
           ${{ runner.os }}-mix-
 
-
-    - name: look at the current folder
-      run: ls
-    - name: move to mix folder
-      run: cd backend
-    - name: look at the current folder
-      run: ls
-
     # Step: Download project dependencies. If unchanged, uses
     # the cached version.
     - name: Install dependencies
       run: mix deps.get
+      working-directory: backend
 
     # Step: Compile the project treating any warnings as errors.
     # Customize this step if a different behavior is desired.
     - name: Compiles without warnings
       run: mix compile --warnings-as-errors
+      working-directory: backend
 
     # Step: Check that the checked in code has already been formatted.
     # This step fails if something was found unformatted.
     # Customize this step as desired.
     - name: Check Formatting
       run: mix format --check-formatted
+      working-directory: backend
 
     # Step: Execute the tests.
     - name: Run tests
       run: mix test
+      working-directory: backend
