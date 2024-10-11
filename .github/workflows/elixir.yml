@@ -87,6 +87,11 @@ jobs:
 
     # Step: Download project dependencies. If unchanged, uses
     # the cached version.
+    - name: move to mix folder
+      run: cd backend
+
+    # Step: Download project dependencies. If unchanged, uses
+    # the cached version.
     - name: Install dependencies
       run: mix deps.get
 
