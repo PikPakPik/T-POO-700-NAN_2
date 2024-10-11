@@ -7,7 +7,6 @@ defmodule TimeManagerWeb.ClockControllerTest do
 
   @create_attrs %{
     status: true,
-    time: ~U[2024-10-07 07:55:00Z]
   }
   @create_user %{
     username: "toto",
@@ -41,9 +40,14 @@ defmodule TimeManagerWeb.ClockControllerTest do
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, ~p"/api/clocks/#{userID}")
+
+      time_now = DateTime.utc_now()
+
       assert %{
         "status" => true,
-        "time" => "2024-10-07T07:55:00Z"
+        "time" => time_now,
+        "user_id" => userID,
+        "id" => id
       } = hd(json_response(conn, 200)["data"])
     end
   end

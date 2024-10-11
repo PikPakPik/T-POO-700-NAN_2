@@ -22,7 +22,8 @@ defmodule TimeManagerWeb.UserControllerTest do
   describe "index" do
     test "lists all users", %{conn: conn} do
       conn = get(conn, ~p"/api/users")
-      assert json_response(conn, 200)["data"] == []
+
+      assert nil == json_response(conn, 404)["data"]
     end
   end
 
@@ -34,11 +35,15 @@ defmodule TimeManagerWeb.UserControllerTest do
 
       # get user by email
       conn = get(conn, ~p"/api/users?email=toto@mail.com")
-      assert [%{"id" => ^id, "email" => "toto@mail.com", "username" => "toto"}] = json_response(conn, 200)["data"]
+      assert [%{"id" => id, "email" => "toto@mail.com", "username" => "toto"}] = json_response(conn, 200)["data"]
 
       # get user by id
       conn = get(conn, ~p"/api/users/#{id}")
-      assert [%{"id" => ^id, "email" => "toto@mail.com", "username" => "toto"}] = json_response(conn, 200)["data"]
+      assert %{"id" => id, "email" => "toto@mail.com", "username" => "toto"} = json_response(conn, 200)["data"]
+
+      # get all users
+      conn = get(conn, ~p"/api/users")
+      assert [%{"id" => id, "email" => "toto@mail.com", "username" => "toto"}] = json_response(conn, 200)["data"]
     end
   end
 
