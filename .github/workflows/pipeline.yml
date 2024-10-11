@@ -11,25 +11,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Elixir
-      uses: actions/setup-elixir@v1
-      with:
-        elixir-version: '1.17.3'  # Version d'Elixir
-        otp-version: '27.0'  # Version d'Erlang
-
-    - name: Go to backend folder
-      run: cd backend
-
-    - name: Install dependencies
-      run: mix deps.get
-
-    - name: Compile project
-      run: mix compile
-
-    - name: Run tests
-      run: mix test
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1
+        with:
+          otp-version: '27.0' # Version d'Erlang
+          elixir-version: '1.17.3' # Version d'Elixir
+      - run: mix deps.get
+      - run: mix test
