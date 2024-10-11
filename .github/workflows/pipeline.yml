@@ -13,11 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v2
+      - uses: actions/setup-elixir
         with:
           otp-version: '27.0' # Version d'Erlang (our version : 27.0)
           elixir-version: '1.17.3' # Version d'Elixir (our version : 1.17.3)
-      - run: mix local.hex --force
-      - run: mix local.rebar --force
       - run: mix deps.get
       - run: mix test
