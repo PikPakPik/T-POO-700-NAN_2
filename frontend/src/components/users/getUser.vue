@@ -41,7 +41,7 @@ import deleteUser from '~/src/components/users/deleteUser.vue';
 //utils
 import useUsers from '~/src/utils/user/user';
 
-const { getUser } = useUsers();
+const { getUser, loading, error } = useUsers();
 
 export default {
   name: 'userProfile',
@@ -53,7 +53,10 @@ export default {
     return {
       userData: null,
       error: null,
-      loading: true,
+      
+      
+      
+      : true,
       userID: this.$route.params.users[0],
     };
   },
