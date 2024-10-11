@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  api:
+    build: ./backend
+    depends_on:
+      - db
+    ports:
+      - 4000:4000
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    profiles:
+      - backend
+      - all
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    profiles:
+      - backend
+      - all
+
+  web:
+    build: ./frontend
+    depends_on:
+      - api
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    profiles:
+      - frontend
+      - all

@@ -1,6 +1,6 @@
 # TimeManager
 
-## Prerequisites
+## Prerequisites for local development
 
 Before launching the TimeManager platform, ensure you have the following installed:
 
@@ -34,6 +34,21 @@ Before launching the TimeManager platform, ensure you have the following install
 _Go to http://localhost:4000/api/swagger_
 
 4. Execute requests to test the API functionality.
+
+## Prerequisites for Docker
+
+1. Docker
+2. Docker Compose
+
+## Launching the platform with Docker
+
+Multiple profiles are available:
+
+- `-backend`: only backend
+- `-frontend`: only frontend
+- `-all`: backend and frontend
+
+Run `./timemanager.sh -all` to launch the platform with Docker.
 
 ## Learn more
 
