@@ -53,10 +53,7 @@ export default {
     return {
       userData: null,
       error: null,
-      
-      
-      
-      : true,
+      loading: true,
       userID: this.$route.params.users[0],
     };
   },
