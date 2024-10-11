@@ -85,6 +85,9 @@ jobs:
           ${{ runner.os }}-mix-${{ env.cache-name }}-
           ${{ runner.os }}-mix-
 
+
+    - name: look at the current folder
+      run: ls
     - name: move to mix folder
       run: cd backend
     - name: look at the current folder
