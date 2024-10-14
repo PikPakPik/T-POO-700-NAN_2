@@ -77,13 +77,3 @@
     },
   };
   </script>
-  
-  <style scoped>
-  .title {
-    font-weight: bold;
-  }
-  .v-btn {
-    width: 100%;
-  }
-  </style>
-  
