@@ -62,12 +62,14 @@
       <!-- Header -->
        <header class="bg-white shadow-sm">
         <div class="flex items-center justify-between px-4 py-3">
+          <div class="flex items-center space-x-4">
           <button @click="toggleSidebar" class="p-1 rounded-full hover:bg-gray-200">
             <v-icon icon="mdi-menu" />
           </button>
           <h2 class="text-xl font-semibold text-gray-800">
             {{ headerTitle }}
           </h2>
+          </div>
           <div class="flex items-center space-x-4">
             <div class="relative">
               <button 
