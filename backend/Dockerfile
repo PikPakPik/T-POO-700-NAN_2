@@ -20,4 +20,4 @@ RUN env
 
 EXPOSE 4000
 
-CMD ["/app/entrypoint.sh"]
+CMD ["./entrypoint.sh"]
