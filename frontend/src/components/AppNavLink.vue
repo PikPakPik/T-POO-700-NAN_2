@@ -7,7 +7,7 @@
     } ${!isOpen ? 'justify-center' : ''}`"
   >
     <slot />
-    <span v-if="isOpen">{{ label }}</span>
+    <span class="ml-6" v-if="isOpen">{{ label }}</span>
   </RouterLink>
 </template>
 
