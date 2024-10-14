@@ -64,8 +64,11 @@
     <!-- Main content -->
     <div class="flex-1 flex flex-col">
       <!-- Header -->
-      <header class="bg-white shadow-sm">
+       <header class="bg-white shadow-sm">
         <div class="flex items-center justify-between px-4 py-3">
+          <button @click="toggleSidebar" class="p-1 rounded-full hover:bg-gray-200">
+            <v-icon icon="mdi-menu" />
+          </button>
           <h2 class="text-xl font-semibold text-gray-800">
             {{ headerTitle }}
           </h2>
@@ -75,9 +78,12 @@
                 @click="toggleUserMenu" 
                 class="flex items-center space-x-2 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out"
               >
-                <span class="text-sm font-medium text-gray-700">John Doe</span>
-                <div class="p-1 rounded-full bg-gray-200 hover:bg-gray-300">
-                  <v-icon icon="mdi-account" />
+                <div class="flex flex-col items-end">
+                  <span class="text-sm font-medium text-gray-700">John Doe</span>
+                  <span class="text-xs text-gray-500">Développeur</span>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center">
+                  <v-icon icon="mdi-account" class="text-gray-800" />
                 </div>
               </button>
               <transition
@@ -105,6 +111,7 @@
           </div>
         </div>
       </header>
+
 
       <!-- Page content -->
       <main class="flex-1 p-6 bg-gray-100">
