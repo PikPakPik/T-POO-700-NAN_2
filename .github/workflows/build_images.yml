@@ -2,8 +2,7 @@ name: Build & Publish Docker Images
 on:
   workflow_run:
     workflows: ["Frontend", "Backend"]
-    types:
-      - completed
+    types: [completed]
 
 jobs:
   build-and-push-image:
