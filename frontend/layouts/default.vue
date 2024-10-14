@@ -4,10 +4,6 @@
     <div :class="`bg-white transition-all duration-300 ease-in-out ${isOpen ? 'w-64' : 'w-20'} flex flex-col`">
       <div class="flex items-center justify-between p-4">
         <h1 v-if="isOpen" class="text-xl font-bold text-gray-800">TimeManager</h1>
-        <button @click="toggleSidebar" class="p-1 rounded-full hover:bg-gray-200">
-          <v-icon icon="mdi-chevron-left" v-if="isOpen" end></v-icon>
-          <v-icon icon="mdi-chevron-right" end v-else></v-icon>
-        </button>
       </div>
       <nav class="flex-1">
         <ul class="space-y-2 p-4">
