@@ -5,6 +5,7 @@ RUN apt-get update && \
     apt-get clean
 
 ADD . /app
+COPY ./entrypoint.sh /app/entrypoint.sh
 WORKDIR /app
 
 RUN mix local.hex --force && \
@@ -20,4 +21,4 @@ RUN env
 
 EXPOSE 4000
 
-CMD ["/app/entrypoint.sh"]
+ENTRYPOINT ["bash", "/app/entrypoint.sh"]
