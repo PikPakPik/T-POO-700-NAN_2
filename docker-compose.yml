@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   api:
-    image: docker.io/pikpak/time-manager-api-nan-2:latest
+    image: docker.io/pikpak/time-manager-api-nan-2:main
     depends_on:
       - db
     ports:
@@ -20,7 +20,7 @@ services:
       - .env
 
   web:
-    image: docker.io/pikpak/time-manager-front-nan-2:latest
+    image: docker.io/pikpak/time-manager-front-nan-2:main
     depends_on:
       - api
     ports:

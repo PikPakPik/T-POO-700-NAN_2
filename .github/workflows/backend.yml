@@ -1,12 +1,10 @@
-name: Elixir CI
+name: Backend
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 
 # Sets the ENV `MIX_ENV` to `test` for running tests
