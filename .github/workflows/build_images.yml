@@ -1,9 +1,5 @@
 name: Build & Publish Docker Images
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ '**' ]
   workflow_run:
     workflows: [Frontend, Backend]
     types:
