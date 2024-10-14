@@ -4,6 +4,10 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ '**' ]
+  workflow_run:
+    workflows: [frontend, elixir]
+    types:
+      - completed
 
 jobs:
   build-and-push-image:
