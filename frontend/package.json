@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "e2e:test": "playwright test",
+    "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -15,12 +17,14 @@
     "dayjs": "^1.11.13",
     "dayjs-with-plugins": "^1.0.4",
     "nuxt": "^3.13.0",
-    "vue": "latest",
     "vite-plugin-vuetify": "^2.0.4",
-    "vuetify": "^3.7.2",
+    "vue": "latest",
     "vue-chartjs": "^5.3.1",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vuetify": "^3.7.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.7.5"
   }
 }
