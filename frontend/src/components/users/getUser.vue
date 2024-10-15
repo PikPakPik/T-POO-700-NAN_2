@@ -4,15 +4,15 @@
       <v-col cols="12" md="8">
         <v-card outlined flex="flex">
           <v-card-title>
-            <h3 class="user-title">{{ userData ? userData.username : 'Chargement de l’utilisateur...' }}</h3>
+            <h3 class="user-title" :aria-busy="loading">{{ userData ? userData.username : 'Chargement de l’utilisateur...' }}</h3>
           </v-card-title>
 
           <v-card-text>
-            <v-alert v-if="error" type="error" class="mt-4">
+            <v-alert v-if="error" type="error" class="mt-4" role="alert">
               {{ error }}
             </v-alert>
 
-            <v-alert v-else-if="loading" type="info" class="mt-4">
+            <v-alert v-else-if="loading" type="info" class="mt-4" role="status">
               Chargement en cours...
             </v-alert>
 
@@ -23,8 +23,8 @@
           </v-card-text>
           <v-if v-if="userData">
             <v-card-actions class="justify-end">
-            <update-user :user="userData" />
-            <delete-user :user="userData" />
+              <update-user :user="userData" />
+              <delete-user :user="userData" />
             </v-card-actions>
           </v-if>
         </v-card>
