@@ -5,6 +5,19 @@ export const useUsers = () => {
     const userApi = new UsersApi();
     let err: string | null = null;
 
+    const getUsers = async () => {
+        const response = await userApi.getUsers();
+        //console.log('response getUsers:', response);
+        if (response?.status !== 200) {
+            throw new Error('Utilisateur introuvable ou problème serveur');
+        }
+        if (response.data && response.data.data) {
+            return response.data.data;
+        } else {
+            throw new Error('Data not found');
+        }
+    }
+
     const getUser = async (userId: string) => {
         const response = await userApi.getUserByID(userId);
         if (response?.status !== 200) {
@@ -67,6 +80,7 @@ export const useUsers = () => {
 
     return { 
         err,
+        getUsers,
         getUser,
         createUser,
         updateUser,
