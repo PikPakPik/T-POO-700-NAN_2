@@ -12,10 +12,10 @@ defmodule TimeManagerWeb.ClockJSON do
   Renders a single clock.
   """
   def show(%{clock: clock}) do
-    %{data: data(clock, %{associations: true})}
+    %{data: data(clock)}
   end
 
-  defp data(%Clock{} = clock, options \\ %{}) do
-    TimeManagerWeb.ModelToJson.serialize_data(clock, options)
+  defp data(clock) do
+    TimeManagerWeb.ModelToJson.serialize_data(clock)
   end
 end

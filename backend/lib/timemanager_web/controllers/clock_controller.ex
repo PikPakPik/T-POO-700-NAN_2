@@ -32,6 +32,7 @@ defmodule TimeManagerWeb.ClockController do
       userID(:path, :integer, "User ID", required: true, example: 1)
     end
 
+    response(200, "OK", Schema.ref(:ClockResponse))
     response(201, "Created Successfully", Schema.ref(:ClockResponse))
   end
 
