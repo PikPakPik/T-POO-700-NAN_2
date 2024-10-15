@@ -41,6 +41,31 @@
       "title": "ClocksReponse",
       "type": "object"
     },
+    "RolesResponse": {
+      "description": "Response schema for multiple roles",
+      "properties": {
+        "data": {
+          "description": "The roles list",
+          "items": {
+            "$ref": "#/definitions/Role"
+          },
+          "type": "array"
+        }
+      },
+      "title": "RolesResponse",
+      "type": "object"
+    },
+    "RoleResponse": {
+      "description": "Response schema for single role",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Role",
+          "description": "The role details"
+        }
+      },
+      "title": "RoleResponse",
+      "type": "object"
+    },
     "Clock": {
       "description": "Clock schema",
       "example": {
@@ -136,6 +161,78 @@
       "title": "UnprocessableEntityResponse",
       "type": "object"
     },
+    "User": {
+      "description": "User schema",
+      "example": {
+        "email": "john@doe.com",
+        "id": 1,
+        "username": "JohnDoe"
+      },
+      "properties": {
+        "email": {
+          "description": "Email address",
+          "format": "email",
+          "type": "string"
+        },
+        "id": {
+          "description": "User ID",
+          "type": "integer"
+        },
+        "username": {
+          "description": "User username",
+          "type": "string"
+        }
+      },
+      "title": "User",
+      "type": "object"
+    },
+    "Role": {
+      "description": "Role. Default roles are: Admin, Manager and Employee",
+      "example": {
+        "id": 4,
+        "name": "Employee",
+        "permissions": {}
+      },
+      "properties": {
+        "id": {
+          "description": "Role ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Role name",
+          "type": "string"
+        }
+      },
+      "title": "Role",
+      "type": "object"
+    },
+    "RoleDetailed": {
+      "description": "Role. Default roles are: Admin, Manager and Employee",
+      "example": {
+        "id": 1,
+        "name": "Employee",
+        "users": []
+      },
+      "properties": {
+        "id": {
+          "description": "Role ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Role name",
+          "type": "string"
+        },
+        "users": {
+          "description": "Users with the requested role",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "type": "array"
+        }
+      },
+      "title": "RoleDetailed",
+      "type": "object"
+    },
     "WorkingTime": {
       "description": "Working time schema",
       "example": {
@@ -165,31 +262,6 @@
         }
       },
       "title": "WorkingTime",
-      "type": "object"
-    },
-    "User": {
-      "description": "User schema",
-      "example": {
-        "email": "john@doe.com",
-        "id": 1,
-        "username": "JohnDoe"
-      },
-      "properties": {
-        "email": {
-          "description": "Email address",
-          "format": "email",
-          "type": "string"
-        },
-        "id": {
-          "description": "User ID",
-          "type": "integer"
-        },
-        "username": {
-          "description": "User username",
-          "type": "string"
-        }
-      },
-      "title": "User",
       "type": "object"
     },
     "UserDetailed": {
@@ -334,12 +406,6 @@
       "type": "object"
     }
   },
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
   "paths": {
     "/api/clocks": {
       "get": {
@@ -442,6 +508,59 @@
         "summary": "Clock in or out user",
         "tags": [
           "Clock"
+        ]
+      }
+    },
+    "/api/roles": {
+      "get": {
+        "description": "List all roles in the database.",
+        "operationId": "TimeManagerWeb.RoleController.index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RolesResponse"
+            }
+          }
+        },
+        "summary": "List Roles",
+        "tags": [
+          "Role"
+        ]
+      }
+    },
+    "/api/roles/{id}": {
+      "get": {
+        "description": "Show a role by ID.",
+        "operationId": "TimeManagerWeb.RoleController.show",
+        "parameters": [
+          {
+            "description": "Role ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 123
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RoleResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Show role",
+        "tags": [
+          "Role"
         ]
       }
     },
@@ -664,6 +783,45 @@
           }
         },
         "summary": "Update user",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/api/users/{userID}/role/{roleID}": {
+      "put": {
+        "description": "Modify a user role.",
+        "operationId": "TimeManagerWeb.UserController.set_role",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userID",
+            "required": true,
+            "type": "integer",
+            "x-example": 3
+          },
+          {
+            "description": "Role ID",
+            "in": "path",
+            "name": "roleID",
+            "required": true,
+            "type": "integer",
+            "x-example": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Modify user role",
         "tags": [
           "User"
         ]
@@ -937,5 +1095,11 @@
       }
     }
   },
-  "swagger": "2.0"
+  "swagger": "2.0",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ]
 }

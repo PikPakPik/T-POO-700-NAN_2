@@ -218,4 +218,52 @@ defmodule TimeManagerWeb.SwaggerDef do
       end
     }
   end
+
+  def role_definitions do
+    %{
+      Role: swagger_schema do
+        title("Role")
+        description("Role. Default roles are: Admin, Manager and Employee")
+
+        properties do
+          id(:integer, "Role ID")
+          name(:string, "Role name")
+        end
+
+        example(%{
+          id: 4,
+          name: "Employee",
+          permissions: %{}
+        })
+      end,
+      RoleDetailed: swagger_schema do
+        title("RoleDetailed")
+        description("Role. Default roles are: Admin, Manager and Employee")
+
+        properties do
+          id(:integer, "Role ID")
+          name(:string, "Role name")
+          users(Schema.array(:User), "Users with the requested role")
+        end
+
+        example(%{
+          id: 1,
+          name: "Employee",
+          users: []
+        })
+      end,
+      RoleResponse: swagger_schema do
+        title("RoleResponse")
+        description("Response schema for single role")
+        property(:data, Schema.ref(:Role), "The role details")
+      end,
+      RolesResponse:
+      swagger_schema do
+        title("RolesResponse")
+        description("Response schema for multiple roles")
+        property(:data, Schema.array(:Role), "The roles list")
+      end
+  }
+  end
+
 end
