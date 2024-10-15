@@ -1,5 +1,13 @@
 # TimeManager
 
+### Production:  
+https://timemanager-front.atressel.fr (Frontend)  
+https://timemanager-back.atressel.fr (API)
+
+###### _If you have ERR_SSL_VERSION_OR_CIPHER_MISMATCH, please use this url instead:_
+https://time-manager-front-nan-2-main.onrender.com  
+https://time-manager-api-nan-2-main.onrender.com
+
 ## Prerequisites for local development
 
 Before launching the TimeManager platform, ensure you have the following installed:
