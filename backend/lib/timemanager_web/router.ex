@@ -11,6 +11,7 @@ defmodule TimeManagerWeb.Router do
 
     resources "/roles", RoleController, only: [:index, :show]
     resources "/logs", LogController, only: [:index, :show]
+
     scope "/users" do
       resources "/", UserController, except: [:new, :edit]
       put "/:userID/role/:roleID", UserController, :set_role
@@ -29,6 +30,14 @@ defmodule TimeManagerWeb.Router do
       post "/:userID", WorkingTimeController, :create_user_time
     end
 
+    scope "/teams" do
+      resources "/", TeamController, except: [:new, :edit]
+      post "/:teamID/clock", TeamController, :clock
+      put "/:teamID/add_employee/:employeeID", TeamController, :add_employee
+      put "/:teamID/remove_employee/:employeeID", TeamController, :remove_employee
+      put "/:teamID/add_manager/:managerID", TeamController, :add_manager
+      put "/:teamID/remove_manager/:managerID", TeamController, :remove_manager
+    end
   end
 
   scope "/api/swagger" do
@@ -43,7 +52,7 @@ defmodule TimeManagerWeb.Router do
         version: "1.0",
         title: "Time Manager API"
       },
-      definitions: TimeManagerWeb.SwaggerDef.global_definitions,
+      definitions: TimeManagerWeb.SwaggerDef.global_definitions(),
       consumes: ["application/json"],
       produces: ["application/json"]
     }

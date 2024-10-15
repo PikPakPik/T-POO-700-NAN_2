@@ -24,6 +24,7 @@ defmodule TimeManagerWeb.UserController do
 
     response(200, "OK", Schema.ref(:UsersResponse))
   end
+
   def index(conn, params) do
     case users = Users.list_users(params) do
       [] -> {:error, :not_found}
@@ -42,6 +43,7 @@ defmodule TimeManagerWeb.UserController do
     response(201, "Created Successfully", Schema.ref(:UserResponse))
     response(422, "Unprocessable Entity", Schema.ref(:UnprocessableEntityResponse))
   end
+
   def create(conn, %{"user" => user_params}) do
     with {:ok, %User{} = user} <- Users.create_user(user_params) do
       conn
@@ -56,11 +58,10 @@ defmodule TimeManagerWeb.UserController do
     description("Show an user by his ID")
     parameter(:id, :path, :integer, "User ID", required: true, example: 123)
 
-
-
     response(200, "OK", Schema.ref(:UserResponse))
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
+
   def show(conn, %{"id" => id}) do
     user = Users.get_user!(id)
     render(conn, :show, user: user)
@@ -79,6 +80,7 @@ defmodule TimeManagerWeb.UserController do
     response(404, "Not found", Schema.ref(:NotFoundResponse))
     response(422, "Unprocessable Entity", Schema.ref(:UnprocessableEntityResponse))
   end
+
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Users.get_user!(id)
 
@@ -95,6 +97,7 @@ defmodule TimeManagerWeb.UserController do
     response(204, "No Content")
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
+
   def delete(conn, %{"id" => id}) do
     user = Users.get_user!(id)
 
@@ -112,6 +115,7 @@ defmodule TimeManagerWeb.UserController do
     response(200, "OK")
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
+
   def set_role(conn, %{"userID" => user_id, "roleID" => role_id}) do
     user = TimeManager.Repo.preload(Users.get_user!(user_id), :role)
     role = TimeManager.Roles.get_role!(role_id)
@@ -120,5 +124,4 @@ defmodule TimeManagerWeb.UserController do
       render(conn, :show, user: user)
     end
   end
-
 end

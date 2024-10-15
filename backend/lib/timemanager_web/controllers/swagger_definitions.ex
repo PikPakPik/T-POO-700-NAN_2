@@ -266,6 +266,72 @@ defmodule TimeManagerWeb.SwaggerDef do
   }
   end
 
+  def team_definitions do
+    %{
+      Team: swagger_schema do
+        title("Team")
+        description("A team of employees managed by one or multiple managers.")
+
+        properties do
+          id(:integer, "Team ID")
+          name(:string, "Team name")
+        end
+
+        example(%{
+          id: 1,
+          name: "Team A"
+        })
+      end,
+      TeamDetailed: swagger_schema do
+        title("TeamDetailed")
+        description("A team of employees managed by one or multiple managers.")
+
+        properties do
+          id(:integer, "Team ID")
+          name(:string, "Team name")
+          employees(Schema.array(:User), "Team employees")
+          managers(Schema.array(:User), "Team managers")
+        end
+
+        example(%{
+          id: 1,
+          name: "Team Day",
+          employees: [],
+          managers: []
+        })
+      end,
+      TeamRequest: swagger_schema do
+        title("TeamRequest")
+        description("A team request for team creation.")
+
+        properties do
+          name(:string, "Team name")
+        end
+
+        example(%{
+          team: %{
+            name: "Team Day",
+          }
+        })
+      end,
+      TeamResponse: swagger_schema do
+        title("TeamResponse")
+        description("Response schema for single team")
+        property(:data, Schema.ref(:TeamDetailed), "The team details")
+      end,
+      TeamsResponse: swagger_schema do
+        title("TeamsResponse")
+        description("Response schema for multiple teams")
+        property(:data, Schema.array(:Team), "The teams list")
+      end,
+      TeamClockResponse: swagger_schema do
+        title("TeamClockResponse")
+        description("Response schema for a team clock")
+        property(:data, Schema.array(:Clock), "The team users' clocks'")
+      end
+  }
+  end
+
   def log_definitions do
     %{
       Log: swagger_schema do

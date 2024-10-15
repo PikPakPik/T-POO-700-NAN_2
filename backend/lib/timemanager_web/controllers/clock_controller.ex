@@ -18,6 +18,7 @@ defmodule TimeManagerWeb.ClockController do
 
     response(200, "OK", Schema.ref(:ClocksResponse))
   end
+
   def index(conn, _params) do
     clocks = Clocks.list_clocks()
     render(conn, :index, clocks: clocks)
@@ -30,8 +31,10 @@ defmodule TimeManagerWeb.ClockController do
     parameters do
       userID(:path, :integer, "User ID", required: true, example: 1)
     end
+
     response(201, "Created Successfully", Schema.ref(:ClockResponse))
   end
+
   def clock_in_out_user(conn, %{"userID" => userID}) do
     with {status, {:ok, %Clock{} = clock}} <- Clocks.clock_in_out_user(userID) do
       case status do
@@ -41,6 +44,7 @@ defmodule TimeManagerWeb.ClockController do
       |> render(:show, clock: clock)
     end
   end
+
   swagger_path(:get_user_clock) do
     summary("Show Clock")
     description("Show a clock by User ID.")
@@ -48,6 +52,7 @@ defmodule TimeManagerWeb.ClockController do
 
     response(200, "OK", Schema.ref(:ClockResponse))
   end
+
   def get_user_clock(conn, %{"userID" => user_id}) do
     case clocks = Clocks.list_clocks_by_user_id(user_id) do
       [] -> {:error, :not_found}
@@ -63,6 +68,7 @@ defmodule TimeManagerWeb.ClockController do
     response(204, "No Content - Deleted Successfully")
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
+
   def delete(conn, %{"id" => id}) do
     clock = Clocks.get_clock!(id)
 

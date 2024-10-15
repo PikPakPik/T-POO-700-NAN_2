@@ -122,14 +122,23 @@ defmodule TimeManager.Clocks do
   @doc """
   Clock in or out a user.
   """
-  def clock_in_out_user(userID) do
-    now = DateTime.utc_now()
+ def clock_in_out_user(userID) do
+  now = DateTime.utc_now()
 
-    case get_user_clock(userID) do
-      nil -> create_new_clock(userID, now)
-      %Clock{} = clock -> update_existing_clock(clock, now, userID)
-    end
+  case get_user_clock(userID) do
+    nil ->
+      case create_new_clock(userID, now) do
+        {:created, {:ok, clock}} -> %{"result" => "created", "clock" => clock}
+        {:created, {:error, changeset}} -> %{"result" => "error", "details" => changeset}
+      end
+
+    %Clock{} = clock ->
+      case update_existing_clock(clock, now, userID) do
+        {:updated, {:ok, clock}} -> %{"result" => "updated", "clock" => clock}
+        {:updated, {:error, changeset}} -> %{"result" => "error", "details" => changeset}
+      end
   end
+end
 
 
   defp create_new_clock(userID, now) do

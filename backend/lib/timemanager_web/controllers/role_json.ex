@@ -12,13 +12,10 @@ defmodule TimeManagerWeb.RoleJSON do
   Renders a single role.
   """
   def show(%{role: role}) do
-    %{data: data(role)}
+    %{data: data(role, %{associations: true})}
   end
 
-  defp data(%Role{} = role) do
-    %{
-      id: role.id,
-      name: role.name
-    }
+  defp data(%Role{} = role, options \\ %{}) do
+    TimeManagerWeb.ModelToJson.serialize_data(role, options)
   end
 end

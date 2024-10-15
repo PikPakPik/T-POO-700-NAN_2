@@ -14,13 +14,18 @@ alias TimeManager.Repo
 alias TimeManager.Users.User
 alias TimeManager.Clocks.Clock
 alias TimeManager.WorkingTimes.WorkingTime
-for role <- TimeManager.Roles.Default.all() do
-  unless TimeManager.Roles.get_role_by_name(role.name) do
-    {:ok, _role} = TimeManager.Roles.create_role(role)
+alias TimeManager.Teams.Team
+alias TimeManager.Roles
+
+# Create roles if they do not exist
+for role <- Roles.Default.all() do
+  unless Roles.get_role_by_name(role.name) do
+    {:ok, _role} = Roles.create_role(role)
   end
 end
 
- Enum.map(1..20, fn _ ->
+# Create users and associated clocks and working times
+users = Enum.map(1..20, fn _ ->
   user = Repo.insert!(%User{
     username: Faker.Person.name(),
     email: Faker.Internet.email(),
@@ -42,24 +47,39 @@ end
     end: clock_out_time,
     user_id: user.id
   })
+
+  user
 end)
 
-Repo.insert!(%User{
-    username: "admin",
-    email: "admin@nan2.fr",
-    role_id: TimeManager.Roles.get_role_by_name("Admin").id
+# Create admin user
+admin_user = Repo.insert!(%User{
+  username: "admin",
+  email: "admin@nan2.fr",
+  role_id: Roles.get_role_by_name("Admin").id
+})
+
+# Create additional users for development environment
+if Mix.env() == :dev do
+  manager_user = Repo.insert!(%User{
+    username: "manager",
+    email: "manager@nan2.fr",
+    role_id: Roles.get_role_by_name("Manager").id
   })
 
-  if Mix.env() == :dev do
-    Repo.insert!(%User{
-      username: "manager",
-      email: "manager@nan2.fr",
-      role_id: TimeManager.Roles.get_role_by_name("Manager").id
-    })
+  employee_user = Repo.insert!(%User{
+    username: "employee",
+    email: "employee@nan2.fr",
+    role_id: Roles.get_role_by_name("Employee").id
+  })
+end
 
-    Repo.insert!(%User{
-      username: "employee",
-      email: "employee@nan2.fr",
-      role_id: TimeManager.Roles.get_role_by_name("Employee").id
-    })
-  end
+# Create teams
+teams = Enum.map(["Day", "Night"], fn name ->
+  Repo.insert!(%Team{name: name})
+end)
+
+# Assign employees and managers to teams
+TimeManager.Teams.assign_employee_to_team(1, Enum.at(users, 0).id)
+TimeManager.Teams.assign_employee_to_team(2, Enum.at(users, 1).id)
+TimeManager.Teams.assign_manager_to_team(1, admin_user.id)
+TimeManager.Teams.assign_manager_to_team(2, admin_user.id)

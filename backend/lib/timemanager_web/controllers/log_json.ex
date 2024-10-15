@@ -12,15 +12,10 @@ defmodule TimeManagerWeb.LogJSON do
   Renders a single log.
   """
   def show(%{log: log}) do
-    %{data: data(log)}
+    %{data: data(log, %{associations: true})}
   end
 
-  defp data(%Log{} = log) do
-    %{
-      id: log.id,
-      action: log.action,
-      user_id: log.user_id,
-      time: log.time
-    }
+  defp data(%Log{} = log, options \\ %{}) do
+    TimeManagerWeb.ModelToJson.serialize_data(log, options)
   end
 end

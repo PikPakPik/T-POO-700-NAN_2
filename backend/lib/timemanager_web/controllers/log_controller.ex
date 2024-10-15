@@ -18,6 +18,7 @@ defmodule TimeManagerWeb.LogController do
 
     response(200, "OK", Schema.ref(:LogsResponse))
   end
+
   def index(conn, _params) do
     logs = Logs.list_logs()
     render(conn, :index, logs: logs)
@@ -31,6 +32,7 @@ defmodule TimeManagerWeb.LogController do
     response(200, "OK", Schema.ref(:LogResponse))
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
+
   def show(conn, %{"id" => id}) do
     log = Logs.get_log!(id)
     render(conn, :show, log: log)

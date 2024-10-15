@@ -288,6 +288,115 @@
       "title": "RoleDetailed",
       "type": "object"
     },
+    "TeamDetailed": {
+      "description": "A team of employees managed by one or multiple managers.",
+      "example": {
+        "employees": [],
+        "id": 1,
+        "managers": [],
+        "name": "Team Day"
+      },
+      "properties": {
+        "employees": {
+          "description": "Team employees",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "type": "array"
+        },
+        "id": {
+          "description": "Team ID",
+          "type": "integer"
+        },
+        "managers": {
+          "description": "Team managers",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "Team name",
+          "type": "string"
+        }
+      },
+      "title": "TeamDetailed",
+      "type": "object"
+    },
+    "Team": {
+      "description": "A team of employees managed by one or multiple managers.",
+      "example": {
+        "id": 1,
+        "name": "Team A"
+      },
+      "properties": {
+        "id": {
+          "description": "Team ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Team name",
+          "type": "string"
+        }
+      },
+      "title": "Team",
+      "type": "object"
+    },
+    "TeamClockResponse": {
+      "description": "Response schema for a team clock",
+      "properties": {
+        "data": {
+          "description": "The team users' clocks'",
+          "items": {
+            "$ref": "#/definitions/Clock"
+          },
+          "type": "array"
+        }
+      },
+      "title": "TeamClockResponse",
+      "type": "object"
+    },
+    "TeamRequest": {
+      "description": "A team request for team creation.",
+      "example": {
+        "team": {
+          "name": "Team Day"
+        }
+      },
+      "properties": {
+        "name": {
+          "description": "Team name",
+          "type": "string"
+        }
+      },
+      "title": "TeamRequest",
+      "type": "object"
+    },
+    "TeamResponse": {
+      "description": "Response schema for single team",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/TeamDetailed",
+          "description": "The team details"
+        }
+      },
+      "title": "TeamResponse",
+      "type": "object"
+    },
+    "TeamsResponse": {
+      "description": "Response schema for multiple teams",
+      "properties": {
+        "data": {
+          "description": "The teams list",
+          "items": {
+            "$ref": "#/definitions/Team"
+          },
+          "type": "array"
+        }
+      },
+      "title": "TeamsResponse",
+      "type": "object"
+    },
     "WorkingTime": {
       "description": "Working time schema",
       "example": {
@@ -675,6 +784,393 @@
         "summary": "Show role",
         "tags": [
           "Role"
+        ]
+      }
+    },
+    "/api/teams": {
+      "get": {
+        "description": "List all teams in the database.",
+        "operationId": "TimeManagerWeb.TeamController.index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamsResponse"
+            }
+          }
+        },
+        "summary": "List teams",
+        "tags": [
+          "Team"
+        ]
+      },
+      "post": {
+        "description": "Create a team.",
+        "operationId": "TimeManagerWeb.TeamController.create",
+        "parameters": [
+          {
+            "description": "Team object",
+            "in": "body",
+            "name": "team",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TeamRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          }
+        },
+        "summary": "Create team",
+        "tags": [
+          "Team"
+        ]
+      }
+    },
+    "/api/teams/{id}": {
+      "delete": {
+        "description": "Delete a team by ID.",
+        "operationId": "TimeManagerWeb.TeamController.delete",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content - Deleted Successfully"
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Delete team",
+        "tags": [
+          "Team"
+        ]
+      },
+      "get": {
+        "description": "Show a team by ID.",
+        "operationId": "TimeManagerWeb.TeamController.show",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Show team",
+        "tags": [
+          "Team"
+        ]
+      },
+      "patch": {
+        "description": "Update a team entry.\nScopes: team.update",
+        "operationId": "TimeManagerWeb.TeamController.update",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Team object",
+            "in": "body",
+            "name": "team",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TeamRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Update team",
+        "tags": [
+          "Team"
+        ]
+      },
+      "put": {
+        "description": "Update a team entry.\nScopes: team.update",
+        "operationId": "TimeManagerWeb.TeamController.update",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Team object",
+            "in": "body",
+            "name": "team",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TeamRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Update team",
+        "tags": [
+          "Team"
+        ]
+      }
+    },
+    "/api/teams/{teamID}/add_employee/{employeeID}": {
+      "put": {
+        "description": "Add a new user as a team employee.",
+        "operationId": "TimeManagerWeb.TeamController.add_employee",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "teamID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Employee ID (User ID)",
+            "in": "path",
+            "name": "employeeID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Add employee",
+        "tags": [
+          "Team"
+        ]
+      }
+    },
+    "/api/teams/{teamID}/add_manager/{managerID}": {
+      "put": {
+        "description": "Add a new user as a team manager.",
+        "operationId": "TimeManagerWeb.TeamController.add_manager",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "teamID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Manager ID (User ID)",
+            "in": "path",
+            "name": "managerID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Add manager",
+        "tags": [
+          "Team"
+        ]
+      }
+    },
+    "/api/teams/{teamID}/clock": {
+      "post": {
+        "description": "Clock all team users.",
+        "operationId": "TimeManagerWeb.TeamController.clock",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "teamID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamClockResponse"
+            }
+          }
+        },
+        "summary": "Clock team users",
+        "tags": [
+          "Team"
+        ]
+      }
+    },
+    "/api/teams/{teamID}/remove_employee/{employeeID}": {
+      "put": {
+        "description": "Remove a team employee.",
+        "operationId": "TimeManagerWeb.TeamController.remove_employee",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "teamID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Employee ID (User ID)",
+            "in": "path",
+            "name": "employeeID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Remove employee",
+        "tags": [
+          "Team"
+        ]
+      }
+    },
+    "/api/teams/{teamID}/remove_manager/{managerID}": {
+      "put": {
+        "description": "Remove a team manager.",
+        "operationId": "TimeManagerWeb.TeamController.remove_manager",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "teamID",
+            "required": true,
+            "type": "integer",
+            "x-example": 123
+          },
+          {
+            "description": "Manager ID (User ID)",
+            "in": "path",
+            "name": "managerID",
+            "required": true,
+            "type": "integer",
+            "x-example": 123
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Remove manager",
+        "tags": [
+          "Team"
         ]
       }
     },
