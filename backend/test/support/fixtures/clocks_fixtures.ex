@@ -12,7 +12,8 @@ defmodule TimeManager.ClocksFixtures do
       attrs
       |> Enum.into(%{
         email: "toto@mail.com",
-        username: "toto"
+        username: "toto",
+        role_id: 1
       })
       |> TimeManager.Users.create_user()
 

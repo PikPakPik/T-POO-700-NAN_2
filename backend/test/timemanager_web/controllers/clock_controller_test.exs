@@ -6,11 +6,12 @@ defmodule TimeManagerWeb.ClockControllerTest do
   alias TimeManager.Clocks.Clock
 
   @create_attrs %{
-    status: true,
+    status: true
   }
   @create_user %{
     username: "toto",
-    email: "toto@mail.com"
+    email: "toto@mail.com",
+    role_id: 1
   }
   @update_attrs %{
     status: false,
@@ -44,11 +45,11 @@ defmodule TimeManagerWeb.ClockControllerTest do
       time_now = DateTime.utc_now()
 
       assert %{
-        "status" => true,
-        "time" => time_now,
-        "user_id" => userID,
-        "id" => id
-      } = hd(json_response(conn, 200)["data"])
+               "status" => true,
+               "time" => time_now,
+               "user_id" => userID,
+               "id" => id
+             } = hd(json_response(conn, 200)["data"])
     end
   end
 end

@@ -7,6 +7,16 @@ defmodule TimeManager.Users.User do
     field :email, :string
     belongs_to :role, TimeManager.Roles.Role
 
+    many_to_many :teams,
+                 TimeManager.Teams.Team,
+                 join_through: TimeManager.Teams.TeamEmployees,
+                 join_keys: [employee_id: :id, team_id: :id]
+
+    many_to_many :managed_teams,
+                 TimeManager.Teams.Team,
+                 join_through: TimeManager.Teams.TeamManagers,
+                 join_keys: [manager_id: :id, team_id: :id]
+
     timestamps(type: :utc_datetime)
   end
 
@@ -20,7 +30,7 @@ defmodule TimeManager.Users.User do
     |> unique_constraint([:email])
   end
 
-   defp default_role(%Ecto.Changeset{changes: %{role_id: _}} = changeset) do
+  defp default_role(%Ecto.Changeset{changes: %{role_id: _}} = changeset) do
     changeset
   end
 

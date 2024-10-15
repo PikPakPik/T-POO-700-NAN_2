@@ -10,7 +10,7 @@ defmodule TimeManager.ClocksTest do
     import TimeManager.ClocksFixtures
     alias TimeManager.Users.User
 
-    @invalid_attrs %{status: nil, time: nil}
+    @invalid_attrs %{status: nil, time: nil, user_id: nil}
 
     test "list_clocks/0 returns all clocks" do
       clock = clock_fixture()
@@ -23,7 +23,7 @@ defmodule TimeManager.ClocksTest do
     end
 
     test "create_clock/1 with valid data creates a clock" do
-      valid_user = %{username: "toto", email: "toto@mail.com"}
+      valid_user = %{username: "toto", email: "toto@mail.com", role_id: 1}
       assert {:ok, %User{} = user} = Users.create_user(valid_user)
       assert user.username == "toto"
       assert user.email == "toto@mail.com"
@@ -40,7 +40,7 @@ defmodule TimeManager.ClocksTest do
 
     test "update_clock/2 with valid data updates the clock" do
       clock = clock_fixture()
-      update_attrs = %{status: false, time: ~U[2024-10-08 07:55:00Z]}
+      update_attrs = %{status: false, time: ~U[2024-10-08 07:55:00Z], user_id: 1}
 
       assert {:ok, %Clock{} = clock} = Clocks.update_clock(clock, update_attrs)
       assert clock.status == false

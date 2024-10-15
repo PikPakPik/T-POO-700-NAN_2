@@ -6,94 +6,81 @@ defmodule TimeManagerWeb.WorkingTimeControllerTest do
   alias TimeManager.WorkingTimes.WorkingTime
 
   @create_attrs %{
-    start: ~U[2024-10-07 07:55:00Z],
-    end: ~U[2024-10-07 07:55:00Z]
-  }
-  @create_user %{
-    username: "toto",
-    email: "toto@mail.com"
-  }
-  @create_user_two %{
-    username: "titi",
-    email: "titi@mail.com"
+    end: ~N[2023-10-23 08:39:00],
+    start: ~N[2023-10-23 08:39:00]
   }
   @update_attrs %{
-    start: ~U[2024-10-08 07:55:00Z],
-    end: ~U[2024-10-08 07:55:00Z]
+    end: ~N[2023-10-24 08:39:00],
+    start: ~N[2023-10-24 08:39:00]
   }
-  @invalid_attrs %{start: nil, end: nil}
+  @invalid_attrs %{end: nil, start: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe "index" do
-    test "lists all workingtimes", %{conn: conn} do
-      conn = get(conn, ~p"/api/workingtimes")
-      assert json_response(conn, 404)["data"] == nil
+    test "lists all working_times", %{conn: conn} do
+      conn = get(conn, ~p"/api/working_times")
+      assert json_response(conn, 200)["data"] == []
     end
   end
 
-  # describe "create working_time" do
-  #   test "renders working_time when data is valid", %{conn: conn} do
-  #     # create a user
-  #     conn = post(conn, ~p"/api/users", user: @create_user)
-  #     assert %{"id" => userID} = json_response(conn, 201)["data"]
+  describe "create working_time" do
+    test "renders working_time when data is valid", %{conn: conn} do
+      conn = post(conn, ~p"/api/working_times", working_time: @create_attrs)
+      assert %{"id" => id} = json_response(conn, 201)["data"]
 
-  #     # create a working_time
-  #     conn = post(conn, ~p"/api/workingtimes/#{userID}", working_time: @create_attrs)
-  #     assert nil = json_response(conn, 404)["data"]
+      conn = get(conn, ~p"/api/working_times/#{id}")
 
-  #     id = json_response(conn, 201)["data"]["id"]
+      assert %{
+               "id" => ^id,
+               "end" => "2023-10-23T08:39:00",
+               "start" => "2023-10-23T08:39:00"
+             } = json_response(conn, 200)["data"]
+    end
 
-  #     conn = get(conn, ~p"/api/workingtimes/#{id}")
+    test "renders errors when data is invalid", %{conn: conn} do
+      conn = post(conn, ~p"/api/working_times", working_time: @invalid_attrs)
+      assert json_response(conn, 422)["errors"] != %{}
+    end
+  end
 
-  #     assert %{
-  #              "id" => id,
-  #              "end" => "2024-10-07T07:55:00Z",
-  #              "start" => "2024-10-07T07:55:00Z"
-  #            } = json_response(conn, 200)["data"]
-  #   end
+  describe "update working_time" do
+    setup [:create_working_time]
 
-  #   test "renders errors when data is invalid", %{conn: conn} do
-  #     conn = post(conn, ~p"/api/workingtimes", working_time: @invalid_attrs)
-  #     assert json_response(conn, 404)["errors"] != %{}
-  #   end
-  # end
+    test "renders working_time when data is valid", %{
+      conn: conn,
+      working_time: %WorkingTime{id: id} = working_time
+    } do
+      conn = put(conn, ~p"/api/working_times/#{working_time}", working_time: @update_attrs)
+      assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
-  # describe "update working_time" do
-  #   setup [:create_working_time]
+      conn = get(conn, ~p"/api/working_times/#{id}")
 
-  #   test "renders working_time when data is valid", %{conn: conn, working_time: %WorkingTime{id: id} = working_time} do
-  #     # create a user
-  #     conn = post(conn, ~p"/api/users", user: @create_user_two)
-  #     assert %{"id" => userID} = json_response(conn, 201)["data"]
+      assert %{
+               "id" => ^id,
+               "end" => "2023-10-24T08:39:00",
+               "start" => "2023-10-24T08:39:00"
+             } = json_response(conn, 200)["data"]
+    end
 
-  #     # create a working_time
-  #     conn = put(conn, ~p"/api/workingtimes/#{userID}", working_time: @update_attrs)
-  #     assert %{"id" => ^id} = json_response(conn, 201)["data"]
-
-  #     conn = get(conn, ~p"/api/workingtimes/#{id}")
-
-  #     assert %{
-  #              "id" => ^id,
-  #              "end" => "2024-10-08T07:55:00Z",
-  #              "start" => "2024-10-08T07:55:00Z"
-  #            } = json_response(conn, 200)["data"]
-  #   end
-
-  #   test "renders errors when data is invalid", %{conn: conn, working_time: working_time} do
-  #     conn = put(conn, ~p"/api/workingtimes/#{working_time}", working_time: @invalid_attrs)
-  #     assert json_response(conn, 404)["errors"] != %{}
-  #   end
-  # end
+    test "renders errors when data is invalid", %{conn: conn, working_time: working_time} do
+      conn = put(conn, ~p"/api/working_times/#{working_time}", working_time: @invalid_attrs)
+      assert json_response(conn, 422)["errors"] != %{}
+    end
+  end
 
   describe "delete working_time" do
     setup [:create_working_time]
 
     test "deletes chosen working_time", %{conn: conn, working_time: working_time} do
-      conn = delete(conn, ~p"/api/workingtimes/#{working_time.id}")
-      assert response(conn, 404)
+      conn = delete(conn, ~p"/api/working_times/#{working_time}")
+      assert response(conn, 204)
+
+      assert_error_sent 404, fn ->
+        get(conn, ~p"/api/working_times/#{working_time}")
+      end
     end
   end
 
