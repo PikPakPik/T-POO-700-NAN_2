@@ -10,7 +10,7 @@ defmodule TimeManagerWeb.Router do
     pipe_through :api
 
     resources "/roles", RoleController, only: [:index, :show]
-
+    resources "/logs", LogController, only: [:index, :show]
     scope "/users" do
       resources "/", UserController, except: [:new, :edit]
       put "/:userID/role/:roleID", UserController, :set_role

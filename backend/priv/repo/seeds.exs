@@ -14,7 +14,6 @@ alias TimeManager.Repo
 alias TimeManager.Users.User
 alias TimeManager.Clocks.Clock
 alias TimeManager.WorkingTimes.WorkingTime
-alias TimeManager.Roles.Role
 for role <- TimeManager.Roles.Default.all() do
   unless TimeManager.Roles.get_role_by_name(role.name) do
     {:ok, _role} = TimeManager.Roles.create_role(role)
@@ -25,7 +24,7 @@ end
   user = Repo.insert!(%User{
     username: Faker.Person.name(),
     email: Faker.Internet.email(),
-    role_id: Enum.random(1..3)
+    role_id: Enum.random(2..3)
   })
 
   # format date utc_datetime
@@ -44,3 +43,23 @@ end
     user_id: user.id
   })
 end)
+
+Repo.insert!(%User{
+    username: "admin",
+    email: "admin@nan2.fr",
+    role_id: TimeManager.Roles.get_role_by_name("Admin").id
+  })
+
+  if Mix.env() == :dev do
+    Repo.insert!(%User{
+      username: "manager",
+      email: "manager@nan2.fr",
+      role_id: TimeManager.Roles.get_role_by_name("Manager").id
+    })
+
+    Repo.insert!(%User{
+      username: "employee",
+      email: "employee@nan2.fr",
+      role_id: TimeManager.Roles.get_role_by_name("Employee").id
+    })
+  end

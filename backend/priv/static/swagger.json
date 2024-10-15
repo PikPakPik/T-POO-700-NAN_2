@@ -41,6 +41,31 @@
       "title": "ClocksReponse",
       "type": "object"
     },
+    "LogsResponse": {
+      "description": "Response schema for multiple logs",
+      "properties": {
+        "data": {
+          "description": "The logs details",
+          "items": {
+            "$ref": "#/definitions/Log"
+          },
+          "type": "array"
+        }
+      },
+      "title": "LogsResponse",
+      "type": "object"
+    },
+    "LogResponse": {
+      "description": "Response schema for single log",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Log",
+          "description": "The log details"
+        }
+      },
+      "title": "LogResponse",
+      "type": "object"
+    },
     "RolesResponse": {
       "description": "Response schema for multiple roles",
       "properties": {
@@ -159,6 +184,36 @@
         }
       },
       "title": "UnprocessableEntityResponse",
+      "type": "object"
+    },
+    "Log": {
+      "description": "Log schema",
+      "example": {
+        "action": "user:create",
+        "id": 1,
+        "time": "2024-10-08 10:05:01",
+        "user_id": 1
+      },
+      "properties": {
+        "action": {
+          "description": "Log action",
+          "type": "string"
+        },
+        "id": {
+          "description": "Log ID",
+          "type": "integer"
+        },
+        "time": {
+          "description": "Log time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
+        }
+      },
+      "title": "Log",
       "type": "object"
     },
     "User": {
@@ -406,6 +461,12 @@
       "type": "object"
     }
   },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/api/clocks": {
       "get": {
@@ -508,6 +569,59 @@
         "summary": "Clock in or out user",
         "tags": [
           "Clock"
+        ]
+      }
+    },
+    "/api/logs": {
+      "get": {
+        "description": "List all logs in the database.",
+        "operationId": "TimeManagerWeb.LogController.index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LogsResponse"
+            }
+          }
+        },
+        "summary": "List Logs",
+        "tags": [
+          "Log"
+        ]
+      }
+    },
+    "/api/logs/{id}": {
+      "get": {
+        "description": "Show a log by ID.",
+        "operationId": "TimeManagerWeb.LogController.show",
+        "parameters": [
+          {
+            "description": "Log ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "x-example": 123
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LogResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Show Log",
+        "tags": [
+          "Log"
         ]
       }
     },
@@ -1095,11 +1209,5 @@
       }
     }
   },
-  "swagger": "2.0",
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ]
+  "swagger": "2.0"
 }

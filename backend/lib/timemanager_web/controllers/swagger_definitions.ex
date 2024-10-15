@@ -266,4 +266,38 @@ defmodule TimeManagerWeb.SwaggerDef do
   }
   end
 
+  def log_definitions do
+    %{
+      Log: swagger_schema do
+        title("Log")
+        description("Log schema")
+
+        properties do
+          id(:integer, "Log ID")
+          user_id(:integer, "User ID")
+          time(:string, "Log time", format: :utc_datetime)
+          action(:string, "Log action")
+        end
+
+        example(%{
+          id: 1,
+          user_id: 1,
+          time: "2024-10-08 10:05:01",
+          action: "user:create"
+        })
+      end,
+      LogsResponse:
+      swagger_schema do
+        title("LogsResponse")
+        description("Response schema for multiple logs")
+        property(:data, Schema.array(:Log), "The logs details")
+      end,
+      LogResponse:
+      swagger_schema do
+        title("LogResponse")
+        description("Response schema for single log")
+        property(:data, Schema.ref(:Log), "The log details")
+      end
+    }
+  end
 end
