@@ -99,22 +99,27 @@ defmodule TimeManagerWeb.TeamController do
     parameter(:teamID, :path, :integer, "Team ID", required: true, example: 1)
 
     response(200, "OK", Schema.ref(:TeamClockResponse))
+    response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
 
   def clock(conn, %{"teamID" => team_id}) do
     team = TimeManager.Repo.preload(Teams.get_team!(team_id), :employees)
 
-    conn
-    |> json(%{
-      data:
-        team.employees
-        |> Enum.map(fn employee ->
-          with {:ok, %TimeManager.Clocks.Clock{} = clock} <-
-                 TimeManager.Clocks.clock_in_out_user(employee.id) do
+    results =
+      team.employees
+      |> Enum.map(fn employee ->
+        case TimeManager.Clocks.clock_in_out_user(employee.id) do
+          {:ok, %TimeManager.Clocks.Clock{} = clock} ->
             TimeManagerWeb.ModelToJson.serialize_data(clock)
-          end
-        end)
-    })
+
+          _error ->
+            # Handle error or return a meaningful message
+            %{}
+        end
+      end)
+
+    conn
+    |> json(%{data: results})
   end
 
   swagger_path(:add_employee) do

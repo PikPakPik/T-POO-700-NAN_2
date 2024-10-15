@@ -23,23 +23,24 @@ defmodule TimeManager.Users.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> default_role()
     |> Ecto.Changeset.cast(attrs, [:username, :email, :role_id])
+    |> default_role()
     |> Ecto.Changeset.validate_required([:username, :email, :role_id])
     |> validate_format(:email, ~r/\A[^@\s]+@[^@\s]+\z/)
     |> unique_constraint([:email])
   end
 
-  defp default_role(%Ecto.Changeset{changes: %{role_id: _}} = changeset) do
-    changeset
-  end
+  defp default_role(%Ecto.Changeset{} = changeset) do
+    case changeset do
+      %Ecto.Changeset{changes: %{role_id: _}} ->
+        changeset
 
-  defp default_role(%Ecto.Changeset{data: %TimeManager.Users.User{role_id: nil}} = changeset) do
-    changeset
-    |> Ecto.Changeset.put_change(:role_id, TimeManager.Roles.get_role_by_name("Employee").id)
-  end
+      %Ecto.Changeset{data: %TimeManager.Users.User{role_id: nil}} ->
+        role_id = TimeManager.Roles.get_role_by_name("Employee").id
+        Ecto.Changeset.put_change(changeset, :role_id, role_id)
 
-  defp default_role(changeset) do
-    changeset
+      _ ->
+        changeset
+    end
   end
 end
