@@ -145,3 +145,9 @@ jobs:
       - name: Send image name with tags
         run: |
           echo "URL: ${{ matrix.image }}:${{ steps.meta.outputs.tags }}"
+      - name: Render Redeploy Action
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: qbaware/render-redeploy-action@v0.3.3
+        with:
+          render-api-key: ${{ secrets.RENDER_API_KEY }}
+          render-service-id: ${{ secrets.RENDER_SERVICEID_BACKEND }}

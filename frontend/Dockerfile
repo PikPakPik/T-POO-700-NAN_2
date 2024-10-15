@@ -1,22 +1,28 @@
-FROM node:lts-alpine
+ARG NODE_VERSION=20.18.0
 
-# install simple http server for serving static content
-RUN npm install -g http-server
+FROM node:${NODE_VERSION}-slim as base
 
-# make the 'app' folder the current working directory
-WORKDIR /app
+ARG PORT=3000
 
-# copy both 'package.json' and 'package-lock.json' (if available)
-COPY package*.json ./
+WORKDIR /src
 
-# install project dependencies leaving out dev dependencies
-RUN npm install --production
+# Build
+FROM base as build
 
-# copy project files and folders to the current working directory (i.e. 'app' folder)
-COPY . .
+COPY --link package.json package-lock.json .
+RUN npm install
 
-# build app for production with minification
+COPY --link . .
+
 RUN npm run build
 
-EXPOSE 8080
-CMD [ "http-server", "dist" ]
+# Run
+FROM base
+
+ENV PORT=$PORT
+ENV NODE_ENV=production
+
+COPY --from=build /src/.output /src/.output
+
+EXPOSE $PORT
+CMD [ "node", ".output/server/index.mjs" ]
