@@ -23,7 +23,9 @@ defmodule TimeManager.ClocksTest do
     end
 
     test "create_clock/1 with valid data creates a clock" do
-      valid_user = %{username: "toto", email: "toto@mail.com", role_id: 1}
+      valid_role = %{name: "User"}
+      {:ok, role} = TimeManager.Roles.create_role(valid_role)
+      valid_user = %{username: "toto", email: "toto@mail.com", role_id: role.id}
       assert {:ok, %User{} = user} = Users.create_user(valid_user)
       assert user.username == "toto"
       assert user.email == "toto@mail.com"
@@ -40,7 +42,7 @@ defmodule TimeManager.ClocksTest do
 
     test "update_clock/2 with valid data updates the clock" do
       clock = clock_fixture()
-      update_attrs = %{status: false, time: ~U[2024-10-08 07:55:00Z], user_id: 1}
+      update_attrs = %{status: false, time: ~U[2024-10-08 07:55:00Z]}
 
       assert {:ok, %Clock{} = clock} = Clocks.update_clock(clock, update_attrs)
       assert clock.status == false

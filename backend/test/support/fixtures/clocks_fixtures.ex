@@ -8,12 +8,19 @@ defmodule TimeManager.ClocksFixtures do
   Generate a clock.
   """
   def clock_fixture(attrs \\ %{}) do
+    {:ok, role} =
+      attrs
+      |> Enum.into(%{
+        name: "employee"
+      })
+      |> TimeManager.Roles.create_role()
+
     {:ok, user} =
       attrs
       |> Enum.into(%{
         email: "toto@mail.com",
         username: "toto",
-        role_id: 1
+        role_id: role.id
       })
       |> TimeManager.Users.create_user()
 

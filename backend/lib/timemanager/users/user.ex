@@ -23,9 +23,9 @@ defmodule TimeManager.Users.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :email, :role_id])
-    |> validate_required([:username, :email, :role_id])
     |> default_role()
+    |> Ecto.Changeset.cast(attrs, [:username, :email, :role_id])
+    |> Ecto.Changeset.validate_required([:username, :email, :role_id])
     |> validate_format(:email, ~r/\A[^@\s]+@[^@\s]+\z/)
     |> unique_constraint([:email])
   end
