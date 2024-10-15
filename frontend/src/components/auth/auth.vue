@@ -73,7 +73,6 @@
                                 name="email"
                                 id="email"
                                 v-model="email"
-                                placeholder="batman@gotham.com"
                                 class="text-xs"
                                 outlined
                                 :rules="[rules.required, rules.email]"
@@ -86,8 +85,9 @@
                                 v-model="password"
                                 class="text-xs"
                                 outlined
+                                type="password"
                                 :rules="[rules.required]"
-                            ></v-text-field>
+                            ></v-text-field> 
 
                             <v-btn class="mt-6 w-full" color="blue" @click.prevent="createUser">
                                 S'inscrire

@@ -111,24 +111,28 @@
               <button @click="toggleUserMenu"
                 class="flex items-center space-x-2 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out">
                 <div class="flex flex-col items-end">
-                  <span class="text-sm font-medium text-gray-700">John Doe</span>
-                  <span class="text-xs text-gray-500">Développeur</span>
+                  <span class="text-sm font-medium text-gray-700">Bruce Wayne</span> <!-- il faudra changer le nom pour qu'il soit dynamique avec le token / store-->
+                  <span class="text-xs text-gray-500">Équipe de nuit</span> <!-- il faudra changer le titre pour qu'il soit dynamique avec le token / store (ex: admin / équipe de nuit ?)-->
                 </div>
-                <div class="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center">
-                  <v-icon icon="mdi-account" class="text-gray-800" />
-                </div>
+                <img src="@/assets/batman-head.png" alt="User Avatar" class="w-10 h-10 rounded-full" />
               </button>
-              <transition enter-active-class="transition ease-out duration-100"
-                enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
-                leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100"
-                leave-to-class="transform opacity-0 scale-95">
-                <div v-if="isUserMenuOpen"
+              <transition
+                enter-active-class="transition ease-out duration-100"
+                enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95"
+              >
+                <div 
+                  v-if="isUserMenuOpen" 
                   class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
-                  role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Votre
-                    Profil</a>
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    role="menuitem">Paramètres</a>
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="user-menu"
+                >
+                  <a href="/users/1" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Votre Profil</a> <!-- il faudra changer le lien pour qu'il soit dynamique avec le token / store-->
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Paramètres</a>
                   <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Aide</a>
                   <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     role="menuitem">Déconnexion</a>
