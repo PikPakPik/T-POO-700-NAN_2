@@ -14,26 +14,18 @@ alias TimeManager.Repo
 alias TimeManager.Users.User
 alias TimeManager.Clocks.Clock
 alias TimeManager.WorkingTimes.WorkingTime
+alias TimeManager.Roles.Role
+for role <- TimeManager.Roles.Default.all() do
+  unless TimeManager.Roles.get_role_by_name(role.name) do
+    {:ok, _role} = TimeManager.Roles.create_role(role)
+  end
+end
 
-# Liste user
-users_data = [
-    %{"username" => "Gerard Martin", "email" => "gerard.martin@example.com"},
-    %{"username" => "Lucie Boucher", "email" => "lucie.boucher@example.com"},
-    %{"username" => "Emilie Durand", "email" => "emilie.durand@example.com"},
-    %{"username" => "Thomas Roux", "email" => "thomas.roux@example.com"},
-    %{"username" => "Pauline Lemoine", "email" => "pauline.lemoine@example.com"},
-    %{"username" => "Arthur Dupuis", "email" => "arthur.dupuis@example.com"},
-    %{"username" => "Sophie Bernard", "email" => "sophie.bernard@example.com"},
-    %{"username" => "Nicolas Morel", "email" => "nicolas.morel@example.com"},
-    %{"username" => "Caroline David", "email" => "caroline.david@example.com"},
-    %{"username" => "Julien Petit", "email" => "julien.petit@example.com"}
-]
-
-# Create user, clock, workingtime
-for user_data <- users_data do
+ Enum.map(1..20, fn _ ->
   user = Repo.insert!(%User{
-    username: user_data["username"],
-    email: user_data["email"]
+    username: Faker.Person.name(),
+    email: Faker.Internet.email(),
+    role_id: Enum.random(1..3)
   })
 
   # format date utc_datetime
@@ -42,12 +34,6 @@ for user_data <- users_data do
 
   Repo.insert!(%Clock{
     time: clock_in_time,
-    status: true,
-    user_id: user.id
-  })
-
-  Repo.insert!(%Clock{
-    time: clock_out_time,
     status: false,
     user_id: user.id
   })
@@ -57,5 +43,4 @@ for user_data <- users_data do
     end: clock_out_time,
     user_id: user.id
   })
-end
-
+end)
