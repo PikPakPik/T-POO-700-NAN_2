@@ -5,6 +5,16 @@ export class UsersApi extends Api {
         super();
     }
 
+    async getUsers() {
+        try {
+            const response = await this.instance.get(`/users`);
+            return response;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
     async getUserByID(userId: string) {
         try {
             const response = await this.instance.get(`/users/${userId}`);
