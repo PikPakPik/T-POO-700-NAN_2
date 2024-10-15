@@ -4,6 +4,8 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
 
+  css: ['~/assets/css/main.css'],
+
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
@@ -11,6 +13,7 @@ export default defineNuxtConfig({
         config.plugins.push(vuetify({ autoImport: true }))
       })
     },
+    '@pinia/nuxt',
   ],
 
   vite: {
@@ -18,6 +21,13 @@ export default defineNuxtConfig({
       template: {
         transformAssetUrls,
       },
+    },
+  },
+
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
     },
   },
 

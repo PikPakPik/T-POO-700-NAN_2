@@ -6,7 +6,7 @@ export class Api {
 
     constructor() {
         this.instance = axios.create({
-          baseURL: 'http://localhost:4000/api',
+          baseURL: import.meta.env.MODE === 'development' ? import.meta.env.VITE_BACKEND_URL + '/api' : 'https://time-manager-api-nan-2-main.onrender.com/api',
           timeout: 1000,
           headers: {
             'Content-Type': 'application/json',

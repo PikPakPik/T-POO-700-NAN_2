@@ -1,16 +1,28 @@
-FROM node:lts-alpine
+ARG NODE_VERSION=20.18.0
 
-# make the 'app' folder the current working directory
-WORKDIR /app
+FROM node:${NODE_VERSION}-slim as base
 
-# copy both 'package.json' and 'package-lock.json' (if available)
-COPY package*.json ./
+ARG PORT=3000
 
-# install project dependencies leaving out dev dependencies
+WORKDIR /src
+
+# Build
+FROM base as build
+
+COPY --link package.json package-lock.json ./
 RUN npm install
 
-# copy project files and folders to the current working directory (i.e. 'app' folder)
-COPY . .
+COPY --link . .
 
-# run the app
-CMD [ "npm", "run", "dev" ]
+RUN npm run build
+
+# Run
+FROM base
+
+ENV PORT=$PORT
+ENV NODE_ENV=production
+
+COPY --from=build /src/.output /src/.output
+
+EXPOSE $PORT
+CMD [ "node", ".output/server/index.mjs" ]
