@@ -1,23 +1,24 @@
 <template>
   <v-card class="mx-auto my-12" max-width="600">
     <v-toolbar flat class="custom-toolbar">
-      <v-toolbar-title class="white--text">Modifier le Working Time</v-toolbar-title>
+      <v-toolbar-title v-if="workingTimeID > 0" class="white--text">Modifier le Working Time</v-toolbar-title>
+      <v-toolbar-title v-else class="white--text">Ajouter un Working Time</v-toolbar-title>
       <v-btn icon @click="$emit('close')">
         <v-icon class="white--text">mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
     <v-divider></v-divider>
     <v-card-text>
-      <!-- Formulaire pour modifier le working time -->
+      <!-- Updating form working time -->
       <v-form ref="form">
         <v-row>
           <v-col cols="12" md="6">
-            <v-text-field label="Select Date start" type="datetime-local" v-model="startDate"
+            <v-text-field label="Date de début" type="datetime-local" v-model="startDate"
               :value="formatDateTime(startDate)" outlined></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field label="Select Date end" type="datetime-local" v-model="endDate"
-              :value="formatDateTime(endDate)" outlined></v-text-field>
+            <v-text-field label="Date de fin" type="datetime-local" v-model="endDate" :value="formatDateTime(endDate)"
+              outlined></v-text-field>
           </v-col>
         </v-row>
       </v-form>
@@ -82,7 +83,7 @@ export default {
     createWorkingTime() {
       createWorkingTime(this.endDate, this.startDate, this.userID)
         .then(response => {
-          this.$emit('success', 'Working time ajouté');
+          this.$emit('created', 'Working time ajouté');
         })
         .catch(error => {
           this.$emit('error', 'Erreur : impossible de créer le working time');
@@ -93,7 +94,7 @@ export default {
     updateWorkingTime() {
       updateWorkingTime(this.workingTimeID, this.endDate, this.startDate, this.userID)
         .then(response => {
-          this.$emit('success', 'Working time modifié');
+          this.$emit('updated', 'Working time modifié');
         })
         .catch(error => {
           this.$emit('error', 'Erreur : impossible de modifier le working time');

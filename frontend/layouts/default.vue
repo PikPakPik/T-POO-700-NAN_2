@@ -32,14 +32,15 @@
             </AppNavLink>
           </li>
           <li>
-            <AppNavLink to="/history" label="Historique" :active="route.path === '/history'" :isOpen="isOpen">
+            <AppNavLink to="/workingTimes/6" label="Historique" :active="route.path === '/workingTimes/6'"
+              :isOpen="isOpen">
               <svg width="23" height="23" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
                   d="M12.2145 9.21165C12.2345 8.95115 12.4517 8.75 12.713 8.75H12.9642C13.221 8.75 13.4361 8.94465 13.4617 9.20025L14 14.5833L17.8314 16.7727C17.9872 16.8617 18.0833 17.0274 18.0833 17.2068V17.4287C18.0833 17.7584 17.7698 17.9978 17.4518 17.9111L12.0653 16.4421C11.8339 16.379 11.68 16.1605 11.6984 15.9213L12.2145 9.21165Z"
-                  :fill="route.path === '/history' ? '#FABB18' : 'black'" />
+                  :fill="route.path === '/workingTimes/6' ? '#FABB18' : 'black'" />
                 <path opacity="0.3" fill-rule="evenodd" clip-rule="evenodd"
                   d="M7.12815 1.52768C6.86405 1.21293 6.3541 1.3334 6.25877 1.73306L4.87779 7.5227C4.80011 7.84835 5.05818 8.15685 5.39243 8.13791L11.3483 7.8004C11.7592 7.77711 11.9676 7.29508 11.703 6.97981L10.207 5.19686C11.2262 4.84858 12.307 4.66667 13.4167 4.66667C18.8936 4.66667 23.3334 9.10651 23.3334 14.5833C23.3334 20.0602 18.8936 24.5 13.4167 24.5C7.93992 24.5 3.50008 20.0602 3.50008 14.5833C3.50008 13.6639 3.62459 12.7634 3.86736 11.8979L1.62074 11.2677C1.32494 12.3223 1.16675 13.4343 1.16675 14.5833C1.16675 21.3488 6.65126 26.8333 13.4167 26.8333C20.1822 26.8333 25.6667 21.3488 25.6667 14.5833C25.6667 7.81785 20.1822 2.33333 13.4167 2.33333C11.715 2.33333 10.0943 2.68033 8.62155 3.30744L7.12815 1.52768Z"
-                  :fill="route.path === '/history' ? 'white' : 'black'" />
+                  :fill="route.path === '/workingTimes/6' ? 'white' : 'black'" />
               </svg>
 
             </AppNavLink>
@@ -111,28 +112,25 @@
               <button @click="toggleUserMenu"
                 class="flex items-center space-x-2 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out">
                 <div class="flex flex-col items-end">
-                  <span class="text-sm font-medium text-gray-700">Bruce Wayne</span> <!-- il faudra changer le nom pour qu'il soit dynamique avec le token / store-->
-                  <span class="text-xs text-gray-500">Équipe de nuit</span> <!-- il faudra changer le titre pour qu'il soit dynamique avec le token / store (ex: admin / équipe de nuit ?)-->
+                  <span class="text-sm font-medium text-gray-700">Bruce Wayne</span>
+                  <!-- il faudra changer le nom pour qu'il soit dynamique avec le token / store-->
+                  <span class="text-xs text-gray-500">Équipe de nuit</span>
+                  <!-- il faudra changer le titre pour qu'il soit dynamique avec le token / store (ex: admin / équipe de nuit ?)-->
                 </div>
                 <img src="@/assets/batman-head.png" alt="User Avatar" class="w-10 h-10 rounded-full" />
               </button>
-              <transition
-                enter-active-class="transition ease-out duration-100"
-                enter-from-class="transform opacity-0 scale-95"
-                enter-to-class="transform opacity-100 scale-100"
-                leave-active-class="transition ease-in duration-75"
-                leave-from-class="transform opacity-100 scale-100"
-                leave-to-class="transform opacity-0 scale-95"
-              >
-                <div 
-                  v-if="isUserMenuOpen" 
+              <transition enter-active-class="transition ease-out duration-100"
+                enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95">
+                <div v-if="isUserMenuOpen"
                   class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="user-menu"
-                >
-                  <a href="/users/1" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Votre Profil</a> <!-- il faudra changer le lien pour qu'il soit dynamique avec le token / store-->
-                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Paramètres</a>
+                  role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
+                  <a href="/users/1" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem">Votre Profil</a>
+                  <!-- il faudra changer le lien pour qu'il soit dynamique avec le token / store-->
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem">Paramètres</a>
                   <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Aide</a>
                   <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     role="menuitem">Déconnexion</a>
@@ -146,7 +144,7 @@
 
       <!-- Page content -->
       <main class="flex-1 bg-gray-100">
-        <div class="p-4" v-if="alert" >
+        <div class="p-4" v-if="alert">
           <v-alert closable border="start" variant="tonal" class="p-4" title="Batman est en ville !"
             icon="custom:BatmanIcon" type="error" />
         </div>
@@ -157,58 +155,58 @@
 </template>
 
 <script setup>
-  import {
-    ref,
-    computed,
-    onMounted,
-    onUnmounted
-  } from 'vue'
-  import {
-    useRoute
-  } from 'vue-router'
-  import AppNavLink from '@/src/components/AppNavLink.vue'
-  import batmanSong from '@/assets/sounds/batman_transition.ogg'
-  import { useHeaderFacadeStore } from '@/stores/headerFacadeStore'
-  
-  const headerStore = useHeaderFacadeStore()
-  const isOpen = ref(true)
-  const route = useRoute()
-  const isUserMenuOpen = ref(false)
+import {
+  ref,
+  computed,
+  onMounted,
+  onUnmounted
+} from 'vue'
+import {
+  useRoute
+} from 'vue-router'
+import AppNavLink from '@/src/components/AppNavLink.vue'
+import batmanSong from '@/assets/sounds/batman_transition.ogg'
+import { useHeaderFacadeStore } from '@/stores/headerFacadeStore'
 
-  const toggleSidebar = () => {
-    isOpen.value = !isOpen.value
+const headerStore = useHeaderFacadeStore()
+const isOpen = ref(true)
+const route = useRoute()
+const isUserMenuOpen = ref(false)
+
+const toggleSidebar = () => {
+  isOpen.value = !isOpen.value
+}
+
+const toggleUserMenu = () => {
+  isUserMenuOpen.value = !isUserMenuOpen.value
+}
+
+const closeUserMenu = (e) => {
+  if (!e.target.closest('.relative')) {
+    isUserMenuOpen.value = false
   }
+}
 
-  const toggleUserMenu = () => {
-    isUserMenuOpen.value = !isUserMenuOpen.value
-  }
+const alert = ref(false)
 
-  const closeUserMenu = (e) => {
-    if (!e.target.closest('.relative')) {
-      isUserMenuOpen.value = false
-    }
-  }
+const randomTime = Math.floor(Math.random() * (30 - 10 + 1) + 10) * 60000;
 
-  const alert = ref(false)
+const playSound = () => {
+  const audio = new Audio(batmanSong);
+  audio.play();
+};
 
-  const randomTime = Math.floor(Math.random() * (30 - 10 + 1) + 10) * 60000;
-
-  const playSound = () => {
-    const audio = new Audio(batmanSong);
-    audio.play();
-  };
-
-  setTimeout(() => {
-    alert.value = true;
-    playSound()
-  }, randomTime);
+setTimeout(() => {
+  alert.value = true;
+  playSound()
+}, randomTime);
 
 
-  onMounted(() => {
-    document.addEventListener('click', closeUserMenu)
-  })
+onMounted(() => {
+  document.addEventListener('click', closeUserMenu)
+})
 
-  onUnmounted(() => {
-    document.removeEventListener('click', closeUserMenu)
-  })
+onUnmounted(() => {
+  document.removeEventListener('click', closeUserMenu)
+})
 </script>

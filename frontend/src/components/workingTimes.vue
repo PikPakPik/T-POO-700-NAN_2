@@ -1,7 +1,7 @@
 <template>
     <v-container>
-        <v-row justify="center">
-            <v-col cols="12" md="8">
+        <v-row justify="start">
+            <v-col cols="12">
                 <v-card class="transparent-card">
                     <v-alert v-if="error" type="error" class="mt-4">
                         {{ error }}
@@ -9,13 +9,17 @@
                     <v-alert v-if="message" type="success" class="mt-4">
                         {{ message }}
                     </v-alert>
-                    <v-card-title>
-                        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
-                            hide-details></v-text-field>
+                    <v-card-title class="d-flex justify-space-between align-center">
+                        <v-text-field v-model="search" class="search-bar" append-icon="mdi-magnify" label="Search"
+                            single-line hide-details></v-text-field>
+                        <v-btn icon class="mr-2 blue" @click="openCreateDialog()">
+                            <v-icon>mdi-plus</v-icon>
+                        </v-btn>
                     </v-card-title>
                     <v-data-table :headers="headers" :items="workingTimes" :search="search" item-key="id"
                         class="elevation-1 custom-data-table" items-per-page-text="Élément par page"
-                        :items-per-page="itemsPerPage" :page.sync="page" :footer-props="customFooterProps">
+                        :items-per-page="itemsPerPage" :page.sync="page" :footer-props="customFooterProps"
+                        :items-per-page-options="options.itemsPerPageOptions">
                         <template v-slot:item.date="{ item }">
                             {{ formatDate(item) }}
                         </template>
@@ -65,7 +69,12 @@
 
         <!-- Edit Dialog -->
         <v-dialog v-model="editDialog" max-width="600">
-            <working-time :userID="userID" :workingTimeID="itemToEdit.id" @close="editDialog = false"></working-time>
+            <working-time :userID="userID" :workingTimeID="itemToEdit.id" @close="editDialog = false"
+                @updated="handleSuccess" @error="handleError"></working-time>
+        </v-dialog>
+        <v-dialog v-model="createDialog" max-width="600">
+            <working-time :userID="userID" @close="createDialog = false" @created="handleSuccess"
+                @error="handleError"></working-time>
         </v-dialog>
     </v-container>
 </template>
@@ -94,6 +103,7 @@ export default {
             message: null,
             dialog: false,
             editDialog: false,
+            createDialog: false,
             itemToDelete: null,
             itemToEdit: null,
             page: 1,
@@ -209,7 +219,6 @@ export default {
                 }
             }
 
-            // const minutes = (nightHours - hours) * 60;
             if (nightMin === 0) {
                 return nightHours + 'h';
             } else {
@@ -222,6 +231,9 @@ export default {
                 }
             }
         },
+        openCreateDialog() {
+            this.createDialog = true;
+        },
         openEditDialog(item) {
             this.itemToEdit = item;
             this.editDialog = true;
@@ -229,6 +241,19 @@ export default {
         confirmDelete(item) {
             this.itemToDelete = item;
             this.dialog = true;
+        },
+        handleSuccess(message) {
+            this.dialog = false;
+            this.createDialog = false;
+            this.editDialog = false;
+            this.getWorkingTimes();
+            this.$emit('success', message);
+        },
+        handleError(message) {
+            this.dialog = false;
+            this.createDialog = false;
+            this.editDialog = false;
+            this.$emit('error', message);
         },
         deleteItem() {
             deleteWorkingTime(this.itemToDelete.id)
@@ -247,6 +272,14 @@ export default {
 </script>
 
 <style scoped>
+.blue {
+    color: #FFC107;
+}
+
+.search-bar {
+    max-width: 400px;
+}
+
 .v-card {
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
