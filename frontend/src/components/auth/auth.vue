@@ -30,19 +30,20 @@
                                 label="Adresse Mail"
                                 name="email"
                                 id="email"
-                                placeholder="titi@grominet.com"
                                 class="text-xs"
                                 outlined
+                                :rules="[rules.required, rules.email]"
+                                required
                             ></v-text-field>
 
                             <v-text-field
                                 label="Mot de passe"
                                 name="password"
                                 id="password"
-                                placeholder="°°°°°°°°°"
                                 class="text-xs"
                                 type="password"
                                 outlined
+                                :rules="[rules.required]"
                             ></v-text-field>
 
                             <v-btn class="mt-6 w-full" color="blue" @click="login">
@@ -63,9 +64,8 @@
                                 name="username"
                                 id="username"
                                 v-model="username"
-                                placeholder="Batman"
                                 class="text-xs"
-                                outlined
+                                :rules="[rules.required]"
                             ></v-text-field>
 
                             <v-text-field
@@ -76,6 +76,17 @@
                                 placeholder="batman@gotham.com"
                                 class="text-xs"
                                 outlined
+                                :rules="[rules.required, rules.email]"
+                            ></v-text-field>
+
+                            <v-text-field
+                                label="Mot de passe"
+                                name="password"
+                                id="password"
+                                v-model="password"
+                                class="text-xs"
+                                outlined
+                                :rules="[rules.required]"
                             ></v-text-field>
 
                             <v-btn class="mt-6 w-full" color="blue" @click.prevent="createUser">
