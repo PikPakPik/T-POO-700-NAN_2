@@ -142,7 +142,7 @@ export default {
             this.error = null;
             try {
                 const response = await createUser(this.username, this.email);
-                this.$router.push('/users/' + response.id);
+                this.$router.push('/')
             } catch (error) {
                 console.error('Error creating user:', error);
                 this.error = "Échec de la création de l'utilisateur.";
