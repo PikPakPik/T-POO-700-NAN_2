@@ -175,6 +175,7 @@ import AppNavLink from '@/src/components/AppNavLink.vue'
 import batmanSong from '@/assets/sounds/batman_transition.ogg'
 import { useHeaderFacadeStore } from '@/stores/headerFacadeStore'
 import { useChronoStore } from '@/stores/chronoStore'
+import { Howl } from 'howler';
 
 const headerStore = useHeaderFacadeStore()
 const chronoStore = useChronoStore()
@@ -208,8 +209,35 @@ const alert = ref(false)
 const randomTime = Math.floor(Math.random() * (30 - 10 + 1) + 10) * 60000;
 
 const playSound = () => {
-  const audio = new Audio(batmanSong);
-  audio.play();
+  const batmanSound = new Howl({
+    src: [batmanSong],
+    volume: 0.5,
+    loop: false,
+    onload: () => {
+      console.log(`
+        _____________________
+        \`-._:  .:'   \`:::  .:\           |\\__/|           /::  .:'   \`:::  .:.-'
+            \\      :          \\          |:   |          /         :       /    
+             \\     ::    .     \`-_______/ ::   \\_______-'   .      ::   . /      
+              |  :   :: ::'  :   :: ::'  :   :: ::'      :: ::'  :   :: :|       
+              |     ;::         ;::         ;::         ;::         ;::  |       
+              |  .:'   \`:::  .:'   \`:::  .:'   \`:::  .:'   \`:::  .:'   \`:|       
+              /     :           :           :           :           :    \\       
+             /______::_____     ::    .     ::    .     ::   _____._::____\\      
+                           \`----._:: ::'  :   :: ::'  _.----'                    
+                                  \`--.       ;::  .--'                           
+                                      \`-. .:'  .-'                               
+                                         \\    / 
+                                          \\  /                                   
+                                           \\/ 
+      `); 
+      console.log('BATMAN EST EN VILLE !');
+    },
+    onend: () => {
+      console.log('Fin de la lecture de la chanson de Batman');
+    }
+  });
+  batmanSound.play();
 };
 
 setTimeout(() => {
