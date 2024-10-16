@@ -53,7 +53,17 @@ export class UsersApi extends Api {
             console.error(error);
             return null;
         }
-    }   
+    }
+
+    async updateUserRole(userId: string, roleId: string) {
+        try {
+            const response = this.instance.put(`/users/${userId}/role/${roleId}`);
+            return response;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
 
     async deleteUser(userId: string) {
         try {
