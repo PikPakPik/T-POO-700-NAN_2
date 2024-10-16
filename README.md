@@ -58,6 +58,16 @@ Multiple profiles are available:
 
 Run `./timemanager.sh -all` to launch the platform with Docker.
 
+## Use the TimeManager locally
+
+#### Credentials
+
+| Role     | Username      | Password |
+|----------|---------------|----------|
+| Admin    | admin@nan2.fr | ......   |
+| Manager  | manager@nan2.fr| ......  |
+| Employee | employee@nan2.fr| ...... |
+
 ## Learn more
 
   * Official website: https://www.phoenixframework.org/

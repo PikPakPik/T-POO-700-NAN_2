@@ -126,11 +126,26 @@ defmodule TimeManager.Clocks do
     now = DateTime.utc_now()
 
     case get_user_clock(userID) do
-      nil -> create_new_clock(userID, now)
-      %Clock{} = clock -> update_existing_clock(clock, now, userID)
+      nil ->
+        {:created, create_clock(%{user_id: userID, status: true, time: now})}
+
+      %Clock{} = clock ->
+        case clock.status do
+          false ->
+            {:updated, update_clock(clock, %{status: !clock.status, time: now})}
+
+          true ->
+            with {:ok, %WorkingTimes.WorkingTime{} = _} <-
+                   WorkingTimes.create_working_time(%{
+                     user_id: userID,
+                     start: clock.time,
+                     end: now
+                   }) do
+              {:updated, update_clock(clock, %{status: !clock.status, time: now})}
+            end
+        end
     end
   end
-
 
   defp create_new_clock(userID, now) do
     {:created, create_clock(%{user_id: userID, status: true, time: now})}
@@ -144,7 +159,8 @@ defmodule TimeManager.Clocks do
   end
 
   defp handle_active_clock(clock, userID, now) do
-    with {:ok, %WorkingTime{} = _} <- WorkingTimes.create_working_time(%{user_id: userID, start: clock.time, end: now}) do
+    with {:ok, %WorkingTime{} = _} <-
+           WorkingTimes.create_working_time(%{user_id: userID, start: clock.time, end: now}) do
       {:updated, update_clock(clock, %{status: !clock.status, time: now})}
     end
   end

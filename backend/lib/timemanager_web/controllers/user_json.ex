@@ -5,21 +5,17 @@ defmodule TimeManagerWeb.UserJSON do
   Renders a list of users.
   """
   def index(%{users: users}) do
-    %{data: for(user <- users, do: data(user))}
+    %{data: for(user <- users, do: data(user, %{associations: true}))}
   end
 
   @doc """
   Renders a single user.
   """
   def show(%{user: user}) do
-    %{data: data(user)}
+    %{data: data(user, %{associations: true})}
   end
 
-  defp data(%User{} = user) do
-    %{
-      id: user.id,
-      username: user.username,
-      email: user.email
-    }
+  defp data(%User{} = user, options \\ %{}) do
+    TimeManagerWeb.ModelToJson.serialize_data(user, options)
   end
 end

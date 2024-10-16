@@ -3,8 +3,8 @@
 		"_postman_id": "627bd7f6-988c-494c-b037-8e06a8c80628",
 		"name": "Routes",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38860697",
-		"_collection_link": "https://nan233.postman.co/workspace/T-POO-700_theme01~91a25d6b-5510-4ccb-ad65-3fca3d9efdbd/collection/34035705-627bd7f6-988c-494c-b037-8e06a8c80628?action=share&source=collection_link&creator=38860697"
+		"_exporter_id": "38861265",
+		"_collection_link": "https://nan233.postman.co/workspace/T-POO-700_theme01~91a25d6b-5510-4ccb-ad65-3fca3d9efdbd/collection/34035705-627bd7f6-988c-494c-b037-8e06a8c80628?action=share&source=collection_link&creator=38861265"
 	},
 	"item": [
 		{
@@ -73,6 +73,70 @@
 										"api",
 										"clocks",
 										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Role",
+			"item": [
+				{
+					"name": "GET",
+					"item": [
+						{
+							"name": "all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/clocks/:userID",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"clocks",
+										":userID"
+									],
+									"variable": [
+										{
+											"key": "userID",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "byID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/roles/:roleID",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"roles",
+										":roleID"
+									],
+									"variable": [
+										{
+											"key": "roleID",
+											"value": "1"
+										}
 									]
 								}
 							},
@@ -266,7 +330,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "1"
 										}
 									]
 								}
@@ -289,7 +353,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:4000/api/users?email={XXX}&username={YYY}",
+									"raw": "http://localhost:4000/api/users?email=toto@mail.com",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -302,11 +366,12 @@
 									"query": [
 										{
 											"key": "email",
-											"value": "{XXX}"
+											"value": "toto@mail.com"
 										},
 										{
 											"key": "username",
-											"value": "{YYY}"
+											"value": "atresselj",
+											"disabled": true
 										}
 									]
 								}
@@ -333,7 +398,7 @@
 									"variable": [
 										{
 											"key": "userID",
-											"value": ""
+											"value": "1"
 										}
 									]
 								}
@@ -355,7 +420,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"user\": {\r\n    \"username\": \"herve\",\r\n    \"email\": \"herv.doe@example.com\"\r\n  }\r\n}",
+									"raw": "{\r\n  \"user\": {\r\n    \"username\": \"herve\",\r\n    \"email\": \"herv.doe@example.com1\"\r\n  }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -408,6 +473,39 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "setRole",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/users/:userID/role/:roleID",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"users",
+										":userID",
+										"role",
+										":roleID"
+									],
+									"variable": [
+										{
+											"key": "userID",
+											"value": "1"
+										},
+										{
+											"key": "roleID",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -435,6 +533,345 @@
 										{
 											"key": "userID",
 											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Team",
+			"item": [
+				{
+					"name": "GET",
+					"item": [
+						{
+							"name": "all",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/teams",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "byID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/teams/:teamID",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams",
+										":teamID"
+									],
+									"variable": [
+										{
+											"key": "teamID",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "POST",
+					"item": [
+						{
+							"name": "User",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"team\": {\r\n    \"name\": \"Team MidJourney\"\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:4000/api/teams",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Clock Team",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"team\": {\r\n    \"name\": \"Team MidJourney\"\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:4000/api/teams/:teamID/clock",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams",
+										":teamID",
+										"clock"
+									],
+									"variable": [
+										{
+											"key": "teamID",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "PUT",
+					"item": [
+						{
+							"name": "Update",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"team\": {\n    \"name\": \"Team Gotham\"\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:4000/api/teams/:teamID",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams",
+										":teamID"
+									],
+									"variable": [
+										{
+											"key": "teamID",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Employee",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/teams/:teamID/add_employee/:userID",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams",
+										":teamID",
+										"add_employee",
+										":userID"
+									],
+									"variable": [
+										{
+											"key": "teamID",
+											"value": ""
+										},
+										{
+											"key": "userID",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Manager",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/teams/:teamID/add_manager/:userID",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams",
+										":teamID",
+										"add_manager",
+										":userID"
+									],
+									"variable": [
+										{
+											"key": "teamID",
+											"value": ""
+										},
+										{
+											"key": "userID",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Manager",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/teams/:teamID/remove_manager/:userID",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams",
+										":teamID",
+										"remove_manager",
+										":userID"
+									],
+									"variable": [
+										{
+											"key": "teamID",
+											"value": ""
+										},
+										{
+											"key": "userID",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Employee",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/teams/:teamID/remove_employee/:userID",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams",
+										":teamID",
+										"remove_employee",
+										":userID"
+									],
+									"variable": [
+										{
+											"key": "teamID",
+											"value": ""
+										},
+										{
+											"key": "userID",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "DELETE",
+					"item": [
+						{
+							"name": "DeleteById",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/api/teams/:id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"teams",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "2"
 										}
 									]
 								}

@@ -218,4 +218,152 @@ defmodule TimeManagerWeb.SwaggerDef do
       end
     }
   end
+
+  def role_definitions do
+    %{
+      Role: swagger_schema do
+        title("Role")
+        description("Role. Default roles are: Admin, Manager and Employee")
+
+        properties do
+          id(:integer, "Role ID")
+          name(:string, "Role name")
+        end
+
+        example(%{
+          id: 4,
+          name: "Employee",
+          permissions: %{}
+        })
+      end,
+      RoleDetailed: swagger_schema do
+        title("RoleDetailed")
+        description("Role. Default roles are: Admin, Manager and Employee")
+
+        properties do
+          id(:integer, "Role ID")
+          name(:string, "Role name")
+          users(Schema.array(:User), "Users with the requested role")
+        end
+
+        example(%{
+          id: 1,
+          name: "Employee",
+          users: []
+        })
+      end,
+      RoleResponse: swagger_schema do
+        title("RoleResponse")
+        description("Response schema for single role")
+        property(:data, Schema.ref(:Role), "The role details")
+      end,
+      RolesResponse:
+      swagger_schema do
+        title("RolesResponse")
+        description("Response schema for multiple roles")
+        property(:data, Schema.array(:Role), "The roles list")
+      end
+  }
+  end
+
+  def team_definitions do
+    %{
+      Team: swagger_schema do
+        title("Team")
+        description("A team of employees managed by one or multiple managers.")
+
+        properties do
+          id(:integer, "Team ID")
+          name(:string, "Team name")
+        end
+
+        example(%{
+          id: 1,
+          name: "Team A"
+        })
+      end,
+      TeamDetailed: swagger_schema do
+        title("TeamDetailed")
+        description("A team of employees managed by one or multiple managers.")
+
+        properties do
+          id(:integer, "Team ID")
+          name(:string, "Team name")
+          employees(Schema.array(:User), "Team employees")
+          managers(Schema.array(:User), "Team managers")
+        end
+
+        example(%{
+          id: 1,
+          name: "Team Day",
+          employees: [],
+          managers: []
+        })
+      end,
+      TeamRequest: swagger_schema do
+        title("TeamRequest")
+        description("A team request for team creation.")
+
+        properties do
+          name(:string, "Team name")
+        end
+
+        example(%{
+          team: %{
+            name: "Team Day",
+          }
+        })
+      end,
+      TeamResponse: swagger_schema do
+        title("TeamResponse")
+        description("Response schema for single team")
+        property(:data, Schema.ref(:TeamDetailed), "The team details")
+      end,
+      TeamsResponse: swagger_schema do
+        title("TeamsResponse")
+        description("Response schema for multiple teams")
+        property(:data, Schema.array(:Team), "The teams list")
+      end,
+      TeamClockResponse: swagger_schema do
+        title("TeamClockResponse")
+        description("Response schema for a team clock")
+        property(:data, Schema.array(:Clock), "The team users' clocks'")
+      end
+  }
+  end
+
+  def log_definitions do
+    %{
+      Log: swagger_schema do
+        title("Log")
+        description("Log schema")
+
+        properties do
+          id(:integer, "Log ID")
+          user_id(:integer, "User ID")
+          time(:string, "Log time", format: :utc_datetime)
+          action(:string, "Log action")
+        end
+
+        example(%{
+          id: 1,
+          user_id: 1,
+          time: "2024-10-08 10:05:01",
+          action: "user:create"
+        })
+      end,
+      LogsResponse:
+      swagger_schema do
+        title("LogsResponse")
+        description("Response schema for multiple logs")
+        property(:data, Schema.array(:Log), "The logs details")
+      end,
+      LogResponse:
+      swagger_schema do
+        title("LogResponse")
+        description("Response schema for single log")
+        property(:data, Schema.ref(:Log), "The log details")
+      end
+    }
+  end
 end

@@ -1,0 +1,17 @@
+Rôle: name
+POSSEDE_3, 0N Utilisateur, 11 Rôle
+RATTACHE, 0N Utilisateur, 0N Temps de Travail
+Temps de Travail: start, end
+:
+
+:
+ASSOCIE_2, 0N Utilisateur, 0N Équipe: Managers
+Utilisateur: username, email
+POSSEDE_1, 0N Utilisateur, 0N Horloge
+Horloge: status, time
+
+:
+Équipe: name
+ASSOCIE_1, 0N Utilisateur, 0N Équipe: Employés
+POSSEDE_2, 0N Utilisateur, 0N Journal
+Journal: action, time, new_value, old_value

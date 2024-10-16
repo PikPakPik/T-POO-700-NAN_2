@@ -15,12 +15,7 @@ defmodule TimeManagerWeb.ClockJSON do
     %{data: data(clock)}
   end
 
-  defp data(%Clock{} = clock) do
-    %{
-      id: clock.id,
-      time: clock.time,
-      status: clock.status,
-      user_id: clock.user_id
-    }
+  defp data(clock) do
+    TimeManagerWeb.ModelToJson.serialize_data(clock)
   end
 end
