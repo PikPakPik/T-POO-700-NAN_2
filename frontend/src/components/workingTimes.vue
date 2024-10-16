@@ -3,23 +3,23 @@
         <v-row justify="start">
             <v-col cols="12">
                 <v-card class="transparent-card">
-                    <v-alert v-if="error" type="error" class="mt-4">
+                    <v-alert v-if="error" type="error" closable border="start" variant="tonal" class="p-4">
                         {{ error }}
                     </v-alert>
-                    <v-alert v-if="message" type="success" class="mt-4">
+                    <v-alert v-if="message" type="success" closable border="start" variant="tonal" class="p-4">
                         {{ message }}
                     </v-alert>
                     <v-card-title class="d-flex justify-space-between align-center">
-                        <v-text-field v-model="search" class="search-bar" append-icon="mdi-magnify" label="Search"
-                            single-line hide-details></v-text-field>
-                        <v-btn icon class="mr-2 blue" @click="openCreateDialog()">
+                        <v-text-field v-model="search" variant="solo-filled" class="search-bar"
+                            append-icon="mdi-magnify" label="Recherche" single-line hide-details></v-text-field>
+                        <v-btn icon class="mr-2 yellow" @click="openCreateDialog()">
                             <v-icon>mdi-plus</v-icon>
                         </v-btn>
                     </v-card-title>
                     <v-data-table :headers="headers" :items="workingTimes" :search="search" item-key="id"
-                        class="elevation-1 custom-data-table" items-per-page-text="Élément par page"
-                        :items-per-page="itemsPerPage" :page.sync="page" :footer-props="customFooterProps"
-                        :items-per-page-options="options.itemsPerPageOptions">
+                        class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page="page"
+                        :items-per-page-text="itemsPerPageText" :no-data-text="noDataText" :page-text="pageText"
+                        :items-per-page-options="itemsPerPageOptions">
                         <template v-slot:item.action="{ item }">
                             <v-row class="d-flex align-center flex-row no-gutters">
                                 <v-btn icon size="small" class="mr-2" @click="openEditDialog(item)">
@@ -70,6 +70,7 @@
 <script>
 import WorkingTime from '@/src/components/workingTime.vue';
 import { readWorkingTimes, deleteWorkingTime } from '@/src/utils/api/workingtime.ts'
+import moment from 'moment';
 
 export default {
     name: 'workingTimes',
@@ -96,11 +97,11 @@ export default {
             itemToEdit: null,
             page: 1,
             itemsPerPage: 10,
-            options: {
-                'items-per-page-options': [10, 20, 30, { text: 'Tous', value: -1 }],
-                'items-per-page-text': 'Élément par page',
-                'page-text': this.pageText
-            }
+            itemsPerPageOptions: [10, 20, 30, { title: 'Tous', value: -1 }],
+            itemsPerPageText: 'Élément par page',
+            pageText: this.pageText,
+            noDataText: 'Aucun élément trouvé',
+
         }
     },
     props: {
@@ -110,31 +111,6 @@ export default {
         },
     },
     computed: {
-        formatDate() {
-            return (workingTime) => {
-                const startDate = workingTime.start.split('T')[0].split('-').reverse().join('/');
-                const endDate = workingTime.end.split('T')[0].split('-').reverse().join('/');
-                if (startDate === endDate) {
-                    return startDate;
-                }
-                return startDate + ' - ' + endDate;
-            };
-        },
-        formatStart() {
-            return (workingTime) => {
-                return workingTime.start.split('T')[1].split(':').slice(0, 2).join(':');
-            };
-        },
-        formatEnd() {
-            return (workingTime) => {
-                return workingTime.end.split('T')[1].split(':').slice(0, 2).join(':');
-            };
-        },
-        formatWorkingTimePoster() {
-            return (workingTime) => {
-                return this.time(workingTime) + ' (' + this.timeNight(workingTime) + ')';
-            };
-        },
         pageStart() {
             return (this.page - 1) * this.itemsPerPage + 1;
         },
@@ -144,35 +120,34 @@ export default {
         itemsLength() {
             return this.workingTimes.length;
         },
-        customFooterProps() {
-            return {
-                'items-per-page-options': [10, 20, 30, { text: 'Tous', value: -1 }],
-                'items-per-page-text': 'Élément par page',
-                'page-text': this.pageText
-            };
-        },
         pageText() {
             const pageStart = (this.page - 1) * this.itemsPerPage + 1;
             const pageStop = Math.min(this.page * this.itemsPerPage, this.workingTimes.length);
             const itemsLength = this.workingTimes.length;
             return `${pageStart}-${pageStop} sur ${itemsLength}`;
         },
-        filteredWorkingTimes() {
-            if (!this.search) {
-                return this.workingTimes;
-            }
-            const searchLower = this.search.toLowerCase();
-            return this.workingTimes.filter(workingTime => {
-                return workingTime.formattedDate.toLowerCase().includes(searchLower) ||
-                    workingTime.formattedStart.toLowerCase().includes(searchLower) ||
-                    workingTime.formattedEnd.toLowerCase().includes(searchLower) ||
-                    workingTime.formattedWorkingTimePoster.toLowerCase().includes(searchLower);
-            });
-        },
     },
     mounted() {
         this.getWorkingTimes();
     },
+
+    watch: {
+        message(newMessage) {
+            if (newMessage) {
+                setTimeout(() => {
+                    this.message = null;
+                }, 5000); // hidden message après 5 secondes
+            }
+        },
+        error(newError) {
+            if (newError) {
+                setTimeout(() => {
+                    this.error = null;
+                }, 5000); // hidden erreur après 5 secondes
+            }
+        }
+    },
+
     methods: {
         getWorkingTimes() {
             readWorkingTimes(this.userID)
@@ -192,6 +167,23 @@ export default {
                 .catch(error => {
                     console.error('Error selecting working time:', error);
                 });
+        },
+        formatDate(workingTime) {
+            const startDate = moment(workingTime.start).format('DD/MM/YYYY');
+            const endDate = moment(workingTime.end).format('DD/MM/YYYY');
+            if (startDate === endDate) {
+                return startDate;
+            }
+            return startDate + ' - ' + endDate;
+        },
+        formatStart(workingTime) {
+            return moment(workingTime.start).format('HH:mm');
+        },
+        formatEnd(workingTime) {
+            return moment(workingTime.end).format('HH:mm');
+        },
+        formatWorkingTimePoster(workingTime) {
+            return this.time(workingTime) + ' (' + this.timeNight(workingTime) + ')';
         },
         time(workingTime) {
             const start = new Date(workingTime.start);
@@ -255,13 +247,13 @@ export default {
             this.createDialog = false;
             this.editDialog = false;
             this.getWorkingTimes();
-            this.$emit('success', message);
+            this.message = message;
         },
         handleError(message) {
             this.dialog = false;
             this.createDialog = false;
             this.editDialog = false;
-            this.$emit('error', message);
+            this.error = message;
         },
         deleteItem() {
             deleteWorkingTime(this.itemToDelete.id)
@@ -275,12 +267,24 @@ export default {
                     this.dialog = false;
                 });
         },
+        showMessage(message) {
+            this.message = message;
+            setTimeout(() => {
+                this.message = null;
+            }, 5000); // hidden message after 5 secondes
+        },
+        showError(message) {
+            this.error = message;
+            setTimeout(() => {
+                this.error = null;
+            }, 5000); // hidden error after 5 secondes
+        },
     }
 }
 </script>
 
 <style scoped>
-.blue {
+.yellow {
     color: #FFC107;
 }
 
@@ -317,6 +321,8 @@ export default {
 
 :deep(.v-data-table) thead {
     background-color: #FFC107 !important;
+    font-weight: bold;
+    font-size: 1.2em;
 }
 
 :deep(.v-data-table) .v-data-table__tr>* {

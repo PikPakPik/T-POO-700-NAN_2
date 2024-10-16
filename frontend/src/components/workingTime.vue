@@ -13,11 +13,11 @@
       <v-form ref="form">
         <v-row>
           <v-col cols="12" md="6">
-            <v-text-field label="Date de début" type="datetime-local" v-model="startDate"
-              :value="formatDateTime(startDate)" outlined></v-text-field>
+            <v-text-field label="Date de début" type="datetime-local" v-model="startDate" :value="startDate"
+              outlined></v-text-field>
           </v-col>
           <v-col cols="12" md="6">
-            <v-text-field label="Date de fin" type="datetime-local" v-model="endDate" :value="formatDateTime(endDate)"
+            <v-text-field label="Date de fin" type="datetime-local" v-model="endDate" :value="endDate"
               outlined></v-text-field>
           </v-col>
         </v-row>
@@ -53,7 +53,7 @@ export default {
       default: '',
     },
     workingTimeID: {
-      type: String,
+      type: Number,
       default: '',
     },
   },
@@ -67,9 +67,7 @@ export default {
   methods: {
     formatDateTime(date) {
       if (!date) return '';
-      const d = new Date(date);
-      const pad = (n) => (n < 10 ? '0' + n : n);
-      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      return moment(date).format('YYYY-MM-DD HH:mm');
     },
     save() {
       if (this.workingTimeID) {
@@ -109,8 +107,6 @@ export default {
         })
         .catch(error => {
           this.$emit('error', 'Erreur : impossible d\'afficher le working time');
-        }).finally(() => {
-          this.$emit('close');
         });
     }
   }
