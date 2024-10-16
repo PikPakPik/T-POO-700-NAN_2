@@ -11,8 +11,7 @@
       </div>
       <span v-else class="text-black text-lg font-medium w-full">Démarrer le pointage</span>
       <button @click="togglePlay" class="bg-amber-400 p-4 flex items-center justify-center rounded-lg">
-
-        <svg v-if="chronoStore.isPlaying" width="30" height="30" viewBox="0 0 45 45" fill="none"
+        <svg v-if="chronoStore.getIsPlaying" width="30" height="30" viewBox="0 0 45 45" fill="none"
           xmlns="http://www.w3.org/2000/svg">
           <rect width="45" height="45" rx="4" fill="black" />
         </svg>
@@ -42,13 +41,9 @@
     },
     data() {
       return {
-        startDateTime: null,
-        endDateTime: null,
         clockApiService: new ClockApi(),
         hasStarted: false,
         timer: null,
-        isPlaying: false,
-        isDisabled: false,
       };
     },
     computed: {
@@ -63,94 +58,58 @@
       }
     },
     methods: {
-      async togglePlay() {
+      togglePlay() {
         if (this.chronoStore.getIsPlaying) {
-
           clearInterval(this.timer);
           this.timer = null;
-          this.chronoStore.updateIsPlaying(false);
-          this.saveToLocalStorage();
-          await this.submitWork();
-
+          this.chronoStore.reset();
+          if(this.hasStarted){
+            this.hasStarted = false;
+          }
         } else {
-
           if (!this.hasStarted) {
             this.hasStarted = true;
           }
-          await this.startWorking();
-          this.timer = setInterval(() => {
-            const updatedTime = this.chronoStore.getTimeElapsed + 1;
-            this.chronoStore.updateTimeElapsed(updatedTime);
-            this.saveToLocalStorage();
-          }, 1000);
-          this.chronoStore.updateIsPlaying(true);
-          this.saveToLocalStorage();
+          this.startTimer();
         }
+        this.clockApiService.clockInOrOut(this.userId);
       },
 
       beforeDestroy() {
         clearInterval(this.timer);
       },
 
-      async startWorking() {
-
-        const now = new Date();
-        this.startDateTime = now.toISOString();
+      async getClockStatus() {
         try {
-          const response = await this.clockApiService.startWorking(this.userId, this.startDateTime);
-        } catch (error) {
-          console.error('Erreur lors du début du travail :', error);
-        }
-      },
-
-      async submitWork() {
-
-        const now = new Date();
-        this.endDateTime = now.toISOString();
-        clearInterval(this.timer);
-        this.chronoStore.updateIsPlaying(false);
-        try {
-          const response = await this.clockApiService.endWorking(this.userId, this.endDateTime);
-        } catch (error) {
-          console.error('Erreur lors de la fin du travail :', error);
-        }
-      },
-
-      saveToLocalStorage() {
-        const data = {
-          timeElapsed: this.chronoStore.getTimeElapsed,
-          isPlaying: this.chronoStore.getIsPlaying,
-          hasStarted: this.hasStarted,
-          startDateTime: this.startDateTime,
-        };
-        localStorage.setItem('clockData', JSON.stringify(data));
-      },
-
-      loadFromLocalStorage() {
-        const savedData = localStorage.getItem('clockData');
-        if (savedData) {
-          const parsedData = JSON.parse(savedData);
-          this.chronoStore.updateTimeElapsed(parsedData.timeElapsed);
-          this.chronoStore.updateIsPlaying(parsedData.isPlaying);
-          this.hasStarted = parsedData.hasStarted;
-          this.startDateTime = parsedData.startDateTime;
-
-          if (this.chronoStore.getIsPlaying) {
-            this.timer = setInterval(() => {
-              const updatedTime = this.chronoStore.getTimeElapsed + 1;
-              this.chronoStore.updateTimeElapsed(updatedTime);
-              this.saveToLocalStorage();
-            }, 1000);
+          const response = await this.clockApiService.getClock(this.userId);
+          const { status, time } = response.data[0];
+          const startTime = new Date(time);
+          const now = new Date();
+          const utcOffset = now.getTimezoneOffset() * 60000; // décalage UTC en millisecondes
+          const localStartTime = new Date(startTime.getTime() - utcOffset); // convertir l'heure de début en heure locale
+          const timeDifference = Math.floor((now - localStartTime) / 1000); 
+          this.chronoStore.updateTimeElapsed(timeDifference);
+          this.hasStarted = status;
+          if (status) {
+            this.startTimer();
           }
+        } catch (error) {
+          console.error('Erreur lors de la récupération de l\'état du chronomètre :', error);
         }
       },
-      clearLocalStorage() {
-        localStorage.removeItem('clockData');
+
+      startTimer() {
+        console.log('startTimer');
+        this.timer = setInterval(() => {
+          const updatedTime = this.chronoStore.getTimeElapsed + 1;
+          this.chronoStore.updateTimeElapsed(updatedTime);
+        }, 1000);
+        this.chronoStore.updateIsPlaying(true);
       },
     },
 
     mounted() {
-      this.loadFromLocalStorage();
+      this.getClockStatus();
     }
   };
 </script>
