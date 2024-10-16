@@ -9,7 +9,7 @@
           {{ formattedTime }}
         </span>
       </div>
-      <span v-else class="text-black text-lg font-medium">Démarrer le pointage</span>
+      <span v-else class="text-black text-lg font-medium w-full">Démarrer le pointage</span>
       <button @click="togglePlay" class="bg-amber-400 p-4 flex items-center justify-center rounded-lg">
 
         <svg v-if="chronoStore.isPlaying" width="30" height="30" viewBox="0 0 45 45" fill="none"
