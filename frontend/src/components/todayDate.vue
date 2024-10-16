@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col">
-    <h1 class="text-2xl">
+    <h1 class="text-4xl">
       AUJOURD'HUI
     </h1>
-    <h2>
+    <h2 class="text-xl">
       {{ displayDate }}
     </h2>
   </div>
