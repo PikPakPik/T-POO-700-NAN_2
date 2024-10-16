@@ -19,6 +19,7 @@
     "dayjs-with-plugins": "^1.0.4",
     "nuxt": "^3.13.0",
     "pinia": "^2.2.4",
+    "tailwind": "^4.0.0",
     "vite-plugin-vuetify": "^2.0.4",
     "vue": "latest",
     "vue-chartjs": "^5.3.1",

@@ -1,0 +1,29 @@
+<template>
+  <div class="flex flex-col ml-6 mr-6">
+    <div class="flex justify-between mb-10 mt-6">
+      <todayDate/>
+      <ClockManager :userId="1"/>
+    </div>
+    <div class="flex gap-8">
+      <workingTimeWeekVue />
+      <extraHour />
+    </div>
+  </div>
+</template>
+
+
+<script>
+import ClockManager from './src/components/clockManager.vue';
+import workingTimeWeekVue from './src/components/workingTimeWeek.vue';
+import extraHour from './src/components/extraHour.vue';
+import todayDate from'./src/components/todayDate.vue';
+
+export default {
+  components: {
+    ClockManager,
+    workingTimeWeekVue,
+    extraHour,
+    todayDate
+  }
+};
+</script>
