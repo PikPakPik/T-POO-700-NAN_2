@@ -5,7 +5,7 @@ defmodule TimeManager.Users do
 
   import Ecto.Query, warn: false
   alias TimeManager.Repo
-
+  alias TimeManager.Roles.Role
   alias TimeManager.Users.User
 
   @doc """
@@ -112,5 +112,11 @@ defmodule TimeManager.Users do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  def update_user_role(%User{} = user, %Role{} = role) do
+    user
+    |> User.changeset(%{"role_id" => role.id})
+    |> Repo.update()
   end
 end

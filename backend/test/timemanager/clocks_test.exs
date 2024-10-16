@@ -10,7 +10,7 @@ defmodule TimeManager.ClocksTest do
     import TimeManager.ClocksFixtures
     alias TimeManager.Users.User
 
-    @invalid_attrs %{status: nil, time: nil}
+    @invalid_attrs %{status: nil, time: nil, user_id: nil}
 
     test "list_clocks/0 returns all clocks" do
       clock = clock_fixture()
@@ -23,7 +23,9 @@ defmodule TimeManager.ClocksTest do
     end
 
     test "create_clock/1 with valid data creates a clock" do
-      valid_user = %{username: "toto", email: "toto@mail.com"}
+      valid_role = %{name: "User"}
+      {:ok, role} = TimeManager.Roles.create_role(valid_role)
+      valid_user = %{username: "toto", email: "toto@mail.com", role_id: role.id}
       assert {:ok, %User{} = user} = Users.create_user(valid_user)
       assert user.username == "toto"
       assert user.email == "toto@mail.com"

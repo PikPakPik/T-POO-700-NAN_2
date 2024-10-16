@@ -23,13 +23,23 @@ defmodule TimeManager.WorkingTimesTest do
     end
 
     test "create_working_time/1 with valid data creates a working_time" do
-      valid_user = %{username: "toto", email: "toto@mail.com"}
-      assert {:ok, %User{} = user} = Users.create_user(valid_user)
+      role_attrs = %{name: "User", description: "Standard user role"}
+      {:ok, role} = TimeManager.Roles.create_role(role_attrs)
+      user_attrs = %{username: "toto", email: "toto@mail.com", role_id: role.id}
+      {:ok, user} = TimeManager.Users.create_user(user_attrs)
       assert user.username == "toto"
       assert user.email == "toto@mail.com"
+      assert user.role_id == role.id
 
-      valid_workingTime = %{start: ~U[2024-10-07 07:55:00Z], end: ~U[2024-10-07 07:55:00Z], user_id: user.id}
-      assert {:ok, %WorkingTime{} = working_time} = WorkingTimes.create_working_time(valid_workingTime)
+      valid_workingTime = %{
+        start: ~U[2024-10-07 07:55:00Z],
+        end: ~U[2024-10-07 07:55:00Z],
+        user_id: user.id
+      }
+
+      assert {:ok, %WorkingTime{} = working_time} =
+               WorkingTimes.create_working_time(valid_workingTime)
+
       assert working_time.start == ~U[2024-10-07 07:55:00Z]
       assert working_time.end == ~U[2024-10-07 07:55:00Z]
     end
@@ -42,14 +52,19 @@ defmodule TimeManager.WorkingTimesTest do
       working_time = working_time_fixture()
       update_attrs = %{start: ~U[2024-10-08 07:55:00Z], end: ~U[2024-10-08 07:55:00Z]}
 
-      assert {:ok, %WorkingTime{} = working_time} = WorkingTimes.update_working_time(working_time, update_attrs)
+      assert {:ok, %WorkingTime{} = working_time} =
+               WorkingTimes.update_working_time(working_time, update_attrs)
+
       assert working_time.start == ~U[2024-10-08 07:55:00Z]
       assert working_time.end == ~U[2024-10-08 07:55:00Z]
     end
 
     test "update_working_time/2 with invalid data returns error changeset" do
       working_time = working_time_fixture()
-      assert {:error, %Ecto.Changeset{}} = WorkingTimes.update_working_time(working_time, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               WorkingTimes.update_working_time(working_time, @invalid_attrs)
+
       assert working_time == WorkingTimes.get_working_time!(working_time.id)
     end
 
