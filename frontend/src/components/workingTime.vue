@@ -45,8 +45,6 @@ export default {
       workingTime: {
         type: Object,
       },
-      error: null,
-      message: null
     }
   },
   props: {
@@ -110,7 +108,9 @@ export default {
           this.endDate = this.workingTime.end;
         })
         .catch(error => {
-          this.error = 'Erreur : impossible d\'afficher le working time';
+          this.$emit('error', 'Erreur : impossible d\'afficher le working time');
+        }).finally(() => {
+          this.$emit('close');
         });
     }
   }

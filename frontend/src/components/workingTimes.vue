@@ -20,18 +20,6 @@
                         class="elevation-1 custom-data-table" items-per-page-text="Élément par page"
                         :items-per-page="itemsPerPage" :page.sync="page" :footer-props="customFooterProps"
                         :items-per-page-options="options.itemsPerPageOptions">
-                        <template v-slot:item.date="{ item }">
-                            {{ formatDate(item) }}
-                        </template>
-                        <template v-slot:item.start="{ item }">
-                            {{ formatStart(item) }}
-                        </template>
-                        <template v-slot:item.end="{ item }">
-                            {{ formatEnd(item) }}
-                        </template>
-                        <template v-slot:item.workingTimePoster="{ item }">
-                            {{ formatWorkingTimePoster(item) }}
-                        </template>
                         <template v-slot:item.action="{ item }">
                             <v-row class="d-flex align-center flex-row no-gutters">
                                 <v-btn icon size="small" class="mr-2" @click="openEditDialog(item)">
@@ -93,10 +81,10 @@ export default {
             workingTimes: [],
             search: '',
             headers: [
-                { title: 'Date(s)', text: 'Date(s)', sortable: true, value: 'date' },
-                { title: 'Heure de début', text: 'Heure de début', sortable: true, value: 'start' },
-                { title: 'Heure de fin', text: 'Heure de fin', sortable: true, value: 'end' },
-                { title: 'Temps travaillé (nuit)', text: 'Temps travaillé (nuit)', sortable: true, value: 'workingTimePoster' },
+                { title: 'Date(s)', text: 'Date(s)', sortable: true, value: 'formattedDate' },
+                { title: 'Heure de début', text: 'Heure de début', sortable: true, value: 'formattedStart' },
+                { title: 'Heure de fin', text: 'Heure de fin', sortable: true, value: 'formattedEnd' },
+                { title: 'Temps travaillé (nuit)', text: 'Temps travaillé (nuit)', sortable: true, value: 'formattedWorkingTimePoster' },
                 { title: 'Actions', text: 'Actions', sortable: false, value: 'action' },
             ],
             error: null,
@@ -169,6 +157,18 @@ export default {
             const itemsLength = this.workingTimes.length;
             return `${pageStart}-${pageStop} sur ${itemsLength}`;
         },
+        filteredWorkingTimes() {
+            if (!this.search) {
+                return this.workingTimes;
+            }
+            const searchLower = this.search.toLowerCase();
+            return this.workingTimes.filter(workingTime => {
+                return workingTime.formattedDate.toLowerCase().includes(searchLower) ||
+                    workingTime.formattedStart.toLowerCase().includes(searchLower) ||
+                    workingTime.formattedEnd.toLowerCase().includes(searchLower) ||
+                    workingTime.formattedWorkingTimePoster.toLowerCase().includes(searchLower);
+            });
+        },
     },
     mounted() {
         this.getWorkingTimes();
@@ -177,7 +177,15 @@ export default {
         getWorkingTimes() {
             readWorkingTimes(this.userID)
                 .then(response => {
-                    this.workingTimes = response.data.sort((a, b) => {
+                    this.workingTimes = response.data.map(workingTime => {
+                        return {
+                            ...workingTime,
+                            formattedDate: this.formatDate(workingTime),
+                            formattedStart: this.formatStart(workingTime),
+                            formattedEnd: this.formatEnd(workingTime),
+                            formattedWorkingTimePoster: this.formatWorkingTimePoster(workingTime)
+                        };
+                    }).sort((a, b) => {
                         return new Date(a.start) - new Date(b.start);
                     });
                 })
