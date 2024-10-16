@@ -3,22 +3,10 @@
     <!-- Sidebar -->
     <div :class="`bg-white transition-all duration-300 ease-in-out ${isOpen ? 'w-64' : 'w-20'} flex flex-col`">
       <div class="flex items-center justify-between p-4">
-        <h1 v-if="isOpen" class="text-xl font-bold text-gray-800">TimeManager</h1>
-        <button @click="toggleSidebar" class="p-1 rounded-full hover:bg-gray-200">
-          <v-icon
-        icon="mdi-chevron-left"
-        v-if="isOpen"
-        end
-      ></v-icon>
-      <v-icon
-        icon="mdi-chevron-right"
-        end
-        v-else
-      ></v-icon>
-        </button>
+        <h1 v-if="isOpen" class="text-2xl text-gray-800 w-full text-center">Time<span class="text-[#FABB18]">Manager</span></h1>
       </div>
       <nav class="flex-1">
-        <ul class="space-y-2 p-4">
+        <ul :class="`space-y-2 ${isOpen ? 'p-8' : 'p-2'}`">
           <li>
             <AppNavLink to="/" label="Tableau de bord" :active="route.path === '/'" :isOpen="isOpen">
               <svg width="23" height="23" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -67,7 +55,7 @@
             </AppNavLink>
           </li>
           <li v-if="true === true">
-            <AppNavLink to="/teams" label="Gérer mes équipes" :active="route.path.includes('/teams')" :isOpen="isOpen">
+            <AppNavLink to="/teams" label="Mes équipes" :active="route.path.includes('/teams')" :isOpen="isOpen">
               <svg :fill="route.path.includes('/teams') ? '#FABB18' : 'black'" height="23" width="23" version="1.1"
                 id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                 viewBox="0 0 512 512" xml:space="preserve">
@@ -93,7 +81,7 @@
             </AppNavLink>
           </li>
           <li v-if="true === true">
-            <AppNavLink to="/users" label="Gérer mes employées" :active="route.path.includes('/users')"
+            <AppNavLink to="/users" label="Mes employées" :active="route.path.includes('/users')"
               :isOpen="isOpen">
               <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="23" height="23" viewBox="0 0 48 48">
                 <path :fill="route.path.includes('/users') ? '#FABB18' : 'black'"

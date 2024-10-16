@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col ml-6 mr-6">
+  <div class="flex flex-col ml-6 mr-6 mt-10">
     <div class="flex justify-between mb-10 mt-6">
       <todayDate/>
       <ClockManager :userId="1"/>

@@ -1,22 +1,11 @@
 <template>
-  <div class="flex flex-col items-start bg-white rounded-lg p-4 shadow-md w-64">
-    <div class="flex items-center justify-between w-full">
-        <span class="text-black text-lg font-medium">Heure supplémentaires cette semaine</span>
-    </div>
-    <div class="flex items-center justify-between mt-4 w-full">
-      <div class="text-black text-2xl font-semibold">
-        {{ formattedExtraTime }}
-      </div>
-      <div class="p-2 flex items-center justify-center rounded-md bg-amber-50 size-24">
-        <img src="@/assets/clock.svg" alt="clock" class="h-12 w-12"/>
-      </div>
-    </div>
-  </div>
+  <dashboardCard :title="'Heure supplémentaires'" :subTitle="'cette semaine'" :formattedExtraTime="formattedExtraTime" />
 </template>
 
 
 <script>
 import { readWorkingTimes } from '@/src/utils/api/workingtime.ts'
+import dashboardCard from './cards/dashboardCard.vue';
 
 export default {
   data() {
@@ -81,6 +70,9 @@ export default {
   },
   mounted() {
     this.recupExtraHour();
+  },
+  components: {
+    dashboardCard
   }
 };
 </script>
