@@ -70,6 +70,20 @@ export const useUsers = () => {
         }
     }
 
+    const updateUserRole = async (userId: string, roleId: string) => {
+        try {
+            const response = await userApi.updateUserRole(userId, roleId);
+            if (response?.status !== 200) {
+                throw new Error('Problem with server');
+            }
+            if (response && response.data && response.data.data) {
+                return response.data.data;
+            }
+        } catch (err) {
+            throw new Error('Échec de la mise à jour du rôle de l\'utilisateur');
+        }
+    }
+
     const deleteUser = async (userId: string) => {
         try {
             await userApi.deleteUser(userId);
@@ -84,6 +98,7 @@ export const useUsers = () => {
         getUser,
         createUser,
         updateUser,
+        updateUserRole,
         deleteUser
     };
 }

@@ -6,79 +6,80 @@
                 <span class="text-xs text-gray-500">Consulter les comptes des utilisateurs enregistrés</span>
             </v-col>
         </v-row>
-        <v-card class="overflow-y-hidden rounded-lg border flex place-content-between text-center">
-            <v-card-text class="overflow-x-auto">
-                <v-simple-table>
-                    <thead>
-                        <tr class="bg-blue-600 text-left text-xs font-semibold uppercase tracking-widest text-white">
-                            <th class="px-5 py-3">ID</th>
-                            <th class="px-5 py-3">Nom d'utilisateur</th>
-                            <th class="px-5 py-3">Role</th>
-                            <th class="px-5 pl-6.5 pr-6.5">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-500">
-                        <tr v-for="user in paginatedUsers" :key="user.id">
-                            <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                                <p class="whitespace-no-wrap">{{ user.id }}</p>
-                            </td>
-                            <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                                <div class="flex items-center">
-                                    <v-avatar class="h-10 w-10 flex-shrink-0">
-                                        <img src="@/assets/batman-head.png" alt="User Avatar" class="w-10 h-10 rounded-full"/>
-                                    </v-avatar>
-                                    <div class="ml-3">
-                                        <p class="whitespace-no-wrap">{{ user.username }}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                                <p class="whitespace-no-wrap">{{ user.role }}</p>
-                            </td>
-                            <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                                <v-icon @click="confirmDelete(user.id)" class="cursor-pointer hover:text-red-600">mdi-delete</v-icon>
-                            </td>
-                            <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                                <v-icon @click="editRole(user)" class="cursor-pointer hover:text-blue-600">mdi-pencil</v-icon>
-                            </td>
-                        </tr>
-                    </tbody>
-                </v-simple-table>
-            </v-card-text>
-            <v-card-actions class="flex flex-col items-center border-t bg-white px-5 py-5 sm:flex-row sm:justify-between">
-                <span class="text-xs text-gray-600 sm:text-sm"> Affichage {{ (currentPage - 1) * itemsPerPage + 1 }} à {{ Math.min(currentPage * itemsPerPage, users.length) }} sur {{ users.length }} entrées </span>
-                <div class="mt-2 inline-flex sm:mt-0">
-                    <v-btn @click="prevPage" :disabled="currentPage === 1" class="mr-2 h-12 w-12 rounded-full border text-sm font-semibold text-gray-600 transition duration-150 hover:bg-gray-100">Préc</v-btn>
-                    <v-btn @click="nextPage" :disabled="currentPage >= totalPages" class="h-12 w-12 rounded-full border text-sm font-semibold text-gray-600 transition duration-150 hover:bg-gray-100">Suiv</v-btn>
-                </div>
-            </v-card-actions>
-        </v-card>
 
-        <v-dialog v-model="deleteDialog" max-width="400">
+        <v-row justify="start">
+        <v-col cols="12">
+            <v-card class="transparent-card">
+            <v-card-title class="d-flex justify-space-between align-center">
+                <v-text-field v-model="search" class="search-bar" append-icon="mdi-magnify" label="Search"
+                single-line hide-details aria-label="Search users"></v-text-field>
+            </v-card-title>
+            <v-data-table :headers="headers" :items="users" :search="search" item-key="id"
+                class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage" items-per-page-text="Éléments par page"
+                :footer-props="customFooterProps" :items-per-page-options="options.itemsPerPageOptions" aria-label="User accounts table">
+                
+                <template v-slot:item.id="{ item }">
+                    <span aria-label="User ID">{{ item.id }}</span>
+                </template>
+                
+                <template v-slot:item.username="{ item }">
+                <div class="flex items-center">
+                    <v-avatar class="h-10 w-10 flex-shrink-0">
+                    <img src="@/assets/batman-head.png" alt="User Avatar" class="w-10 h-10 rounded-full" />
+                    </v-avatar>
+                    <div class="ml-3">
+                    <p class="whitespace-no-wrap" aria-label="Username">{{ item.username }}</p>
+                    </div>
+                </div>
+                </template>
+
+                <template v-slot:item.role="{ item }">
+                    <span aria-label="User role">{{ item.role.name }}</span>
+                </template>
+                
+                <template v-slot:item.action="{ item }">
+                <v-row class="d-flex align-center flex-row no-gutters">
+                    <v-btn icon size="small" class="mr-2" @click="editRole(item)" aria-label="Edit role">
+                        <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-btn icon size="small" class="mr-2" @click="confirmDelete(item.id)" aria-label="Delete user">
+                        <v-icon>mdi-trash-can</v-icon>
+                    </v-btn>
+                </v-row>
+                </template>
+            </v-data-table>
+            </v-card>
+        </v-col>
+        </v-row>
+
+        <!-- Confirmation dialog -->
+        <v-dialog v-model="deleteDialog" max-width="400" aria-label="Delete confirmation dialog">
             <v-card>
                 <v-card-title class="text-h5">Confirmer la suppression</v-card-title>
                 <v-card-text>Es-tu sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.</v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-grey" text @click="deleteDialog = false">Annuler</v-btn>
-                    <v-btn color="red" text @click="deleteSelectedUser(selectedUserId)">Supprimer</v-btn>
+                    <v-btn color="blue-grey" text @click="deleteDialog = false" aria-label="Cancel delete">Annuler</v-btn>
+                    <v-btn color="red" text @click="deleteSelectedUser(selectedUserId)" aria-label="Confirm delete">Supprimer</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
-
-        <v-dialog v-model="editDialog" max-width="400">
+        
+        <!-- Edit dialog -->
+        <v-dialog v-model="editDialog" max-width="400" aria-label="Edit role dialog">
             <v-card>
                 <v-card-title class="text-h5">Modifier le rôle</v-card-title>
                 <v-card-text>
-                    <v-select v-model="selectedUserRole" :items="roles" label="Rôle"></v-select>
+                    <v-select v-model="selectedUserRole" :items="roles" label="Rôle" aria-label="Select user role"></v-select>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-grey" text @click="editDialog = false">Annuler</v-btn>
-                    <v-btn color="blue" text @click="updateUserRole">Enregistrer</v-btn>
+                    <v-btn color="blue-grey" text @click="editDialog = false" aria-label="Cancel edit">Annuler</v-btn>
+                    <v-btn color="blue" text @click="updateUserRole" aria-label="Save role">Enregistrer</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        
     </v-container>
 </template>
 
@@ -86,21 +87,30 @@
 //utils
 import useUsers from '~/src/utils/user/user';
 
-const { getUsers, deleteUser, updateUser } = useUsers();
+const { getUsers, deleteUser, updateUserRole } = useUsers();
 
 export default {
     name: 'userList',
     data() {
         return {
+            headers: [
+                { title: 'ID', text: 'ID', sortable: true, value: 'id' },
+                { title: 'Nom d\'utilisateur', text: 'Nom d\'utilisateur', sortable: true, value: 'username' },
+                { title: 'Rôle', text: 'Role', sortable: true, value: 'role.name' },
+                { title: 'Actions', text: 'Actions', sortable: false , value: 'action'}
+            ],
+            search: '',
             error: null,
             loading: true,
             users: [],
-            userRoles: null,
             deleteDialog: false,
             editDialog: false,
             selectedUser: null,
+            selectedUserRole: null,
             currentPage: 1,
-            itemsPerPage: 10,
+            options: {
+                itemsPerPageOptions: [5, 10, 25, 50]
+            },
             roles: ['Employee', 'Manager', 'Admin'] 
         };
     },
@@ -108,11 +118,6 @@ export default {
         totalPages() {
             return Math.ceil(this.users.length / this.itemsPerPage);
         },
-        paginatedUsers() {
-            const start = (this.currentPage - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.users.slice(start, end);
-        }
     },
     mounted() {
         this.fetchUserData();
@@ -141,12 +146,26 @@ export default {
             }
         },
         editRole(user) {
-            this.selectedUser = user
+            this.selectedUser = user;
             this.editDialog = true;
+            console.log(user);
+        },
+        formatUserRole(selectedUserRole) {
+            switch (selectedUserRole) {
+            case 'Employee':
+                return 3;
+            case 'Manager':
+                return 2;
+            case 'Admin':
+                return 1;
+            default:
+                return 3;
+            }
         },
         async updateUserRole() {
             try {
-                await updateUser(this.selectedUser.id,this.selectedUser.username, this.username.email); //TODO: add , this.selectedUserRole when role is in db 
+                const roleID = this.formatUserRole(this.selectedUserRole);
+                await updateUserRole(this.selectedUser.id, roleID);
                 this.editDialog = false;
                 this.fetchUserData();
             } catch (error) {
@@ -166,3 +185,15 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+
+
+:deep(.v-data-table) thead {
+    background-color: #FFC107 !important;
+}
+.v-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+</style>
