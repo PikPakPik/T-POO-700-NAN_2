@@ -159,6 +159,14 @@
           <v-alert closable border="start" variant="tonal" class="p-4" title="Batman est en ville !"
             icon="custom:BatmanIcon" type="error" />
         </div>
+        <div class="p-4" v-if="overtime">
+          <v-alert closable border="start" variant="tonal" class="p-4" title="N'oubliez pas de pointer à votre départ."
+             type="warning" />
+        </div>
+        <div class="p-4" v-if="showAlert">
+          <v-alert closable border="start" variant="tonal" class="p-4" title="N'oubliez pas de pointer à votre arrivé."
+             type="warning" />
+        </div>
         <slot />
       </main>
     </div>
@@ -178,11 +186,20 @@ import {
 import AppNavLink from '@/src/components/AppNavLink.vue'
 import batmanSong from '@/assets/sounds/batman_transition.ogg'
 import { useHeaderFacadeStore } from '@/stores/headerFacadeStore'
+import { useChronoStore } from '@/stores/chronoStore'
 
 const headerStore = useHeaderFacadeStore()
+const chronoStore = useChronoStore()
 const isOpen = ref(true)
 const route = useRoute()
 const isUserMenuOpen = ref(false)
+const overtime = ref(false);
+const chrono = computed(() => chronoStore.timeElapsed);
+const isPlaying = computed(() => chronoStore.isPlaying);
+const sevenHourInSecond = 25200
+const simulatedLoginTime = new Date(new Date().getTime() - (9 * 60000 + 50 * 1000));
+const alertThreshold = 10 * 60000;
+const showAlert =  ref(false)
 
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value
@@ -212,12 +229,40 @@ setTimeout(() => {
   playSound()
 }, randomTime);
 
+watch(
+  [chrono, isPlaying],
+  ([chronoVal, isPlayingVal]) => {
+
+    if (chronoVal >= sevenHourInSecond && isPlayingVal) {
+      overtime.value = true;
+    } else {
+      overtime.value = false;
+    }
+  },
+  { immediate: true }
+);
+
+const checkLoginTime = () => {
+  const currentTime = new Date();
+  const timeElapsed = currentTime - simulatedLoginTime;
+  if(chrono.value == 0 && timeElapsed >= alertThreshold){
+    showAlert.value = true;
+  }else{
+    showAlert.value = false;
+  }
+  
+};
+
+let timer;
 
 onMounted(() => {
+  checkLoginTime();
+  timer = setInterval(checkLoginTime, 30000);
   document.addEventListener('click', closeUserMenu)
 })
 
 onUnmounted(() => {
+  clearInterval(timer);
   document.removeEventListener('click', closeUserMenu)
 })
 </script>

@@ -6,7 +6,7 @@
         @click="togglePlay" 
         class="bg-amber-400 p-3 flex items-center justify-center rounded-md"
       >
-        <img v-if="!isPlaying" src="@/assets/bouton-jouer.png" alt="Play Icon" class="h-6 w-6" />
+        <img v-if="!chronoStore.isPlaying" src="@/assets/bouton-jouer.png" alt="Play Icon" class="h-6 w-6" />
         <img v-else src="@/assets/bouton-pause.png" alt="Pause Icon" class="h-6 w-6" />
       </button>
     </div>
@@ -19,6 +19,7 @@
 
 <script>
 import ClockApi from '~/src/utils/api/clock';
+import { useChronoStore } from '@/stores/chronoStore';
 
 export default {
   props: {
@@ -32,28 +33,30 @@ export default {
       startDateTime: null,
       endDateTime: null,
       clockApiService: new ClockApi(),
-      isPlaying: false,
       hasStarted: false,
-      timeElapsed: 0,
       timer: null,
+      isPlaying: false,
       isDisabled: false,
     };
   },
   computed: {
+    chronoStore() {
+      return useChronoStore();
+    },
     formattedTime() {
-      const hours = Math.floor(this.timeElapsed / 3600);
-      const minutes = Math.floor((this.timeElapsed % 3600) / 60);
-      const seconds = this.timeElapsed % 60;
+      const hours = Math.floor(this.chronoStore.getTimeElapsed / 3600);
+      const minutes = Math.floor((this.chronoStore.getTimeElapsed % 3600) / 60);
+      const seconds = this.chronoStore.getTimeElapsed % 60;
       return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
   },
   methods: {
     async togglePlay() {
-      if (this.isPlaying) {
+      if (this.chronoStore.getIsPlaying) {
         
         clearInterval(this.timer);
         this.timer = null;
-        this.isPlaying = false;
+        this.chronoStore.updateIsPlaying(false);
         this.saveToLocalStorage();
         await this.submitWork();  
 
@@ -64,10 +67,11 @@ export default {
         }
         await this.startWorking();  
         this.timer = setInterval(() => {
-          this.timeElapsed++;
+          const updatedTime = this.chronoStore.getTimeElapsed + 1;
+          this.chronoStore.updateTimeElapsed(updatedTime);
           this.saveToLocalStorage();
         }, 1000);
-        this.isPlaying = true;
+        this.chronoStore.updateIsPlaying(true);
         this.saveToLocalStorage();
       }
     },
@@ -92,7 +96,7 @@ export default {
       const now = new Date();
       this.endDateTime = now.toISOString();
       clearInterval(this.timer);
-      this.isPlaying = false;
+      this.chronoStore.updateIsPlaying(false);
       try {
         const response = await this.clockApiService.endWorking(this.userId, this.endDateTime);
       } catch (error) {
@@ -102,8 +106,8 @@ export default {
 
     saveToLocalStorage() {
       const data = {
-        timeElapsed: this.timeElapsed,
-        isPlaying: this.isPlaying,
+        timeElapsed: this.chronoStore.getTimeElapsed,
+        isPlaying : this.chronoStore.getIsPlaying,
         hasStarted: this.hasStarted,
         startDateTime: this.startDateTime,
       };
@@ -114,23 +118,23 @@ export default {
       const savedData = localStorage.getItem('clockData');
       if (savedData) {
         const parsedData = JSON.parse(savedData);
-        this.timeElapsed = parsedData.timeElapsed;
-        this.isPlaying = parsedData.isPlaying;
+        this.chronoStore.updateTimeElapsed(parsedData.timeElapsed);
+        this.chronoStore.updateIsPlaying(parsedData.isPlaying);
         this.hasStarted = parsedData.hasStarted;
         this.startDateTime = parsedData.startDateTime;
 
-        if (this.isPlaying) {
+        if (this.chronoStore.getIsPlaying) {
           this.timer = setInterval(() => {
-            this.timeElapsed++;
+            const updatedTime = this.chronoStore.getTimeElapsed + 1;
+            this.chronoStore.updateTimeElapsed(updatedTime);
             this.saveToLocalStorage();
           }, 1000);
         }
       }
     },
-
     clearLocalStorage() {
       localStorage.removeItem('clockData');
-    }
+    },
   },
 
   mounted() {
