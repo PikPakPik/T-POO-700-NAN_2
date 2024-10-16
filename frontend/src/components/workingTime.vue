@@ -1,44 +1,36 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="12" md="8">
-        <v-card>
-          <v-card-title>
-            <h1 class="text-h5">Working Time</h1>
-          </v-card-title>
-          <v-card-subtitle>
-            <v-alert v-if="error" type="error" class="mt-4">
-              {{ error }}
-            </v-alert>
-            <v-alert v-if="message" type="success" class="mt-4">
-              {{ message }}
-            </v-alert>
-          </v-card-subtitle>
-          <v-card-text>
-            <v-form ref="form">
-              <v-row>
-                <v-col cols="12" md="6">
-                  <v-text-field label="Select Date start" type="datetime-local" v-model="startDate"
-                    :value="formatDateTime(startDate)"></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field label="Select Date end" type="datetime-local" v-model="endDate"
-                    :value="formatDateTime(endDate)"></v-text-field>
-                </v-col>
-              </v-row>
-              <v-row justify="center">
-                <v-btn v-if="!workingTimeID" @click="createWorkingTime" color="primary" class="mr-2">Ajouter</v-btn>
-                <div v-else>
-                  <v-btn @click="updateWorkingTime" color="warning" class="mr-2">Modifier</v-btn>
-                  <v-btn @click="deleteWorkingTime" color="error">Supprimer</v-btn>
-                </div>
-              </v-row>
-            </v-form>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-card class="mx-auto my-12" max-width="600">
+    <v-toolbar flat class="custom-toolbar">
+      <v-toolbar-title v-if="workingTimeID > 0" class="white--text">Modifier le Working Time</v-toolbar-title>
+      <v-toolbar-title v-else class="white--text">Ajouter un Working Time</v-toolbar-title>
+      <v-btn icon @click="$emit('close')">
+        <v-icon class="white--text">mdi-close</v-icon>
+      </v-btn>
+    </v-toolbar>
+    <v-divider></v-divider>
+    <v-card-text>
+      <!-- Updating form working time -->
+      <v-form ref="form">
+        <v-row>
+          <v-col cols="12" md="6">
+            <v-text-field label="Date de début" type="datetime-local" v-model="startDate"
+              :value="formatDateTime(startDate)" outlined></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field label="Date de fin" type="datetime-local" v-model="endDate" :value="formatDateTime(endDate)"
+              outlined></v-text-field>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-card-text>
+    <v-divider></v-divider>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="blue darken-1" text @click="save">
+        <v-icon left>mdi-content-save</v-icon> Enregistrer
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
@@ -81,31 +73,33 @@ export default {
       const pad = (n) => (n < 10 ? '0' + n : n);
       return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
     },
+    save() {
+      if (this.workingTimeID) {
+        this.updateWorkingTime();
+      } else {
+        this.createWorkingTime();
+      }
+    },
     createWorkingTime() {
       createWorkingTime(this.endDate, this.startDate, this.userID)
         .then(response => {
-          this.message = 'Working time ajouté';
+          this.$emit('created', 'Working time ajouté');
         })
         .catch(error => {
-          this.error = 'Erreur : impossible de créer le working time';
+          this.$emit('error', 'Erreur : impossible de créer le working time');
+        }).finally(() => {
+          this.$emit('close');
         });
     },
     updateWorkingTime() {
       updateWorkingTime(this.workingTimeID, this.endDate, this.startDate, this.userID)
         .then(response => {
-          this.message = 'Working time modifié';
+          this.$emit('updated', 'Working time modifié');
         })
         .catch(error => {
-          this.error = 'Erreur : impossible de modifier le working time';
-        });
-    },
-    deleteWorkingTime() {
-      deleteWorkingTime(this.workingTimeID)
-        .then(response => {
-          this.message = 'Working time supprimé';
-        })
-        .catch(error => {
-          this.error = 'Erreur : impossible de supprimer le working time';
+          this.$emit('error', 'Erreur : impossible de modifier le working time');
+        }).finally(() => {
+          this.$emit('close');
         });
     },
     getWorkingTime() {
@@ -124,22 +118,20 @@ export default {
 </script>
 
 <style scoped>
-.v-card-title {
-  display: flex;
-  justify-content: center;
+.v-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.v-card-subtitle {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
+.custom-toolbar {
+  background-color: #FFC107;
+  /* Amber color */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  border-radius: inherit;
 }
 
-.v-card-text {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
+.v-card-actions {
+  justify-content: flex-end;
 }
 </style>
