@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import WorkingTime from './WorkingTime.vue';
+import WorkingTime from '@/src/components/workingTime.vue';
 import { readWorkingTimes, deleteWorkingTime } from '@/src/utils/api/workingtime.ts'
 
 export default {
