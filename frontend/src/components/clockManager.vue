@@ -1,17 +1,19 @@
 <template>
-  <div class="flex flex-col items-start bg-white shadow-md rounded-lg p-4">
+  <div class="flex flex-col items-start bg-white shadow-md rounded-lg p-4 index-intro" data-title="Pointeur"
+    data-intro="Voici votre pointeur">
     <div class="flex items-center space-x-4">
       <span class="text-black text-lg font-medium">Démarrer le pointage</span>
-      <button 
-        @click="togglePlay" 
-        class="bg-amber-400 p-3 flex items-center justify-center rounded-md"
-      >
+      <button @click="togglePlay" class="bg-amber-400 p-3 flex items-center justify-center rounded-md index-intro"
+        data-title="Bouton on/off"
+        data-intro="Bouton pour déclancher le pointage au premier click et l'arrêter au second click.">
+        >
         <img v-if="!isPlaying" src="@/assets/bouton-jouer.png" alt="Play Icon" class="h-6 w-6" />
         <img v-else src="@/assets/bouton-pause.png" alt="Pause Icon" class="h-6 w-6" />
       </button>
     </div>
 
-    <div v-if="hasStarted" class="mt-3 text-black text-lg font-medium text-2xl">
+    <div v-if="hasStarted" class="mt-3 text-black text-lg font-medium text-2xl index-intro" data-title="Minuteur"
+      data-intro="Le temps depuis quand vous avez déclanché le pointeur">
       {{ formattedTime }}
     </div>
   </div>
@@ -50,19 +52,19 @@ export default {
   methods: {
     async togglePlay() {
       if (this.isPlaying) {
-        
+
         clearInterval(this.timer);
         this.timer = null;
         this.isPlaying = false;
         this.saveToLocalStorage();
-        await this.submitWork();  
+        await this.submitWork();
 
       } else {
-        
+
         if (!this.hasStarted) {
           this.hasStarted = true;
         }
-        await this.startWorking();  
+        await this.startWorking();
         this.timer = setInterval(() => {
           this.timeElapsed++;
           this.saveToLocalStorage();

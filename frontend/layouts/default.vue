@@ -5,16 +5,8 @@
       <div class="flex items-center justify-between p-4">
         <h1 v-if="isOpen" class="text-xl font-bold text-gray-800">TimeManager</h1>
         <button @click="toggleSidebar" class="p-1 rounded-full hover:bg-gray-200">
-          <v-icon
-        icon="mdi-chevron-left"
-        v-if="isOpen"
-        end
-      ></v-icon>
-      <v-icon
-        icon="mdi-chevron-right"
-        end
-        v-else
-      ></v-icon>
+          <v-icon icon="mdi-chevron-left" v-if="isOpen" end></v-icon>
+          <v-icon icon="mdi-chevron-right" end v-else></v-icon>
         </button>
       </div>
       <nav class="flex-1">
@@ -45,7 +37,7 @@
           </li>
           <li>
             <AppNavLink to="/workingTimes/6" label="Historique" :active="route.path === '/workingTimes/6'"
-              :isOpen="isOpen">
+              :isOpen="isOpen" name="workingTimes">
               <svg width="23" height="23" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
                   d="M12.2145 9.21165C12.2345 8.95115 12.4517 8.75 12.713 8.75H12.9642C13.221 8.75 13.4361 8.94465 13.4617 9.20025L14 14.5833L17.8314 16.7727C17.9872 16.8617 18.0833 17.0274 18.0833 17.2068V17.4287C18.0833 17.7584 17.7698 17.9978 17.4518 17.9111L12.0653 16.4421C11.8339 16.379 11.68 16.1605 11.6984 15.9213L12.2145 9.21165Z"
@@ -119,9 +111,14 @@
             </h2>
           </div>
           <div class="flex items-center space-x-4">
+            <v-btn icon class="mr-2 yellow" @click="startIntro">
+              <v-icon>mdi-help-circle</v-icon>
+            </v-btn>
             <div class="relative">
               <button @click="toggleUserMenu"
-                class="flex items-center space-x-2 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out">
+                class="flex items-center space-x-2 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out index-intro"
+                data-title="Espace utilisateur"
+                data-intro="Vous pourrez y retrouver votre profil et le bouton de déconnexion">
                 <div class="flex flex-col items-end">
                   <span class="text-sm font-medium text-gray-700">Bruce Wayne</span>
                   <!-- il faudra changer le nom pour qu'il soit dynamique avec le token / store-->
@@ -178,11 +175,14 @@ import {
 import AppNavLink from '@/src/components/AppNavLink.vue'
 import batmanSong from '@/assets/sounds/batman_transition.ogg'
 import { useHeaderFacadeStore } from '@/stores/headerFacadeStore'
+import introJs from 'intro.js';
+import 'intro.js/introjs.css';
 
 const headerStore = useHeaderFacadeStore()
 const isOpen = ref(true)
 const route = useRoute()
 const isUserMenuOpen = ref(false)
+const currentPage = ref(route.name);
 
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value
@@ -220,4 +220,26 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', closeUserMenu)
 })
+
+// Use for training application with introJs
+const startIntro = () => {
+  const elements = document.querySelectorAll(`.${currentPage.value}-intro`);
+  introJs().setOptions({
+    steps: [...elements].map((element) => ({
+      element: element,
+      intro: element.getAttribute('data-intro'),
+      title: element.getAttribute('data-title'),
+    })),
+  }).start();
+};
+// Watch for route changes to update currentPage
+watch(route, (newRoute) => {
+  currentPage.value = newRoute.name; // Assumes route names are set to match the page identifiers
+});
 </script>
+
+<style>
+.yellow {
+  color: #FFC107;
+}
+</style>

@@ -1,14 +1,15 @@
 <template>
-  <div class="flex flex-col items-start bg-white rounded-lg p-4 shadow-md w-64">
+  <div class="flex flex-col items-start bg-white rounded-lg p-4 shadow-md w-64 index-intro"
+    data-title="Horloge heures supplémentaires" data-intro="Voici vos heures supplémentaires de la semaine">
     <div class="flex items-center justify-between w-full">
-        <span class="text-black text-lg font-medium">Heure supplémentaires cette semaine</span>
+      <span class="text-black text-lg font-medium">Heure supplémentaires cette semaine</span>
     </div>
     <div class="flex items-center justify-between mt-4 w-full">
       <div class="text-black text-2xl font-semibold">
         {{ formattedExtraTime }}
       </div>
       <div class="p-2 flex items-center justify-center rounded-md bg-amber-50 size-24">
-        <img src="@/assets/clock.svg" alt="clock" class="h-12 w-12"/>
+        <img src="@/assets/clock.svg" alt="clock" class="h-12 w-12" />
       </div>
     </div>
   </div>
@@ -21,8 +22,8 @@ import { readWorkingTimes } from '@/src/utils/api/workingtime.ts'
 export default {
   data() {
     return {
-      workingTimes: [], 
-      extraSeconds: 0,  
+      workingTimes: [],
+      extraSeconds: 0,
     };
   },
   computed: {
@@ -47,35 +48,35 @@ export default {
       }
     },
     calculateExtraHours() {
-        let totalExtraSeconds = 0;
-        const workByDay = {};
-        
-        this.workingTimes.forEach(workingTime => {
-            const startTime = new Date(workingTime.start);
-            const endTime = new Date(workingTime.end);
+      let totalExtraSeconds = 0;
+      const workByDay = {};
 
-            const dayKey = startTime.toISOString().split('T')[0];
-            const secondsWorked = (endTime - startTime) / 1000;
+      this.workingTimes.forEach(workingTime => {
+        const startTime = new Date(workingTime.start);
+        const endTime = new Date(workingTime.end);
 
-            
-            if (!workByDay[dayKey]) {
-            workByDay[dayKey] = 0;  
-            }
-            workByDay[dayKey] += secondsWorked;  
-        });
+        const dayKey = startTime.toISOString().split('T')[0];
+        const secondsWorked = (endTime - startTime) / 1000;
 
-        
-        Object.keys(workByDay).forEach(dayKey => {
-            const secondsWorkedInDay = workByDay[dayKey];
-            const sevenHoursInSeconds = 7 * 3600;
 
-            
-            if (secondsWorkedInDay > sevenHoursInSeconds) {
-                totalExtraSeconds += secondsWorkedInDay - sevenHoursInSeconds;
-            }
-        });
+        if (!workByDay[dayKey]) {
+          workByDay[dayKey] = 0;
+        }
+        workByDay[dayKey] += secondsWorked;
+      });
 
-        this.extraSeconds = totalExtraSeconds;
+
+      Object.keys(workByDay).forEach(dayKey => {
+        const secondsWorkedInDay = workByDay[dayKey];
+        const sevenHoursInSeconds = 7 * 3600;
+
+
+        if (secondsWorkedInDay > sevenHoursInSeconds) {
+          totalExtraSeconds += secondsWorkedInDay - sevenHoursInSeconds;
+        }
+      });
+
+      this.extraSeconds = totalExtraSeconds;
     }
 
   },
