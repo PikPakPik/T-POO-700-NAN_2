@@ -2,7 +2,7 @@
   <RouterLink
     :to="to"
     activeClass="active"
-    :class="`flex items-center space-x-2 p-2 rounded-lg ${
+    :class="`flex items-center space-x-2 p-3 rounded-lg ${
       active ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-200'
     } ${!isOpen ? 'justify-center' : ''}`"
   >
@@ -12,7 +12,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 const props = defineProps({
