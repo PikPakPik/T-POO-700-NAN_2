@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2 index-intro" data-title="Date du jour" data-intro="Voici la date du jour">
     <h1 class="text-4xl">
       Aujourd'hui
     </h1>
@@ -24,9 +24,9 @@ export default {
     updateDateTime() {
       const now = new Date();
       const options = {
-        weekday: 'short',    
-        day: '2-digit',      
-        month: 'long',       
+        weekday: 'short',
+        day: '2-digit',
+        month: 'long',
       };
       let formattedDate = now.toLocaleDateString('fr-FR', options);
       let formattedTime = now.toLocaleTimeString('fr-FR', {

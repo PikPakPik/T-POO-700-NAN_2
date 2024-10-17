@@ -10,22 +10,33 @@
                         {{ message }}
                     </v-alert>
                     <v-card-title class="d-flex justify-space-between align-center">
-                        <v-text-field v-model="search" variant="solo-filled" class="search-bar"
-                            append-icon="mdi-magnify" label="Recherche" single-line hide-details></v-text-field>
-                        <v-btn icon class="mr-2 yellow" @click="openCreateDialog()">
+                        <v-text-field v-model="search" variant="solo-filled"
+                            class="search-bar workingTimes-userID-intro" append-icon="mdi-magnify" label="Recherche"
+                            single-line hide-details
+                            data-intro="Utilisez cette barre de recherche pour trouver des éléments."
+                            data-title="Barre de recherche"></v-text-field>
+                        <v-btn icon class="mr-2 yellow workingTimes-userID-intro" @click="openCreateDialog()"
+                            data-intro="Cliquez ici pour ajouter un nouvel élément." data-title="Ajouter un élément">
                             <v-icon>mdi-plus</v-icon>
                         </v-btn>
                     </v-card-title>
                     <v-data-table :headers="headers" :items="workingTimes" :search="search" item-key="id"
-                        class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page="page"
-                        :items-per-page-text="itemsPerPageText" :no-data-text="noDataText" :page-text="pageText"
-                        :items-per-page-options="itemsPerPageOptions">
-                        <template v-slot:item.action="{ item }">
+                        class="elevation-1 custom-data-table workingTimes-userID-intro" :items-per-page="itemsPerPage"
+                        :page="page" :items-per-page-text="itemsPerPageText" :no-data-text="noDataText"
+                        :page-text="pageText" :items-per-page-options="itemsPerPageOptions"
+                        data-intro="Voici la table des données." data-title="Liste working times">
+                        <template v-slot:item.action="{ item, index }">
                             <v-row class="d-flex align-center flex-row no-gutters">
-                                <v-btn icon size="small" class="mr-2" @click="openEditDialog(item)">
+                                <v-btn icon size="small"
+                                    :class="{ 'workingTimes-userID-intro': index === 0, 'mr-2': index >= 0 }"
+                                    @click="openEditDialog(item)" data-intro="Cliquez ici pour éditer cet élément."
+                                    data-title="Modifier working times">
                                     <v-icon>mdi-pencil</v-icon>
                                 </v-btn>
-                                <v-btn icon size="small" class="mr-2" @click="confirmDelete(item)">
+                                <v-btn icon size="small"
+                                    :class="{ 'workingTimes-userID-intro': index === 0, 'mr-2': index >= 0 }"
+                                    @click="confirmDelete(item)" data-intro="Cliquez ici pour supprimer cet élément."
+                                    data-title="Supprimer working times">
                                     <v-icon>mdi-trash-can</v-icon>
                                 </v-btn>
                             </v-row>
@@ -99,7 +110,6 @@ export default {
             itemsPerPage: 10,
             itemsPerPageOptions: [10, 20, 30, { title: 'Tous', value: -1 }],
             itemsPerPageText: 'Élément par page',
-            pageText: this.pageText,
             noDataText: 'Aucun élément trouvé',
 
         }
@@ -284,10 +294,6 @@ export default {
 </script>
 
 <style scoped>
-.yellow {
-    color: #FFC107;
-}
-
 .search-bar {
     max-width: 400px;
 }

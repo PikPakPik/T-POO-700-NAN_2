@@ -1,5 +1,6 @@
 <template>
-  <dashboardCard :title="'Temps travaillé'" :subTitle="'cette semaine'" :formattedExtraTime="formattedExtraTime" :icon="clock" />
+  <dashboardCard :title="'Temps travaillé'" :subTitle="'cette semaine'" :formattedExtraTime="formattedExtraTime"
+    :icon="clock" data-title="Horloge temps travaillé" data-intro="Temps travaillé cette semaine." />
 </template>
 
 <script>
@@ -10,8 +11,8 @@ import clock from '@/assets/clock.svg';
 export default {
   data() {
     return {
-      workingTimes: [], 
-      extraSeconds: 0,  
+      workingTimes: [],
+      extraSeconds: 0,
     };
   },
   computed: {
@@ -36,30 +37,30 @@ export default {
       }
     },
     calculateWeekHours() {
-        let totalSeconds = 0;
-        const workByDay = {};
-        
-        this.workingTimes.forEach(workingTime => {
-            const startTime = new Date(workingTime.start);
-            const endTime = new Date(workingTime.end);
+      let totalSeconds = 0;
+      const workByDay = {};
 
-            const dayKey = startTime.toISOString().split('T')[0];
-            const secondsWorked = (endTime - startTime) / 1000;
+      this.workingTimes.forEach(workingTime => {
+        const startTime = new Date(workingTime.start);
+        const endTime = new Date(workingTime.end);
 
-            
-            if (!workByDay[dayKey]) {
-            workByDay[dayKey] = 0;  
-            }
-            workByDay[dayKey] += secondsWorked;  
-        });
+        const dayKey = startTime.toISOString().split('T')[0];
+        const secondsWorked = (endTime - startTime) / 1000;
 
-        
-        Object.keys(workByDay).forEach(dayKey => {
-            const secondsWorkedInDay = workByDay[dayKey];
-            totalSeconds += secondsWorkedInDay;
-        });
 
-        this.extraSeconds = totalSeconds;
+        if (!workByDay[dayKey]) {
+          workByDay[dayKey] = 0;
+        }
+        workByDay[dayKey] += secondsWorked;
+      });
+
+
+      Object.keys(workByDay).forEach(dayKey => {
+        const secondsWorkedInDay = workByDay[dayKey];
+        totalSeconds += secondsWorkedInDay;
+      });
+
+      this.extraSeconds = totalSeconds;
     }
 
   },

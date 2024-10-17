@@ -1,5 +1,6 @@
 <template>
-  <dashboardCard :title="'Heure supplémentaires'" :subTitle="'cette semaine'" :formattedExtraTime="formattedExtraTime" />
+  <dashboardCard :title="'Heure supplémentaires'" :subTitle="'cette semaine'" :formattedExtraTime="formattedExtraTime"
+    data-title="Horloge temps supplémentaires" data-intro="Heures supplémentaires acquis cette semaine." />
 </template>
 
 
@@ -10,8 +11,8 @@ import dashboardCard from './cards/dashboardCard.vue';
 export default {
   data() {
     return {
-      workingTimes: [], 
-      extraSeconds: 0,  
+      workingTimes: [],
+      extraSeconds: 0,
     };
   },
   computed: {
@@ -36,35 +37,35 @@ export default {
       }
     },
     calculateExtraHours() {
-        let totalExtraSeconds = 0;
-        const workByDay = {};
-        
-        this.workingTimes.forEach(workingTime => {
-            const startTime = new Date(workingTime.start);
-            const endTime = new Date(workingTime.end);
+      let totalExtraSeconds = 0;
+      const workByDay = {};
 
-            const dayKey = startTime.toISOString().split('T')[0];
-            const secondsWorked = (endTime - startTime) / 1000;
+      this.workingTimes.forEach(workingTime => {
+        const startTime = new Date(workingTime.start);
+        const endTime = new Date(workingTime.end);
 
-            
-            if (!workByDay[dayKey]) {
-            workByDay[dayKey] = 0;  
-            }
-            workByDay[dayKey] += secondsWorked;  
-        });
+        const dayKey = startTime.toISOString().split('T')[0];
+        const secondsWorked = (endTime - startTime) / 1000;
 
-        
-        Object.keys(workByDay).forEach(dayKey => {
-            const secondsWorkedInDay = workByDay[dayKey];
-            const sevenHoursInSeconds = 7 * 3600;
 
-            
-            if (secondsWorkedInDay > sevenHoursInSeconds) {
-                totalExtraSeconds += secondsWorkedInDay - sevenHoursInSeconds;
-            }
-        });
+        if (!workByDay[dayKey]) {
+          workByDay[dayKey] = 0;
+        }
+        workByDay[dayKey] += secondsWorked;
+      });
 
-        this.extraSeconds = totalExtraSeconds;
+
+      Object.keys(workByDay).forEach(dayKey => {
+        const secondsWorkedInDay = workByDay[dayKey];
+        const sevenHoursInSeconds = 7 * 3600;
+
+
+        if (secondsWorkedInDay > sevenHoursInSeconds) {
+          totalExtraSeconds += secondsWorkedInDay - sevenHoursInSeconds;
+        }
+      });
+
+      this.extraSeconds = totalExtraSeconds;
     }
 
   },
