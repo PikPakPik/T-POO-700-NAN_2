@@ -1,6 +1,6 @@
 <template>
   <div class=" bg-white shadow-md rounded-lg px-8 py-6 w-80 index-intro" data-title="Pointeur"
-    data-intro="Voici votre pointeur">>
+    data-intro="Voici votre pointeur">
     <div class="flex items-center justify-center gap-4">
       <div v-if="hasStarted" class="flex flex-col w-full text-center">
         <h3 class="text-black text-lg font-medium">

@@ -1,6 +1,6 @@
 <template>
-  <dashboardCard :title="'Heure supplémentaires'" :subTitle="'cette semaine'"
-    :formattedExtraTime="formattedExtraTime" />
+  <dashboardCard :title="'Heure supplémentaires'" :subTitle="'cette semaine'" :formattedExtraTime="formattedExtraTime"
+    data-title="Horloge temps supplémentaires" data-intro="Heures supplémentaires acquis cette semaine." />
 </template>
 
 
