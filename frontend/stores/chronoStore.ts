@@ -11,6 +11,10 @@ export const useChronoStore = defineStore('chrono', {
     },
     updateIsPlaying(value : boolean){
       this.isPlaying = value;
+    },
+    reset() {
+      this.timeElapsed = 0;
+      this.isPlaying = false;
     }
   },
   getters: {
