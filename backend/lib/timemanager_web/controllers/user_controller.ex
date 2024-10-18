@@ -7,10 +7,23 @@ defmodule TimeManagerWeb.UserController do
   alias TimeManager.Roles
   alias TimeManagerWeb.SwaggerDef
 
-  action_fallback TimeManagerWeb.FallbackController
+  action_fallback(TimeManagerWeb.FallbackController)
 
   def swagger_definitions do
     SwaggerDef.user_definitions()
+  end
+
+  def login(conn, %{"email" => email, "password" => password}) do
+    case Users.authenticate_user(email, password) do
+      {:ok, user} ->
+        {:ok, token, _claims} = Guardian.encode_and_sign(user)
+        json(conn, %{token: token})
+
+      {:error, _reason} ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "Invalid credentials"})
+    end
   end
 
   swagger_path(:index) do

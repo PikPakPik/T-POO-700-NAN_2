@@ -12,6 +12,11 @@ config :timemanager,
   ecto_repos: [TimeManager.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :timemanager, TimeManager.Guardian,
+  issuer: "timemanager",
+  # put the result of the mix command above here
+  secret_key: System.get_env("SECRET_KEY_BASE", "supersecret")
+
 config :cors_plug,
   origins: "*",
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -74,6 +79,7 @@ config :timemanager, :phoenix_swagger,
       endpoint: TimeManagerWeb.Endpoint
     ]
   }
+
 config :phoenix_swagger, json_library: Jason
 
 # Import environment specific config. This must remain at the bottom

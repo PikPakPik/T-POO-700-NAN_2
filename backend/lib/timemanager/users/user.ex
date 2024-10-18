@@ -2,20 +2,27 @@ defmodule TimeManager.Users.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Argon2
+
   schema "users" do
-    field :username, :string
-    field :email, :string
-    belongs_to :role, TimeManager.Roles.Role
+    field(:username, :string)
+    field(:email, :string)
+    field(:password, :string)
+    belongs_to(:role, TimeManager.Roles.Role)
 
-    many_to_many :teams,
-                 TimeManager.Teams.Team,
-                 join_through: TimeManager.Teams.TeamEmployees,
-                 join_keys: [employee_id: :id, team_id: :id]
+    many_to_many(
+      :teams,
+      TimeManager.Teams.Team,
+      join_through: TimeManager.Teams.TeamEmployees,
+      join_keys: [employee_id: :id, team_id: :id]
+    )
 
-    many_to_many :managed_teams,
-                 TimeManager.Teams.Team,
-                 join_through: TimeManager.Teams.TeamManagers,
-                 join_keys: [manager_id: :id, team_id: :id]
+    many_to_many(
+      :managed_teams,
+      TimeManager.Teams.Team,
+      join_through: TimeManager.Teams.TeamManagers,
+      join_keys: [manager_id: :id, team_id: :id]
+    )
 
     timestamps(type: :utc_datetime)
   end
@@ -23,11 +30,12 @@ defmodule TimeManager.Users.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> Ecto.Changeset.cast(attrs, [:username, :email, :role_id])
+    |> Ecto.Changeset.cast(attrs, [:username, :email, :role_id, :password])
     |> default_role()
-    |> Ecto.Changeset.validate_required([:username, :email, :role_id])
+    |> Ecto.Changeset.validate_required([:username, :email, :role_id, :password])
     |> validate_format(:email, ~r/\A[^@\s]+@[^@\s]+\z/)
     |> unique_constraint([:email])
+    |> put_password_hash()
   end
 
   defp default_role(%Ecto.Changeset{} = changeset) do
@@ -43,4 +51,24 @@ defmodule TimeManager.Users.User do
         changeset
     end
   end
+
+  defp put_password_hash(
+         %Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset
+       ) do
+    change(changeset, password: Argon2.hash_pwd_salt(password))
+  end
+
+  defp put_password_hash(changeset), do: changeset
+
+  # defp put_password_hash(changeset) do
+  #   if changeset.valid? do
+  #     put_change(
+  #       changeset,
+  #       :password_hash,
+  #       Argon2.hash_pwd_salt(get_change(changeset, :password))
+  #     )
+  #   else
+  #     changeset
+  #   end
+  # end
 end
