@@ -10,14 +10,14 @@ export function calculateWorkingHours(startDate: string, endDate: string): { day
     let current = start;
     while (current.isBefore(end)) {
         const currentDateStr = current.format('YYYY-MM-DD');
-        
+
         if (!dayHoursPerDate[currentDateStr]) {
             dayHoursPerDate[currentDateStr] = 0;
             nightHoursPerDate[currentDateStr] = 0;
         }
 
         // Détermination du prochain changement de jour
-        const nextDay = current.endOf('day').add(1, 'second'); 
+        const nextDay = current.endOf('day').add(1, 'second');
         const intervalEnd = nextDay.isAfter(end) ? end : nextDay;
         const durationInHours = intervalEnd.diff(current, 'minutes') / 60;
 
