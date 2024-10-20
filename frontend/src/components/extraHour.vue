@@ -7,6 +7,9 @@
 <script>
 import { readWorkingTimes } from '@/src/utils/api/workingtime.ts'
 import dashboardCard from './cards/dashboardCard.vue';
+import dayjs from 'dayjs';
+import isoweek from 'dayjs/plugin/isoWeek';
+dayjs.extend(isoweek);
 
 export default {
   data() {
@@ -27,7 +30,9 @@ export default {
     async recupExtraHour() {
       try {
         // TODO recup de l'userId
-        const response = await readWorkingTimes(1);
+        const startOfWeek = dayjs().isoWeekday(1).startOf('day');
+        const endOfWeek = dayjs().isoWeekday(7).endOf('day');
+        const response = await readWorkingTimes(1, startOfWeek.toISOString(), endOfWeek.toISOString());
         if (response && response.data) {
           this.workingTimes = response.data;
           this.calculateExtraHours();

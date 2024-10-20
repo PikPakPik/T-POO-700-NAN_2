@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import ChartManager from '@/src/components/chartManager.vue'
-import { readWorkingTimes } from '@/src/utils/api/workingtime.ts'
+import { readWorkingTimes } from '@/src/utils/api/workingtime'
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';

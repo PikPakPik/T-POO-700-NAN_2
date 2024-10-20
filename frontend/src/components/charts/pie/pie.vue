@@ -4,7 +4,7 @@ import type { IChartData } from "@/src/types/chart";
 import { nextTick } from 'vue';
 
 defineProps<{
-  datas: IChartData | null;
+  chartDatas: IChartData | null;
 }>();
 
 const chartOptions = {
@@ -27,8 +27,8 @@ defineExpose({
 });
 </script>
 <template>
-  <div v-if="render && datas">
-    <Pie :data="datas" :options="chartOptions" />
+  <div v-if="render && chartDatas">
+    <Pie :data="chartDatas" :options="chartOptions" />
   </div>
   <template v-else>
     <div>

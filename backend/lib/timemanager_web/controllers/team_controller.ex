@@ -6,7 +6,7 @@ defmodule TimeManagerWeb.TeamController do
   alias TimeManager.Teams.Team
   alias TimeManagerWeb.SwaggerDef
 
-  action_fallback TimeManagerWeb.FallbackController
+  action_fallback(TimeManagerWeb.FallbackController)
 
   def swagger_definitions do
     SwaggerDef.team_definitions()
@@ -191,5 +191,50 @@ defmodule TimeManagerWeb.TeamController do
 
     Teams.remove_manager_from_team(team.id, manager_id)
     render(conn, :show, team: team)
+  end
+
+  swagger_path(:get_working_times) do
+    summary("Get working times of a team")
+    description("Get all working times of a team.")
+
+    parameter(:teamID, :path, :integer, "Team ID", required: true, example: 1)
+
+    parameter(:start, :query, :string, "Period start (default to no limit)",
+      required: false,
+      example: "2024-10-10 11:24:45",
+      format: :utc_datetime
+    )
+
+    parameter(:end, :query, :string, "Period end (default to no limit)",
+      required: false,
+      example: "2024-10-10 16:28:42",
+      format: :utc_datetime
+    )
+
+    response(200, "OK", Schema.ref(:TeamResponse))
+    response(404, "Not found", Schema.ref(:NotFoundResponse))
+  end
+
+  def get_working_times(conn, params) do
+    team_employees = TimeManager.Repo.preload(Teams.get_team!(params["teamID"]), :employees)
+    team_managers = TimeManager.Repo.preload(Teams.get_team!(params["teamID"]), :managers)
+
+    all_people = team_employees.employees ++ team_managers.managers
+
+    conn
+    |> json(%{
+      data:
+        all_people
+        |> Enum.map(fn person ->
+          params
+          |> Map.put("userID", "#{person.id}")
+          |> TimeManager.WorkingTimes.get_user_working_times!()
+          |> TimeManagerWeb.ModelToJson.serialize_data(%{
+            associations: true,
+            excluded: [:email, :role_id]
+          })
+        end)
+        |> List.flatten()
+    })
   end
 end
