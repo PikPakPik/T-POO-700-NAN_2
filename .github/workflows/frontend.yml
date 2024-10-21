@@ -98,7 +98,9 @@ jobs:
 
       - name: Install npm dependencies
         working-directory: ./frontend
-        run: npm install
+        run: |
+          npm install
+          npm install -g cordova
 
       - name: Install npm dependencies
         working-directory: ./frontend
@@ -106,29 +108,14 @@ jobs:
           npm run build
           npm run generate
 
-      - name: Update android folder
-        working-directory: ./frontend
+      - name: Build APK
+        working-directory: ./frontend/TimeManagerApp
         run: |
-          npx cap copy
-          npx cap sync
-
-      - name: set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          java-version: "17"
-          distribution: "adopt"
-          cache: gradle
-
-      - name: Grant execute permission for gradlew
-        working-directory: ./frontend/TimeManagerApp/platforms/android
-        run: chmod +x gradlew
-
-      - name: Build
-        working-directory: ./frontend/TimeManagerApp/platforms/android
-        run: bash ./gradlew assemble
+          cordova build android --release -- --packageType=apk 
+          mv ./platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk ./app-release.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app
-          path: ./frontend/TimeManagerApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          path: ./frontend/TimeManagerApp/app-release.apk
