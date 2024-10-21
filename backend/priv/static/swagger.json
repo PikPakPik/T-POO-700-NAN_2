@@ -5,61 +5,6 @@
   },
   "host": "localhost:4000",
   "definitions": {
-    "Team": {
-      "description": "A team of employees managed by one or multiple managers.",
-      "example": {
-        "id": 1,
-        "name": "Team A"
-      },
-      "properties": {
-        "id": {
-          "description": "Team ID",
-          "type": "integer"
-        },
-        "name": {
-          "description": "Team name",
-          "type": "string"
-        }
-      },
-      "title": "Team",
-      "type": "object"
-    },
-    "ClockResponse": {
-      "description": "Response schema for single clock",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/Clock",
-          "description": "The clock details"
-        }
-      },
-      "title": "ClockResponse",
-      "type": "object"
-    },
-    "NotFoundResponse": {
-      "description": "Resource not found",
-      "properties": {
-        "reason": {
-          "description": "Error reason",
-          "type": "ErrorReason"
-        }
-      },
-      "title": "NotFoundResponse",
-      "type": "object"
-    },
-    "ClocksResponse": {
-      "description": "Response schema for multiple clocks",
-      "properties": {
-        "data": {
-          "description": "The clocks details",
-          "items": {
-            "$ref": "#/definitions/Clock"
-          },
-          "type": "array"
-        }
-      },
-      "title": "ClocksReponse",
-      "type": "object"
-    },
     "Clock": {
       "description": "Clock schema",
       "example": {
@@ -90,69 +35,23 @@
       "title": "Clock",
       "type": "object"
     },
-    "WorkingTimeRequest": {
-      "description": "Request body when creating a working time",
+    "Team": {
+      "description": "A team of employees managed by one or multiple managers.",
       "example": {
-        "working_time": {
-          "end": "2024-10-08 10:05:01",
-          "start": "2024-10-08 10:05:01",
-          "user_id": 1
-        }
+        "id": 1,
+        "name": "Team A"
       },
       "properties": {
-        "end_": {
-          "description": "Working time end time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "start": {
-          "description": "Working time start time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "Associated user id",
+        "id": {
+          "description": "Team ID",
           "type": "integer"
-        }
-      },
-      "title": "WorkingTimeRequest",
-      "type": "object"
-    },
-    "ErrorReason": {
-      "description": "An error",
-      "example": {
-        "_type": "Elixir.Ecto.NoResultsError",
-        "message": "expected at least one result but got none"
-      },
-      "properties": {
-        "_type": {
-          "description": "Error type",
-          "type": "string"
         },
-        "message": {
-          "description": "Error message",
+        "name": {
+          "description": "Team name",
           "type": "string"
-        },
-        "stack": {
-          "description": "Error stack trace. Only in debug mode",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
         }
       },
-      "title": "ErrorReason",
-      "type": "object"
-    },
-    "UnprocessableEntityResponse": {
-      "description": "Unprocessable entity",
-      "properties": {
-        "reason": {
-          "description": "Error reason",
-          "type": "ErrorReason"
-        }
-      },
-      "title": "UnprocessableEntityResponse",
+      "title": "Team",
       "type": "object"
     },
     "WorkingTime": {
@@ -209,6 +108,179 @@
         }
       },
       "title": "User",
+      "type": "object"
+    },
+    "Log": {
+      "description": "Log schema",
+      "example": {
+        "action": "user:create",
+        "id": 1,
+        "time": "2024-10-08 10:05:01",
+        "user_id": 1
+      },
+      "properties": {
+        "action": {
+          "description": "Log action",
+          "type": "string"
+        },
+        "id": {
+          "description": "Log ID",
+          "type": "integer"
+        },
+        "time": {
+          "description": "Log time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
+        }
+      },
+      "title": "Log",
+      "type": "object"
+    },
+    "Role": {
+      "description": "Role. Default roles are: Admin, Manager and Employee",
+      "example": {
+        "id": 4,
+        "name": "Employee",
+        "permissions": {}
+      },
+      "properties": {
+        "id": {
+          "description": "Role ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Role name",
+          "type": "string"
+        }
+      },
+      "title": "Role",
+      "type": "object"
+    },
+    "ClocksResponse": {
+      "description": "Response schema for multiple clocks",
+      "properties": {
+        "data": {
+          "description": "The clocks details",
+          "items": {
+            "$ref": "#/definitions/Clock"
+          },
+          "type": "array"
+        }
+      },
+      "title": "ClocksReponse",
+      "type": "object"
+    },
+    "ClockResponse": {
+      "description": "Response schema for single clock",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Clock",
+          "description": "The clock details"
+        }
+      },
+      "title": "ClockResponse",
+      "type": "object"
+    },
+    "NotFoundResponse": {
+      "description": "Resource not found",
+      "properties": {
+        "reason": {
+          "description": "Error reason",
+          "type": "ErrorReason"
+        }
+      },
+      "title": "NotFoundResponse",
+      "type": "object"
+    },
+    "LogsResponse": {
+      "description": "Response schema for multiple logs",
+      "properties": {
+        "data": {
+          "description": "The logs details",
+          "items": {
+            "$ref": "#/definitions/Log"
+          },
+          "type": "array"
+        }
+      },
+      "title": "LogsResponse",
+      "type": "object"
+    },
+    "LogResponse": {
+      "description": "Response schema for single log",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Log",
+          "description": "The log details"
+        }
+      },
+      "title": "LogResponse",
+      "type": "object"
+    },
+    "RolesResponse": {
+      "description": "Response schema for multiple roles",
+      "properties": {
+        "data": {
+          "description": "The roles list",
+          "items": {
+            "$ref": "#/definitions/Role"
+          },
+          "type": "array"
+        }
+      },
+      "title": "RolesResponse",
+      "type": "object"
+    },
+    "RoleResponse": {
+      "description": "Response schema for single role",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Role",
+          "description": "The role details"
+        }
+      },
+      "title": "RoleResponse",
+      "type": "object"
+    },
+    "ErrorReason": {
+      "description": "An error",
+      "example": {
+        "_type": "Elixir.Ecto.NoResultsError",
+        "message": "expected at least one result but got none"
+      },
+      "properties": {
+        "_type": {
+          "description": "Error type",
+          "type": "string"
+        },
+        "message": {
+          "description": "Error message",
+          "type": "string"
+        },
+        "stack": {
+          "description": "Error stack trace. Only in debug mode",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "title": "ErrorReason",
+      "type": "object"
+    },
+    "UnprocessableEntityResponse": {
+      "description": "Unprocessable entity",
+      "properties": {
+        "reason": {
+          "description": "Error reason",
+          "type": "ErrorReason"
+        }
+      },
+      "title": "UnprocessableEntityResponse",
       "type": "object"
     },
     "UserDetailed": {
@@ -304,6 +376,34 @@
       "title": "UsersResponse",
       "type": "object"
     },
+    "WorkingTimeRequest": {
+      "description": "Request body when creating a working time",
+      "example": {
+        "working_time": {
+          "end": "2024-10-08 10:05:01",
+          "start": "2024-10-08 10:05:01",
+          "user_id": 1
+        }
+      },
+      "properties": {
+        "end_": {
+          "description": "Working time end time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Associated user id",
+          "type": "integer"
+        }
+      },
+      "title": "WorkingTimeRequest",
+      "type": "object"
+    },
     "UserWorkingTimeRequest": {
       "description": "Request body when creating a user working time",
       "example": {
@@ -350,106 +450,6 @@
         }
       },
       "title": "WorkingTimesResponse",
-      "type": "object"
-    },
-    "Log": {
-      "description": "Log schema",
-      "example": {
-        "action": "user:create",
-        "id": 1,
-        "time": "2024-10-08 10:05:01",
-        "user_id": 1
-      },
-      "properties": {
-        "action": {
-          "description": "Log action",
-          "type": "string"
-        },
-        "id": {
-          "description": "Log ID",
-          "type": "integer"
-        },
-        "time": {
-          "description": "Log time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "User ID",
-          "type": "integer"
-        }
-      },
-      "title": "Log",
-      "type": "object"
-    },
-    "Role": {
-      "description": "Role. Default roles are: Admin, Manager and Employee",
-      "example": {
-        "id": 4,
-        "name": "Employee",
-        "permissions": {}
-      },
-      "properties": {
-        "id": {
-          "description": "Role ID",
-          "type": "integer"
-        },
-        "name": {
-          "description": "Role name",
-          "type": "string"
-        }
-      },
-      "title": "Role",
-      "type": "object"
-    },
-    "LogsResponse": {
-      "description": "Response schema for multiple logs",
-      "properties": {
-        "data": {
-          "description": "The logs details",
-          "items": {
-            "$ref": "#/definitions/Log"
-          },
-          "type": "array"
-        }
-      },
-      "title": "LogsResponse",
-      "type": "object"
-    },
-    "LogResponse": {
-      "description": "Response schema for single log",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/Log",
-          "description": "The log details"
-        }
-      },
-      "title": "LogResponse",
-      "type": "object"
-    },
-    "RolesResponse": {
-      "description": "Response schema for multiple roles",
-      "properties": {
-        "data": {
-          "description": "The roles list",
-          "items": {
-            "$ref": "#/definitions/Role"
-          },
-          "type": "array"
-        }
-      },
-      "title": "RolesResponse",
-      "type": "object"
-    },
-    "RoleResponse": {
-      "description": "Response schema for single role",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/Role",
-          "description": "The role details"
-        }
-      },
-      "title": "RoleResponse",
       "type": "object"
     },
     "RoleDetailed": {
@@ -570,12 +570,6 @@
       "type": "object"
     }
   },
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
   "paths": {
     "/api/clocks": {
       "get": {
@@ -1186,6 +1180,58 @@
         ]
       }
     },
+    "/api/teams/{teamID}/workingtimes": {
+      "get": {
+        "description": "Get all working times of a team.",
+        "operationId": "TimeManagerWeb.TeamController.get_working_times",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "teamID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Period start (default to no limit)",
+            "format": "utc_datetime",
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "type": "string",
+            "x-example": "2024-10-10 11:24:45"
+          },
+          {
+            "description": "Period end (default to no limit)",
+            "format": "utc_datetime",
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "type": "string",
+            "x-example": "2024-10-10 16:28:42"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Get working times of a team",
+        "tags": [
+          "Team"
+        ]
+      }
+    },
     "/api/users": {
       "get": {
         "description": "List all users in the database.",
@@ -1717,5 +1763,11 @@
       }
     }
   },
-  "swagger": "2.0"
+  "swagger": "2.0",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ]
 }

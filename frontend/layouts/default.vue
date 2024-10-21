@@ -223,8 +223,8 @@ const playSound = () => {
     loop: false,
     onload: () => {
       console.log(`
-        _____________________
-        \`-._:  .:'   \`:::  .:\           |\\__/|           /::  .:'   \`:::  .:.-'
+        _____________________                                 _______________________
+        \`-._:  .:'   \`:::  .:\           |\\__/|           /::  .:'   \`:::  .:.-'/
             \\      :          \\          |:   |          /         :       /    
              \\     ::    .     \`-_______/ ::   \\_______-'   .      ::   . /      
               |  :   :: ::'  :   :: ::'  :   :: ::'      :: ::'  :   :: :|       
@@ -241,9 +241,6 @@ const playSound = () => {
       `);
       console.log('BATMAN EST EN VILLE !');
     },
-    onend: () => {
-      console.log('Fin de la lecture de la chanson de Batman');
-    }
   });
   batmanSound.play();
 };

@@ -2,48 +2,50 @@ defmodule TimeManagerWeb.Router do
   use TimeManagerWeb, :router
 
   pipeline :api do
-    plug CORSPlug, origin: "*"
-    plug :accepts, ["json"]
+    plug(CORSPlug, origin: "*")
+    plug(:accepts, ["json"])
   end
 
   scope "/api", TimeManagerWeb do
-    pipe_through :api
+    pipe_through(:api)
 
-    resources "/roles", RoleController, only: [:index, :show]
-    resources "/logs", LogController, only: [:index, :show]
+    resources("/roles", RoleController, only: [:index, :show])
+    resources("/logs", LogController, only: [:index, :show])
 
     scope "/users" do
-      resources "/", UserController, except: [:new, :edit]
-      put "/:userID/role/:roleID", UserController, :set_role
+      resources("/", UserController, except: [:new, :edit])
+      put("/:userID/role/:roleID", UserController, :set_role)
     end
 
     scope "/clocks" do
-      resources "/", ClockController, only: [:index, :delete]
-      post "/:userID", ClockController, :clock_in_out_user
-      get "/:userID", ClockController, :get_user_clock
+      resources("/", ClockController, only: [:index, :delete])
+      post("/:userID", ClockController, :clock_in_out_user)
+      get("/:userID", ClockController, :get_user_clock)
     end
 
     scope "/workingtime" do
-      resources "/", WorkingTimeController, except: [:new, :show, :create, :edit]
-      get "/:userID", WorkingTimeController, :show_user_times
-      get "/:userID/:id", WorkingTimeController, :show_user_time
-      post "/:userID", WorkingTimeController, :create_user_time
+      resources("/", WorkingTimeController, except: [:new, :show, :create, :edit])
+      get("/:userID", WorkingTimeController, :show_user_times)
+      get("/:userID/:id", WorkingTimeController, :show_user_time)
+      post("/:userID", WorkingTimeController, :create_user_time)
     end
 
     scope "/teams" do
-      resources "/", TeamController, except: [:new, :edit]
-      post "/:teamID/clock", TeamController, :clock
-      put "/:teamID/add_employee/:employeeID", TeamController, :add_employee
-      put "/:teamID/remove_employee/:employeeID", TeamController, :remove_employee
-      put "/:teamID/add_manager/:managerID", TeamController, :add_manager
-      put "/:teamID/remove_manager/:managerID", TeamController, :remove_manager
+      resources("/", TeamController, except: [:new, :edit])
+      post("/:teamID/clock", TeamController, :clock)
+      get("/:teamID/workingtimes", TeamController, :get_working_times)
+      put("/:teamID/add_employee/:employeeID", TeamController, :add_employee)
+      put("/:teamID/remove_employee/:employeeID", TeamController, :remove_employee)
+      put("/:teamID/add_manager/:managerID", TeamController, :add_manager)
+      put("/:teamID/remove_manager/:managerID", TeamController, :remove_manager)
     end
   end
 
   scope "/api/swagger" do
-    forward "/", PhoenixSwagger.Plug.SwaggerUI,
+    forward("/", PhoenixSwagger.Plug.SwaggerUI,
       otp_app: :timemanager,
       swagger_file: "swagger.json"
+    )
   end
 
   def swagger_info do
@@ -68,10 +70,10 @@ defmodule TimeManagerWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through [:fetch_session, :protect_from_forgery]
+      pipe_through([:fetch_session, :protect_from_forgery])
 
-      live_dashboard "/dashboard", metrics: TimeManagerWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      live_dashboard("/dashboard", metrics: TimeManagerWeb.Telemetry)
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 end

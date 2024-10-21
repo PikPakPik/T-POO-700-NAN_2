@@ -5,7 +5,7 @@ defmodule TimeManagerWeb.WorkingTimeController do
   alias TimeManager.WorkingTimes
   alias TimeManager.WorkingTimes.WorkingTime
   alias TimeManagerWeb.SwaggerDef
-  action_fallback TimeManagerWeb.FallbackController
+  action_fallback(TimeManagerWeb.FallbackController)
 
   def swagger_definitions do
     SwaggerDef.working_time_definitions()
@@ -68,14 +68,11 @@ defmodule TimeManagerWeb.WorkingTimeController do
     )
 
     response(200, "OK", Schema.ref(:WorkingTimesResponse))
-    response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
 
   def show_user_times(conn, params) do
-    case working_times = WorkingTimes.get_user_working_times!(params) do
-      [] -> {:error, :not_found}
-      working_times -> render(conn, "index.json", workingtimes: working_times)
-    end
+    working_times = WorkingTimes.get_user_working_times!(params)
+    render(conn, "index.json", workingtimes: working_times)
   end
 
   swagger_path(:show_user_time) do
