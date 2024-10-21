@@ -17,6 +17,15 @@ Before launching the TimeManager platform, ensure you have the following install
 3. Phoenix Framework (version 1.7 or later)
 4. PostgreSQL (version 14 or later)
 
+### For Cordova
+
+1. Node.js (version 18 or later)
+2. Cordova (version 11 or later)
+3. Java JDK (version 17 or later)
+
+_XCode is required for iOS build_
+_Android Studio (Gradle) is required for Android build_
+
 ## Start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
@@ -43,6 +52,14 @@ _Go to http://localhost:4000/api/swagger_
 
 4. Execute requests to test the API functionality.
 
+## For Cordova
+
+_In the frontend directory_
+1. Run `npm install` to install dependencies
+2. Run `npm run generate` to generate the project
+3. Go to the `TimeManagerApp` directory and run `cordova platform add android` or `cordova platform add ios` to add the platform
+4. Run `cordova run android` or `cordova run ios` to run the project
+
 ## Prerequisites for Docker
 
 1. Docker
@@ -67,13 +84,4 @@ Run `./timemanager.sh -all` to launch the platform with Docker.
 | Admin    | admin@nan2.fr | ......   |
 | Manager  | manager@nan2.fr| ......  |
 | Employee | employee@nan2.fr| ...... |
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
-
 
