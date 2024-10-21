@@ -103,7 +103,7 @@
               <v-icon icon="mdi-menu" />
             </button>
             <h2 class="text-xl font-semibold text-gray-800">
-              {{ headerStore.title }}
+              {{ headerStore.title }}{{ ENV }}
             </h2>
           </div>
           <div class="flex items-center md:gap-4">
@@ -147,7 +147,7 @@
 
 
       <!-- Page content -->
-      <main class="flex-1 bg-gray-100">
+      <main class="flex-1 bg-gray-100 pb-32">
         <div class="p-4" v-if="alert">
           <v-alert closable border="start" variant="tonal" class="p-4" title="Batman est en ville !"
             icon="custom:BatmanIcon" type="error" />
@@ -162,7 +162,7 @@
         </div>
         <slot />
       </main>
-      <nav v-if="!isDesktop" class="bg-white shadow-lg lg:hidden">
+      <nav v-if="!isDesktop" class="fixed bottom-0 w-full bg-white shadow-lg z-10 p-6">
         <ul class="flex justify-around">
           <AppTabItem to="/" :active="route.path === '/'"><svg width="23" height="23" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="11.375" height="6.5" rx="1.5" fill="#FABB18" />
