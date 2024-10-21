@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col ml-6 mr-6 mt-10">
     <div class="flex justify-between mb-10 mt-6 flex-col md:flex-row items-center">
-      <todayDate />
-      <ClockManager :userId="1" />
+      <todayDate/>
+      <ClockManager :id="1"/>
     </div>
     <div class="flex gap-8 flex-col md:flex-row items-center">
       <workingTimeWeekVue />

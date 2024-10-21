@@ -16,6 +16,16 @@ export class ClockApi extends Api {
     }
   }
 
+  async clockInOrOutTeams(teamId: number): Promise<any> {
+    try {
+      const response = await this.instance.post(`/teams/${teamId}/clock`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de l\'enregistrement du clock :', error);
+      throw error;
+    }
+  }
+
   async clockInOrOut(userId: number): Promise<any> {
     try {
       const response = await this.instance.post(`/clocks/${userId}`);

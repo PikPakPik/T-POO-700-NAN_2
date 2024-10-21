@@ -37,9 +37,13 @@ import {
 
 export default {
   props: {
-    userId: {
+    id: {
       type: Number,
       required: true
+    },
+    isTeam: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -76,7 +80,11 @@ export default {
         }
         this.startTimer();
       }
-      this.clockApiService.clockInOrOut(this.userId);
+      if (this.isTeam) {
+        this.clockApiService.clockInOrOutTeams(this.id);
+      } else {
+      this.clockApiService.clockInOrOut(this.id);
+      }
     },
 
     beforeDestroy() {
@@ -85,7 +93,7 @@ export default {
 
     async getClockStatus() {
       try {
-        const response = await this.clockApiService.getClock(this.userId);
+        const response = await this.clockApiService.getClock(this.id);
         const { status, time } = response.data[0];
         const startTime = new Date(time);
         const now = new Date();
@@ -103,7 +111,6 @@ export default {
     },
 
     startTimer() {
-      console.log('startTimer');
       this.timer = setInterval(() => {
         const updatedTime = this.chronoStore.getTimeElapsed + 1;
         this.chronoStore.updateTimeElapsed(updatedTime);
