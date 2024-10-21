@@ -109,7 +109,7 @@ jobs:
           npm run generate
 
       - name: Prepare Cordova
-        working-directory: ./frontend
+        working-directory: ./frontend/TimeManagerApp
         run: cordova platform add android
 
       - name: Build APK
