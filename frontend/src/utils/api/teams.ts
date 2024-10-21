@@ -1,3 +1,4 @@
+import { tr } from "vuetify/locale";
 import { Api } from "./api";
 
 export class TeamsApi extends Api {
@@ -101,6 +102,16 @@ export class TeamsApi extends Api {
         try {
             const response = await this.instance.delete(`/teams/${teamId}`);
             return response;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
+    async getTeamClocks(teamId: string) {
+        try {
+            const response = await this.instance.get(`/teams/${teamId}/clocks`);
+            return response
         } catch (error) {
             console.error(error);
             return null;

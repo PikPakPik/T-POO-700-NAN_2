@@ -47,6 +47,7 @@ defmodule TimeManagerWeb.Router do
       put("/:teamID/remove_employee/:employeeID", TeamController, :remove_employee)
       put("/:teamID/add_manager/:managerID", TeamController, :add_manager)
       put("/:teamID/remove_manager/:managerID", TeamController, :remove_manager)
+      get("/:teamID/clocks", TeamController, :show_team_clocks)
     end
   end
 

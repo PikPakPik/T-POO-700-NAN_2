@@ -1,6 +1,8 @@
 <template>
-  <div class=" bg-white shadow-md rounded-lg px-8 py-6 w-80 index-intro" data-title="Pointeur"
-    data-intro="Voici votre pointeur">
+  <div 
+    class=" bg-white shadow-md rounded-lg px-8 py-6 w-80 index-intro" 
+    data-title="Pointeur"
+    data-intro="Voici votre pointeur.">
     <div class="flex items-center justify-center gap-4">
       <div v-if="hasStarted" class="flex flex-col w-full text-center">
         <h3 class="text-black text-lg font-medium">
@@ -30,10 +32,14 @@
 </template>
 
 <script>
+//utils
 import ClockApi from '~/src/utils/api/clock';
+import useTeams from '~/src/utils/team/team';
 import {
   useChronoStore
 } from '@/stores/chronoStore';
+
+const { clockTeam } = useTeams();
 
 export default {
   props: {
@@ -81,7 +87,7 @@ export default {
         this.startTimer();
       }
       if (this.isTeam) {
-        this.clockApiService.clockInOrOutTeams(this.id);
+        clockTeam(this.id);
       } else {
       this.clockApiService.clockInOrOut(this.id);
       }

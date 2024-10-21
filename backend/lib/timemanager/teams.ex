@@ -6,7 +6,7 @@ defmodule TimeManager.Teams do
   import Ecto.Query, warn: false
   alias TimeManager.Repo
 
-  alias TimeManager.Teams.{Team, TeamEmployees, TeamManagers}
+  alias TimeManager.Teams.{Team, TeamEmployees, TeamManagers, TeamClock}
 
   @doc """
   Returns the list of teams.
@@ -132,5 +132,19 @@ defmodule TimeManager.Teams do
       )
 
     Repo.delete(relation)
+  end
+
+  def get_team_clocks(team_id) do
+    Repo.all(from(c in TeamClock, where: c.team_id == ^team_id))
+  end
+
+  def create_team_clock(team_id, clock_id) do
+    %TeamClock{}
+    |> TeamClock.changeset(%{team_id: team_id, clock_id: clock_id})
+    |> Repo.insert()
+  end
+
+  def remove_team_clocks(team_id) do
+    Repo.delete_all(from(c in TeamClock, where: c.team_id == ^team_id))
   end
 end

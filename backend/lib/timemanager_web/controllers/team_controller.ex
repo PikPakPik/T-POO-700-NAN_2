@@ -111,13 +111,16 @@ defmodule TimeManagerWeb.TeamController do
         case TimeManager.Clocks.clock_in_out_user(employee.id) do
           {:ok, %TimeManager.Clocks.Clock{} = clock} ->
             TimeManagerWeb.ModelToJson.serialize_data(clock)
-
-          _error ->
-            # Handle error or return a meaningful message
-            %{}
-        end
-      end)
-
+            if TimeManager.Teams.get_team_clocks(team_id) do
+              TimeManager.Teams.remove_team_clocks(team_id)
+            else
+              TimeManager.Teams.create_team_clock(team_id, clock.id)
+            end
+            _error ->
+              # Handle error or return a meaningful message
+              %{}
+            end
+          end)
     conn
     |> json(%{data: results})
   end
@@ -236,5 +239,20 @@ defmodule TimeManagerWeb.TeamController do
         end)
         |> List.flatten()
     })
+  end
+
+  swagger_path(:show_team_clocks) do
+    summary("Show team clocks")
+    description("Show all team clocks.")
+
+    parameter(:team_id, :path, :integer, "Team ID", required: true, example: 1)
+
+    response(200, "OK", Schema.ref(:TeamResponse))
+    response(404, "Not found", Schema.ref(:NotFoundResponse))
+  end
+
+  def show_team_clocks(conn, %{"team_id" => team_id}) do
+    teamClocks = Teams.get_team_clocks!(team_id)
+    render(conn, :show, team: teamClocks)
   end
 end
