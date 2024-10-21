@@ -5,175 +5,6 @@
   },
   "host": "localhost:4000",
   "definitions": {
-    "Clock": {
-      "description": "Clock schema",
-      "example": {
-        "id": 1,
-        "status": false,
-        "time": "2024-10-08 10:05:01",
-        "user_id": 1
-      },
-      "properties": {
-        "id": {
-          "description": "Clock ID",
-          "type": "integer"
-        },
-        "status": {
-          "description": "Clock status",
-          "type": "boolean"
-        },
-        "time": {
-          "description": "Clock time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "User ID",
-          "type": "integer"
-        }
-      },
-      "title": "Clock",
-      "type": "object"
-    },
-    "Team": {
-      "description": "A team of employees managed by one or multiple managers.",
-      "example": {
-        "id": 1,
-        "name": "Team A"
-      },
-      "properties": {
-        "id": {
-          "description": "Team ID",
-          "type": "integer"
-        },
-        "name": {
-          "description": "Team name",
-          "type": "string"
-        }
-      },
-      "title": "Team",
-      "type": "object"
-    },
-    "WorkingTime": {
-      "description": "Working time schema",
-      "example": {
-        "end": "2024-10-08 10:05:01",
-        "id": 1,
-        "start": "2024-10-08 10:05:01",
-        "user_id": 1
-      },
-      "properties": {
-        "end_": {
-          "description": "Working time end time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "id": {
-          "description": "Working time ID",
-          "type": "integer"
-        },
-        "start": {
-          "description": "Working time start time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "User ID",
-          "type": "integer"
-        }
-      },
-      "title": "WorkingTime",
-      "type": "object"
-    },
-    "User": {
-      "description": "User schema",
-      "example": {
-        "email": "john@doe.com",
-        "id": 1,
-        "username": "JohnDoe"
-      },
-      "properties": {
-        "email": {
-          "description": "Email address",
-          "format": "email",
-          "type": "string"
-        },
-        "id": {
-          "description": "User ID",
-          "type": "integer"
-        },
-        "username": {
-          "description": "User username",
-          "type": "string"
-        }
-      },
-      "title": "User",
-      "type": "object"
-    },
-    "Log": {
-      "description": "Log schema",
-      "example": {
-        "action": "user:create",
-        "id": 1,
-        "time": "2024-10-08 10:05:01",
-        "user_id": 1
-      },
-      "properties": {
-        "action": {
-          "description": "Log action",
-          "type": "string"
-        },
-        "id": {
-          "description": "Log ID",
-          "type": "integer"
-        },
-        "time": {
-          "description": "Log time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "User ID",
-          "type": "integer"
-        }
-      },
-      "title": "Log",
-      "type": "object"
-    },
-    "Role": {
-      "description": "Role. Default roles are: Admin, Manager and Employee",
-      "example": {
-        "id": 4,
-        "name": "Employee",
-        "permissions": {}
-      },
-      "properties": {
-        "id": {
-          "description": "Role ID",
-          "type": "integer"
-        },
-        "name": {
-          "description": "Role name",
-          "type": "string"
-        }
-      },
-      "title": "Role",
-      "type": "object"
-    },
-    "ClocksResponse": {
-      "description": "Response schema for multiple clocks",
-      "properties": {
-        "data": {
-          "description": "The clocks details",
-          "items": {
-            "$ref": "#/definitions/Clock"
-          },
-          "type": "array"
-        }
-      },
-      "title": "ClocksReponse",
-      "type": "object"
-    },
     "ClockResponse": {
       "description": "Response schema for single clock",
       "properties": {
@@ -194,6 +25,20 @@
         }
       },
       "title": "NotFoundResponse",
+      "type": "object"
+    },
+    "ClocksResponse": {
+      "description": "Response schema for multiple clocks",
+      "properties": {
+        "data": {
+          "description": "The clocks details",
+          "items": {
+            "$ref": "#/definitions/Clock"
+          },
+          "type": "array"
+        }
+      },
+      "title": "ClocksReponse",
       "type": "object"
     },
     "LogsResponse": {
@@ -246,6 +91,64 @@
       "title": "RoleResponse",
       "type": "object"
     },
+    "Clock": {
+      "description": "Clock schema",
+      "example": {
+        "id": 1,
+        "status": false,
+        "time": "2024-10-08 10:05:01",
+        "user_id": 1
+      },
+      "properties": {
+        "id": {
+          "description": "Clock ID",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Clock status",
+          "type": "boolean"
+        },
+        "time": {
+          "description": "Clock time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
+        }
+      },
+      "title": "Clock",
+      "type": "object"
+    },
+    "WorkingTimeRequest": {
+      "description": "Request body when creating a working time",
+      "example": {
+        "working_time": {
+          "end": "2024-10-08 10:05:01",
+          "start": "2024-10-08 10:05:01",
+          "user_id": 1
+        }
+      },
+      "properties": {
+        "end_": {
+          "description": "Working time end time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Associated user id",
+          "type": "integer"
+        }
+      },
+      "title": "WorkingTimeRequest",
+      "type": "object"
+    },
     "ErrorReason": {
       "description": "An error",
       "example": {
@@ -281,6 +184,248 @@
         }
       },
       "title": "UnprocessableEntityResponse",
+      "type": "object"
+    },
+    "Log": {
+      "description": "Log schema",
+      "example": {
+        "action": "user:create",
+        "id": 1,
+        "time": "2024-10-08 10:05:01",
+        "user_id": 1
+      },
+      "properties": {
+        "action": {
+          "description": "Log action",
+          "type": "string"
+        },
+        "id": {
+          "description": "Log ID",
+          "type": "integer"
+        },
+        "time": {
+          "description": "Log time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
+        }
+      },
+      "title": "Log",
+      "type": "object"
+    },
+    "User": {
+      "description": "User schema",
+      "example": {
+        "email": "john@doe.com",
+        "id": 1,
+        "username": "JohnDoe"
+      },
+      "properties": {
+        "email": {
+          "description": "Email address",
+          "format": "email",
+          "type": "string"
+        },
+        "id": {
+          "description": "User ID",
+          "type": "integer"
+        },
+        "username": {
+          "description": "User username",
+          "type": "string"
+        }
+      },
+      "title": "User",
+      "type": "object"
+    },
+    "Role": {
+      "description": "Role. Default roles are: Admin, Manager and Employee",
+      "example": {
+        "id": 4,
+        "name": "Employee",
+        "permissions": {}
+      },
+      "properties": {
+        "id": {
+          "description": "Role ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Role name",
+          "type": "string"
+        }
+      },
+      "title": "Role",
+      "type": "object"
+    },
+    "RoleDetailed": {
+      "description": "Role. Default roles are: Admin, Manager and Employee",
+      "example": {
+        "id": 1,
+        "name": "Employee",
+        "users": []
+      },
+      "properties": {
+        "id": {
+          "description": "Role ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Role name",
+          "type": "string"
+        },
+        "users": {
+          "description": "Users with the requested role",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "type": "array"
+        }
+      },
+      "title": "RoleDetailed",
+      "type": "object"
+    },
+    "TeamDetailed": {
+      "description": "A team of employees managed by one or multiple managers.",
+      "example": {
+        "employees": [],
+        "id": 1,
+        "managers": [],
+        "name": "Team Day"
+      },
+      "properties": {
+        "employees": {
+          "description": "Team employees",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "type": "array"
+        },
+        "id": {
+          "description": "Team ID",
+          "type": "integer"
+        },
+        "managers": {
+          "description": "Team managers",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "Team name",
+          "type": "string"
+        }
+      },
+      "title": "TeamDetailed",
+      "type": "object"
+    },
+    "Team": {
+      "description": "A team of employees managed by one or multiple managers.",
+      "example": {
+        "id": 1,
+        "name": "Team A"
+      },
+      "properties": {
+        "id": {
+          "description": "Team ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Team name",
+          "type": "string"
+        }
+      },
+      "title": "Team",
+      "type": "object"
+    },
+    "TeamClockResponse": {
+      "description": "Response schema for a team clock",
+      "properties": {
+        "data": {
+          "description": "The team users' clocks'",
+          "items": {
+            "$ref": "#/definitions/Clock"
+          },
+          "type": "array"
+        }
+      },
+      "title": "TeamClockResponse",
+      "type": "object"
+    },
+    "TeamRequest": {
+      "description": "A team request for team creation.",
+      "example": {
+        "team": {
+          "name": "Team Day"
+        }
+      },
+      "properties": {
+        "name": {
+          "description": "Team name",
+          "type": "string"
+        }
+      },
+      "title": "TeamRequest",
+      "type": "object"
+    },
+    "TeamResponse": {
+      "description": "Response schema for single team",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/TeamDetailed",
+          "description": "The team details"
+        }
+      },
+      "title": "TeamResponse",
+      "type": "object"
+    },
+    "TeamsResponse": {
+      "description": "Response schema for multiple teams",
+      "properties": {
+        "data": {
+          "description": "The teams list",
+          "items": {
+            "$ref": "#/definitions/Team"
+          },
+          "type": "array"
+        }
+      },
+      "title": "TeamsResponse",
+      "type": "object"
+    },
+    "WorkingTime": {
+      "description": "Working time schema",
+      "example": {
+        "end": "2024-10-08 10:05:01",
+        "id": 1,
+        "start": "2024-10-08 10:05:01",
+        "user_id": 1
+      },
+      "properties": {
+        "end_": {
+          "description": "Working time end time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "id": {
+          "description": "Working time ID",
+          "type": "integer"
+        },
+        "start": {
+          "description": "Working time start time",
+          "format": "utc_datetime",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "integer"
+        }
+      },
+      "title": "WorkingTime",
       "type": "object"
     },
     "UserDetailed": {
@@ -376,34 +521,6 @@
       "title": "UsersResponse",
       "type": "object"
     },
-    "WorkingTimeRequest": {
-      "description": "Request body when creating a working time",
-      "example": {
-        "working_time": {
-          "end": "2024-10-08 10:05:01",
-          "start": "2024-10-08 10:05:01",
-          "user_id": 1
-        }
-      },
-      "properties": {
-        "end_": {
-          "description": "Working time end time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "start": {
-          "description": "Working time start time",
-          "format": "utc_datetime",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "Associated user id",
-          "type": "integer"
-        }
-      },
-      "title": "WorkingTimeRequest",
-      "type": "object"
-    },
     "UserWorkingTimeRequest": {
       "description": "Request body when creating a user working time",
       "example": {
@@ -451,125 +568,14 @@
       },
       "title": "WorkingTimesResponse",
       "type": "object"
-    },
-    "RoleDetailed": {
-      "description": "Role. Default roles are: Admin, Manager and Employee",
-      "example": {
-        "id": 1,
-        "name": "Employee",
-        "users": []
-      },
-      "properties": {
-        "id": {
-          "description": "Role ID",
-          "type": "integer"
-        },
-        "name": {
-          "description": "Role name",
-          "type": "string"
-        },
-        "users": {
-          "description": "Users with the requested role",
-          "items": {
-            "$ref": "#/definitions/User"
-          },
-          "type": "array"
-        }
-      },
-      "title": "RoleDetailed",
-      "type": "object"
-    },
-    "TeamDetailed": {
-      "description": "A team of employees managed by one or multiple managers.",
-      "example": {
-        "employees": [],
-        "id": 1,
-        "managers": [],
-        "name": "Team Day"
-      },
-      "properties": {
-        "employees": {
-          "description": "Team employees",
-          "items": {
-            "$ref": "#/definitions/User"
-          },
-          "type": "array"
-        },
-        "id": {
-          "description": "Team ID",
-          "type": "integer"
-        },
-        "managers": {
-          "description": "Team managers",
-          "items": {
-            "$ref": "#/definitions/User"
-          },
-          "type": "array"
-        },
-        "name": {
-          "description": "Team name",
-          "type": "string"
-        }
-      },
-      "title": "TeamDetailed",
-      "type": "object"
-    },
-    "TeamRequest": {
-      "description": "A team request for team creation.",
-      "example": {
-        "team": {
-          "name": "Team Day"
-        }
-      },
-      "properties": {
-        "name": {
-          "description": "Team name",
-          "type": "string"
-        }
-      },
-      "title": "TeamRequest",
-      "type": "object"
-    },
-    "TeamResponse": {
-      "description": "Response schema for single team",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/TeamDetailed",
-          "description": "The team details"
-        }
-      },
-      "title": "TeamResponse",
-      "type": "object"
-    },
-    "TeamsResponse": {
-      "description": "Response schema for multiple teams",
-      "properties": {
-        "data": {
-          "description": "The teams list",
-          "items": {
-            "$ref": "#/definitions/Team"
-          },
-          "type": "array"
-        }
-      },
-      "title": "TeamsResponse",
-      "type": "object"
-    },
-    "TeamClockResponse": {
-      "description": "Response schema for a team clock",
-      "properties": {
-        "data": {
-          "description": "The team users' clocks'",
-          "items": {
-            "$ref": "#/definitions/Clock"
-          },
-          "type": "array"
-        }
-      },
-      "title": "TeamClockResponse",
-      "type": "object"
     }
   },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/api/clocks": {
       "get": {
@@ -1665,12 +1671,6 @@
             "schema": {
               "$ref": "#/definitions/WorkingTimesResponse"
             }
-          },
-          "404": {
-            "description": "Not found",
-            "schema": {
-              "$ref": "#/definitions/NotFoundResponse"
-            }
           }
         },
         "summary": "List user working times",
@@ -1763,11 +1763,5 @@
       }
     }
   },
-  "swagger": "2.0",
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ]
+  "swagger": "2.0"
 }
