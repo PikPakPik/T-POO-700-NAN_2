@@ -60,15 +60,20 @@ defmodule TimeManager.Users.User do
 
   defp put_password_hash(changeset), do: changeset
 
-  # defp put_password_hash(changeset) do
-  #   if changeset.valid? do
-  #     put_change(
-  #       changeset,
-  #       :password_hash,
-  #       Argon2.hash_pwd_salt(get_change(changeset, :password))
-  #     )
-  #   else
-  #     changeset
-  #   end
-  # end
+  defimpl Jason.Encoder, for: TimeManager.Users.User do
+    def encode(
+          %TimeManager.Users.User{id: id, username: username, email: email, role: role},
+          opts
+        ) do
+      Jason.Encode.map(
+        %{
+          id: id,
+          username: username,
+          email: email,
+          role: role
+        },
+        opts
+      )
+    end
+  end
 end

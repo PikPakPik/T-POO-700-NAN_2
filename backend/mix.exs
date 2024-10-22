@@ -61,7 +61,8 @@ defmodule TimeManager.MixProject do
       {:faker, "~> 0.18"},
       {:comeonin, "~> 5.5"},
       {:argon2_elixir, "~> 4.0"},
-      {:guardian, "~> 2.0"}
+      {:joken, "~> 2.6"},
+      {:elixir_uuid, "~> 1.2"}
     ]
   end
 

@@ -12,15 +12,14 @@ config :timemanager,
   ecto_repos: [TimeManager.Repo],
   generators: [timestamp_type: :utc_datetime]
 
-config :timemanager, TimeManager.Guardian,
-  issuer: "timemanager",
-  # put the result of the mix command above here
-  secret_key: System.get_env("SECRET_KEY_BASE", "supersecret")
-
 config :cors_plug,
-  origins: "*",
+  origin: ["http://localhost:3000"],
+  max_age: 86400,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  headers: ["authorization", "content-type"]
+  headers: ["Authorization", "Content-Type", "c-xsrf-token"],
+  credentials: true
+
+config :joken, default_signer: System.get_env("SECRET_KEY_BASE", "supersecret")
 
 # Configures the endpoint
 config :timemanager, TimeManagerWeb.Endpoint,
@@ -65,9 +64,10 @@ config :tailwind,
   ]
 
 # Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+# config :logger, :console,
+#   format: "$time $metadata[$level] $message\n",
+#   metadata: [:request_id]
+config :logger, level: :debug
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason

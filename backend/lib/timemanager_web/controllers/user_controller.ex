@@ -6,6 +6,7 @@ defmodule TimeManagerWeb.UserController do
   alias TimeManager.Users.User
   alias TimeManager.Roles
   alias TimeManagerWeb.SwaggerDef
+  alias TimeManager.Auth
 
   action_fallback(TimeManagerWeb.FallbackController)
 
@@ -16,13 +17,16 @@ defmodule TimeManagerWeb.UserController do
   def login(conn, %{"email" => email, "password" => password}) do
     case Users.authenticate_user(email, password) do
       {:ok, user} ->
-        {:ok, token, _claims} = Guardian.encode_and_sign(user)
-        json(conn, %{token: token})
+        {jwt, xsrf_token} = Auth.generate_jwt(user)
 
-      {:error, _reason} ->
+        conn
+        |> put_resp_cookie("jwt", jwt, http_only: true, secure: true, same_site: "Lax")
+        |> json(%{xsrf_token: xsrf_token, user: user})
+
+      {:error, message} ->
         conn
         |> put_status(:unauthorized)
-        |> json(%{error: "Invalid credentials"})
+        |> json(%{error: message})
     end
   end
 

@@ -9,19 +9,21 @@ defmodule TimeManager.Users do
   alias TimeManager.Roles.Role
   alias TimeManager.Users.User
 
-  def authenticate_user(username, plain_text_password) do
-    query = from(u in User, where: u.username == ^username)
+  def authenticate_user(email, plain_text_password) do
+    query = from(u in User, where: u.email == ^email)
 
     case Repo.one(query) do
       nil ->
         Argon2.no_user_verify()
-        {:error, :invalid_credentials}
+        {:error, "Aucun utilisateur avec cet email"}
 
       user ->
+        user = Repo.preload(user, :role)
+
         if Argon2.verify_pass(plain_text_password, user.password) do
           {:ok, user}
         else
-          {:error, :invalid_credentials}
+          {:error, "Mot de passe incorrect"}
         end
     end
   end
