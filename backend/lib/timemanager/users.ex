@@ -15,7 +15,7 @@ defmodule TimeManager.Users do
     case Repo.one(query) do
       nil ->
         Argon2.no_user_verify()
-        {:error, "Aucun utilisateur avec cet email"}
+        {:error, "Utilisateur et/ou mot de passe incorrect"}
 
       user ->
         user = Repo.preload(user, :role)
@@ -23,7 +23,7 @@ defmodule TimeManager.Users do
         if Argon2.verify_pass(plain_text_password, user.password) do
           {:ok, user}
         else
-          {:error, "Mot de passe incorrect"}
+          {:error, "Utilisateur et/ou mot de passe incorrect"}
         end
     end
   end
