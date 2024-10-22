@@ -2,12 +2,21 @@ defmodule TimeManagerWeb.Router do
   use TimeManagerWeb, :router
 
   pipeline :api do
-    plug(CORSPlug, origin: "*")
     plug(:accepts, ["json"])
+  end
+
+  pipeline :protected do
+    plug(TimeManagerWeb.Plugs.VerifyXSRFToken)
   end
 
   scope "/api", TimeManagerWeb do
     pipe_through(:api)
+    # Public routes
+    post("/users/sign_in", UserController, :login)
+  end
+
+  scope "/api", TimeManagerWeb do
+    pipe_through([:api, :protected])
 
     resources("/roles", RoleController, only: [:index, :show])
     resources("/logs", LogController, only: [:index, :show])
