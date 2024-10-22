@@ -7,7 +7,11 @@
 <script>
 //components
 import teamDetails from '~/src/components/teams/teamDetails.vue';
-
+definePageMeta({
+    middleware: [
+        'user',
+    ],
+})
 export default {
     components: {
         teamDetails,
