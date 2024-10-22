@@ -1102,6 +1102,40 @@
         ]
       }
     },
+    "/api/teams/{teamID}/clocks": {
+      "get": {
+        "description": "Show all team clocks.",
+        "operationId": "TimeManagerWeb.TeamController.show_team_clocks",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "team_id",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Show team clocks",
+        "tags": [
+          "Team"
+        ]
+      }
+    },
     "/api/teams/{teamID}/remove_employee/{employeeID}": {
       "put": {
         "description": "Remove a team employee.",

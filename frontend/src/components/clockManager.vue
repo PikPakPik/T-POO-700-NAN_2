@@ -35,11 +35,13 @@
 //utils
 import ClockApi from '~/src/utils/api/clock';
 import useTeams from '~/src/utils/team/team';
+import useUsers from '../utils/user/user';
 import {
   useChronoStore
 } from '@/stores/chronoStore';
 
-const { clockTeam } = useTeams();
+const { clockTeam, getTeamClocks } = useTeams();
+const { getUser } = useUsers();
 
 export default {
   props: {
@@ -92,11 +94,9 @@ export default {
       this.clockApiService.clockInOrOut(this.id);
       }
     },
-
     beforeDestroy() {
       clearInterval(this.timer);
     },
-
     async getClockStatus() {
       try {
         const response = await this.clockApiService.getClock(this.id);
@@ -115,7 +115,6 @@ export default {
         console.error('Erreur lors de la récupération de l\'état du chronomètre :', error);
       }
     },
-
     startTimer() {
       this.timer = setInterval(() => {
         const updatedTime = this.chronoStore.getTimeElapsed + 1;

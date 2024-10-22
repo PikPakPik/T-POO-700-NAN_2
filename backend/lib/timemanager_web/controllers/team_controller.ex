@@ -56,6 +56,7 @@ defmodule TimeManagerWeb.TeamController do
     render(conn, :show, team: team)
   end
 
+
   swagger_path(:update) do
     summary("Update team")
     description("Update a team entry.\nScopes: team.update")
@@ -111,10 +112,10 @@ defmodule TimeManagerWeb.TeamController do
         case TimeManager.Clocks.clock_in_out_user(employee.id) do
           {:ok, %TimeManager.Clocks.Clock{} = clock} ->
             TimeManagerWeb.ModelToJson.serialize_data(clock)
-            if TimeManager.Teams.get_team_clocks(team_id) do
-              TimeManager.Teams.remove_team_clocks(team_id)
+            if Teams.show_team_clocks(team_id) do
+              Teams.remove_team_clocks(team_id)
             else
-              TimeManager.Teams.create_team_clock(team_id, clock.id)
+              Teams.create_team_clock(team_id, clock.id)
             end
             _error ->
               # Handle error or return a meaningful message
@@ -251,8 +252,8 @@ defmodule TimeManagerWeb.TeamController do
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
 
-  def show_team_clocks(conn, %{"team_id" => team_id}) do
-    teamClocks = Teams.get_team_clocks!(team_id)
-    render(conn, :show, team: teamClocks)
+  def show_team_clocks(conn, %{"teamID" => team_id}) do
+    team_clocks = Teams.show_team_clocks(team_id)
+    render(conn, :show, team: team_clocks)
   end
 end

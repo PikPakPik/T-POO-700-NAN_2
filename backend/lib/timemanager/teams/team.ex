@@ -15,6 +15,11 @@ defmodule TimeManager.Teams.Team do
                  join_through: TimeManager.Teams.TeamManagers,
                  join_keys: [team_id: :id, manager_id: :id]
 
+    many_to_many :clocks,
+                 TimeManager.Clocks.Clock,
+                 join_through: TimeManager.Teams.TeamClock,
+                 join_keys: [team_id: :id, clocks_id: :id]
+
     timestamps(type: :utc_datetime)
   end
 

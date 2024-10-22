@@ -35,7 +35,10 @@ defmodule TimeManager.Teams do
       ** (Ecto.NoResultsError)
 
   """
-  def get_team!(id), do: Repo.get!(Team, id)
+  def get_team!(id) do
+    Repo.get!(Team, id)
+    |> Repo.preload([:clocks])
+  end
 
   @doc """
   Creates a team.
@@ -134,13 +137,22 @@ defmodule TimeManager.Teams do
     Repo.delete(relation)
   end
 
-  def get_team_clocks(team_id) do
-    Repo.all(from(c in TeamClock, where: c.team_id == ^team_id))
+  # def show_team_clocks(team_id) do
+  #   Repo.all(from(c in TeamClock, where: c.team_id == ^team_id))
+  # end
+
+  def show_team_clocks(team_id) do
+    Repo.all(
+      from c in TeamClock,
+      where: c.team_id == ^team_id
+    )
+    |> Repo.preload([:team, :clock])  # Précharge les associations
   end
+
 
   def create_team_clock(team_id, clock_id) do
     %TeamClock{}
-    |> TeamClock.changeset(%{team_id: team_id, clock_id: clock_id})
+    |> TeamClock.changeset(%{team_id: team_id, clocks_id: clock_id})
     |> Repo.insert()
   end
 

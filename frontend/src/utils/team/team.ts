@@ -61,6 +61,7 @@ export const useTeams = () => {
     }
 
     const showTeam = async (teamId: string) => {
+        console.log('teamId', teamId);
         const response = await teamApi.getTeamByID(teamId);
         if (response?.status !== 200) {
             throw new Error('Équipe introuvable ou problème serveur');
