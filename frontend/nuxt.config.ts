@@ -22,7 +22,6 @@ export default defineNuxtConfig({
     preset: 'static',
     output: {
       publicDir: path.join(__dirname, 'TimeManagerApp/www'),
-      serverDir: path.join(__dirname, '.output/server'),
     }
   },
 
