@@ -5,6 +5,16 @@ export class UsersApi extends Api {
         super();
     }
 
+    async login(userData: { email: string, password: string }) {
+        try {
+            const response = await this.instance.post(`/users/sign_in`, userData);
+            return response;
+        } catch (error) {
+            console.error('Error in UsersApi login:', error);
+            throw error; // Re-throw the error to be caught in the calling function
+        }
+    }
+
     async getUsers() {
         try {
             const response = await this.instance.get(`/users`);

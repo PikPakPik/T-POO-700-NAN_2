@@ -92,14 +92,14 @@ export const useUsers = () => {
         }
     }
 
-    return { 
+    return {
         err,
         getUsers,
         getUser,
         createUser,
         updateUser,
         updateUserRole,
-        deleteUser
+        deleteUser,
     };
 }
 
