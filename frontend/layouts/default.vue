@@ -94,28 +94,28 @@
       </nav>
     </div>
     <!-- Main content -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col w-full">
       <!-- Header -->
       <header class="bg-white shadow-sm">
         <div class="flex items-center justify-between px-4 py-3">
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center gap-4">
             <button v-if="isDesktop" @click="toggleSidebar" class="p-1 rounded-full hover:bg-gray-200">
               <v-icon icon="mdi-menu" />
             </button>
             <h2 class="text-xl font-semibold text-gray-800">
-              {{ headerStore.title }}
+              {{ headerStore.title }}{{ ENV }}
             </h2>
           </div>
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center md:gap-4">
             <v-btn icon class="mr-2 yellow" @click="startIntro">
               <v-icon>mdi-help-circle</v-icon>
             </v-btn>
             <div class="relative">
               <button @click="toggleUserMenu"
-                class="flex items-center space-x-2 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out index-intro"
+                class="flex items-center md:space-x-2 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out index-intro"
                 data-title="Espace utilisateur"
                 data-intro="Vous pourrez y retrouver votre profil et le bouton de déconnexion">
-                <div class="flex flex-col items-end">
+                <div class="items-end hidden md:flex flex-col ">
                   <span class="text-sm font-medium text-gray-700">Bruce Wayne</span>
                   <!-- il faudra changer le nom pour qu'il soit dynamique avec le token / store-->
                   <span class="text-xs text-gray-500">Équipe de nuit</span>
@@ -147,7 +147,7 @@
 
 
       <!-- Page content -->
-      <main class="flex-1 bg-gray-100">
+      <main class="flex-1 bg-gray-100 pb-32">
         <div class="p-4" v-if="alert">
           <v-alert closable border="start" variant="tonal" class="p-4" title="Batman est en ville !"
             icon="custom:BatmanIcon" type="error" />
@@ -162,7 +162,7 @@
         </div>
         <slot />
       </main>
-      <nav v-if="!isDesktop" class="bg-white shadow-lg md:hidden">
+      <nav v-if="!isDesktop" class="fixed bottom-0 w-full bg-white shadow-lg z-10 p-6">
         <ul class="flex justify-around">
           <AppTabItem to="/" :active="route.path === '/'"><svg width="23" height="23" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="11.375" height="6.5" rx="1.5" fill="#FABB18" />
@@ -341,7 +341,7 @@ onUnmounted(() => {
 })
 
 const handleResize = () => {
-  isDesktop.value = window.innerWidth >= 768
+  isDesktop.value = window.innerWidth >= 955
 }
 
 

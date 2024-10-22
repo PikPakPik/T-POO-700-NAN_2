@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "nuxt build && touch TimeManagerApp/www/.gitkeep",
     "dev": "nuxt dev",
-    "generate": "nuxt generate",
+    "generate": "nuxt generate && touch TimeManagerApp/www/.gitkeep",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "e2e:test": "playwright test",
