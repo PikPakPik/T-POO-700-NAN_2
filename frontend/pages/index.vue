@@ -19,10 +19,8 @@ import extraHour from './src/components/extraHour.vue';
 import todayDate from './src/components/todayDate.vue';
 
 definePageMeta({
-  middleware: ['nuxt-permissions'],
-  roles: ['Admin', 'Employee', 'Manager'],
-  name: 'home',
-  path: '/home',
+  // middleware: ['nuxt-permissions'],
+  // roles: ['Admin', 'Employee', 'Manager'],
   // permissions: ['']
 })
 
