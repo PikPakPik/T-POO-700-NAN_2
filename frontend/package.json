@@ -6,6 +6,7 @@
     "build": "nuxt build && touch TimeManagerApp/www/.gitkeep",
     "dev": "nuxt dev",
     "generate": "nuxt generate && touch TimeManagerApp/www/.gitkeep",
+    "generate:android": "nuxt generate && touch TimeManagerApp/www/.gitkeep && cp -r .output/public/* TimeManagerApp/www",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "e2e:test": "playwright test",
