@@ -66,6 +66,7 @@ export default {
         clearInterval(this.timer);
         this.timer = null;
         this.chronoStore.reset();
+        this.formattedTime = '00H 00m 00s';
         if (this.hasStarted) {
           this.hasStarted = false;
         }

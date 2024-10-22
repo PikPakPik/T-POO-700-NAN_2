@@ -111,7 +111,6 @@ export default {
             itemsPerPageOptions: [10, 20, 30, { title: 'Tous', value: -1 }],
             itemsPerPageText: 'Élément par page',
             noDataText: 'Aucun élément trouvé',
-
         }
     },
     props: {

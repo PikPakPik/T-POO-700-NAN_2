@@ -89,3 +89,42 @@ jobs:
         with:
           render-api-key: ${{ secrets.RENDER_API_KEY }}
           render-service-id: ${{ secrets.RENDER_SERVICEID_FRONTEND }}
+  build-apk-artifact:
+    needs: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install npm dependencies
+        working-directory: ./frontend
+        run: |
+          npm install
+          npm install -g cordova
+
+      - name: Install npm dependencies
+        working-directory: ./frontend
+        run: |
+          npm run build
+          npm run generate
+
+      - name: Prepare Cordova
+        working-directory: ./frontend/TimeManagerApp
+        run: cordova platform add android
+
+      - name: Build APK
+        working-directory: ./frontend/TimeManagerApp
+        run: |
+          cordova build android --release -- --packageType=apk 
+          mv ./platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk ./app-release.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: ./frontend/TimeManagerApp/app-release.apk

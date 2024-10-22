@@ -7,7 +7,6 @@ export const useUsers = () => {
 
     const getUsers = async () => {
         const response = await userApi.getUsers();
-        //console.log('response getUsers:', response);
         if (response?.status !== 200) {
             throw new Error('Utilisateur introuvable ou problème serveur');
         }

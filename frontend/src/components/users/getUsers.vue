@@ -2,7 +2,7 @@
     <v-container class="mx-auto max-w-screen-lg px-4 py-8 sm:px-8">
         <v-row class="flex items-center justify-center pb-6">
             <v-col class="text-center">
-                <h2 class="font-semibold text-gray-700">Comptes d'utilisateurs</h2>
+                <h2 class="font-semibold text-gray-700 underline">Comptes d'utilisateurs</h2>
                 <span class="text-xs text-gray-500">Consulter les comptes des utilisateurs enregistrés</span>
             </v-col>
         </v-row>
@@ -148,7 +148,6 @@ export default {
         editRole(user) {
             this.selectedUser = user;
             this.editDialog = true;
-            console.log(user);
         },
         formatUserRole(selectedUserRole) {
             switch (selectedUserRole) {
@@ -187,8 +186,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 :deep(.v-data-table) thead {
     background-color: #FFC107 !important;
 }

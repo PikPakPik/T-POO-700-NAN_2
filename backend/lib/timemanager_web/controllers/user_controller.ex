@@ -141,4 +141,21 @@ defmodule TimeManagerWeb.UserController do
       render(conn, :show, user: user)
     end
   end
+
+
+  swagger_path(:get_user_team) do
+    summary("Get user team")
+    description("Get the team(s) of a user.")
+    parameter(:userID, :path, :integer, "User ID", required: true, example: 3)
+
+    response(200, "OK")
+    response(404, "Not found", Schema.ref(:NotFoundResponse))
+  end
+
+  def get_user_team(conn, %{"userID" => user_id}) do
+    user = TimeManager.Repo.preload(Users.get_user!(user_id), :team)
+
+    render(conn, :show, user: user)
+
+  end
 end

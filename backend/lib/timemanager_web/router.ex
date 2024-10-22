@@ -42,6 +42,7 @@ defmodule TimeManagerWeb.Router do
     scope "/teams" do
       resources("/", TeamController, except: [:new, :edit])
       post("/:teamID/clock", TeamController, :clock)
+      get("/:teamID/workingtimes", TeamController, :get_working_times)
       put("/:teamID/add_employee/:employeeID", TeamController, :add_employee)
       put("/:teamID/remove_employee/:employeeID", TeamController, :remove_employee)
       put("/:teamID/add_manager/:managerID", TeamController, :add_manager)
