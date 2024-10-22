@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import type { AuthState, User } from '../src/types/auth';
-import { UsersApi } from '../src/utils/api/users';
 
 export const useAuthStore = defineStore('auth', {
     state: (): AuthState => ({
@@ -14,17 +13,15 @@ export const useAuthStore = defineStore('auth', {
         SET_XSRF_TOKEN(xsrfToken: string | null) {
             this.xsrfToken = xsrfToken;
         },
-        async login(email: string, password: string) {
-            const usersApi = new UsersApi();
+        login(user: User, xsrf_token: string) {
             try {
-                const response = await usersApi.login({ email, password });
-                if (response && response.data) {
-                    const { user, xsrf_token } = response.data;
-                    this.user = user;
-                    this.xsrfToken = xsrf_token;
-                } else {
-                    throw new Error('Login failed');
-                }
+                this.SET_USER(user);
+                this.SET_XSRF_TOKEN(xsrf_token);
+                // const userPermissions = useCookie('permissions');
+                const userRoles = useCookie('roles');
+                // userPermissions.value = user.permissions; // ['read posts', ..., 'delete posts']
+                userRoles.value = user.role.name; // ['admin', 'editor']
+
             } catch (error) {
                 console.error('Error logging in:', error);
                 throw error;

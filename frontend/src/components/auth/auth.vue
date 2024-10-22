@@ -89,9 +89,14 @@ import gotham from '~/assets/GothamCity.webp';
 //utils
 import useUsers from '~/src/utils/user/user';
 import { useAuthStore } from '@/stores/auth';
+import {
+    useRouter
+} from 'vue-router'
 
 
-const { createUser } = useUsers();
+const { createUser, login } = useUsers();
+const router = useRouter()
+
 
 export default {
     name: 'auth',
@@ -118,9 +123,22 @@ export default {
         async login() {
             this.error = null;
             try {
-                const authStore = useAuthStore();
-                await authStore.login(this.email, this.password);
-                this.$router.push('/');
+                const response = await login(this.email, this.password);
+
+                if (response && response.data) {
+                    const { user, xsrf_token } = response.data;
+                    const authStore = useAuthStore();
+                    authStore.login(user, xsrf_token);
+                    console.log('response1:', response);
+                    // this.$router.push({ name: ('home') });
+                    this.$router.push('/home');
+                    console.log('route:', this.$router.getRoutes());
+                    // window.location.href = '/';
+                    // await router.push({ name: ('index') });
+                    // await router.got('/');
+                    // window.location.reload();
+                    // navigateTo('/1');
+                }
             } catch (error) {
                 this.error = 'Échec de la connexion.';
             }
