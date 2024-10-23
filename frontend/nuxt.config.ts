@@ -16,6 +16,7 @@ export default defineNuxtConfig({
       })
     },
     '@pinia/nuxt',
+    'nuxt-permissions',
   ],
 
   nitro: {
@@ -28,7 +29,7 @@ export default defineNuxtConfig({
 
   hooks: {
     close: (nuxt) => {
-      if(!nuxt.options._prepare) process.exit()
+      if (!nuxt.options._prepare) process.exit()
     },
   },
 

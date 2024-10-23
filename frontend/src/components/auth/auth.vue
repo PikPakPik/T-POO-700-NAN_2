@@ -90,8 +90,8 @@ import gotham from '~/assets/GothamCity.webp';
 import useUsers from '~/src/utils/user/user';
 import { useAuthStore } from '@/stores/auth';
 
+const { createUser, login } = useUsers();
 
-const { createUser } = useUsers();
 
 export default {
     name: 'auth',
@@ -118,9 +118,17 @@ export default {
         async login() {
             this.error = null;
             try {
-                const authStore = useAuthStore();
-                await authStore.login(this.email, this.password);
-                this.$router.push('/');
+                const response = await login(this.email, this.password);
+                if (response && response.data) {
+                    const { user, xsrf_token } = response.data;
+                    const authStore = useAuthStore();
+                    authStore.login(user, xsrf_token);
+                    console.log('response:', response);
+                    // Redirection avec Nuxt router
+                    this.$nuxt.$router.push({ name: 'index' }).catch(err => {
+                        console.error('Erreur de redirection:', err);
+                    });
+                }
             } catch (error) {
                 this.error = 'Échec de la connexion.';
             }
