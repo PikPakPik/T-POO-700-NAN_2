@@ -7,7 +7,7 @@
 
 if [ "$1" == "-backend" ]; then
     echo "Launching backend"
-    docker-compose -f docker-compose.local.yml  --profile backend up --pull always --build --remove-orphans --force-recreate
+    docker-compose -f docker-compose.local.yml --profile backend up --pull always --build --remove-orphans --force-recreate
 fi
 
 if [ "$1" == "-frontend" ]; then
