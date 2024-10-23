@@ -53,7 +53,8 @@ export default {
   methods: {    
     async getCurrentUser() {
       try {
-        this.currentUser = await getUser(1); // to change dynamic blabla
+        //getUserID from localStorage
+        this.currentUser = await getUser(localStorage.getItem('userID'));
         this.teamStarted(); // Ensure teamStarted is called after currentUser is set
       } catch (error) {
         console.error('Failed to fetch user:', error);
@@ -63,10 +64,10 @@ export default {
       const user = this.currentUser;
         const teams = user.teams;
         for (let i = 0; i < teams.length; i++) {
-          const team = teams[i];
-          const teamClock = await showTeam(team.id);
-          console.log('teamClock:', teamClock);
-          if (teamClock) {
+          const teamDetails = await showTeam(teams[i].id);
+          const teamClock = teamDetails.clocks
+          console.log(teamClock);
+          if (teamClock.length > 0) {
             this.isTeamStarted = true;
             break; // Exit loop if a teamClock is found
           }

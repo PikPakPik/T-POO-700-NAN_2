@@ -193,8 +193,8 @@ export default {
         },
         async fetchTeamData() {
             try {
-                const response = await getUser(1); //to change with auth to handle the user id dynamically (21 = admin) (1 = Manager) (7 = Employee)
-                this.user = response;
+                //getUserID from localStorage
+                this.user = await getUser(localStorage.getItem('userID'));
 
                 if (this.user.role.id == '1') {
                     const response = await getTeams();

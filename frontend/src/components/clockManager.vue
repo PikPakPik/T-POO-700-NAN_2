@@ -40,7 +40,7 @@ import {
   useChronoStore
 } from '@/stores/chronoStore';
 
-const { clockTeam, getTeamByID } = useTeams();
+const { clockTeam } = useTeams();
 const { getUser } = useUsers();
 
 export default {
