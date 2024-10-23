@@ -34,7 +34,7 @@ definePageMeta({
 import useTeams from '~/src/utils/team/team';
 import useUsers from '~/src/utils/user/user';
 
-const { getTeamClocks } = useTeams();
+const { showTeam } = useTeams();
 const { getUser } = useUsers();
 
 export default {
@@ -64,7 +64,7 @@ export default {
         const teams = user.teams;
         for (let i = 0; i < teams.length; i++) {
           const team = teams[i];
-          const teamClock = await getTeamClocks(team.id); // Ensure getTeamClocks is awaited
+          const teamClock = await showTeam(team.id);
           console.log('teamClock:', teamClock);
           if (teamClock) {
             this.isTeamStarted = true;

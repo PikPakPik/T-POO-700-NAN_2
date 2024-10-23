@@ -22,6 +22,8 @@ export const useAuthStore = defineStore('auth', {
                 // userPermissions.value = user.permissions; // ['read posts', ..., 'delete posts']
                 userRoles.value = user.role.name; // ['admin', 'editor']
 
+                //xsrf in local storage
+                localStorage.setItem('xsrf_token', xsrf_token);
             } catch (error) {
                 console.error('Error logging in:', error);
                 throw error;

@@ -107,14 +107,4 @@ export class TeamsApi extends Api {
             return null;
         }
     }
-
-    async getTeamClocks(teamId: string) {
-        try {
-            const response = await this.instance.get(`/teams/${teamId}/clocks`);
-            return response
-        } catch (error) {
-            console.error(error);
-            return null;
-        }
-    }
 }

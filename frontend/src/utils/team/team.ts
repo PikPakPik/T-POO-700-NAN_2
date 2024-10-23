@@ -121,18 +121,6 @@ export const useTeams = () => {
         }
     }
 
-    const getTeamClocks = async (teamId: string) => {
-        const response = await teamApi.getTeamClocks(teamId);
-        if (response?.status !== 200) {
-            throw new Error('Équipe introuvable ou problème serveur');
-        }
-        if (response && response.data && response.data.data) {
-            return response.data.data;
-        } else {
-            throw new Error('Data not found');
-        }
-    }
-
     return { 
         err,
         getTeams,
@@ -144,7 +132,6 @@ export const useTeams = () => {
         associateEmployee,
         removeEmployeeFromTeam,
         clockTeam,
-        getTeamClocks
     };
 }
 
