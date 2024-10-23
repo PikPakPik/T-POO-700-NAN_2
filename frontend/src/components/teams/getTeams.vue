@@ -154,8 +154,7 @@
             <v-btn color="blue" text @click="createTeam" aria-label="Create team">Créer</v-btn>
             </v-card-actions>
             </v-card>
-        </v-dialog>
-        
+        </v-dialog>  
     </v-container>
 </template>
 
@@ -222,8 +221,8 @@ export default {
         },
         async fetchTeamData() {
             try {
-                const response = await getUser(1); //to change with auth to handle the user id dynamically (21 = admin) (1 = Manager) (7 = Employee)
-                this.user = response;
+                //getUserID from localStorage
+                this.user = await getUser(localStorage.getItem('userID'));
 
                 if (this.user.role.id == '1') {
                     const response = await getTeams();
@@ -323,8 +322,27 @@ export default {
 <style scoped>
 :deep(.v-data-table) thead {
     background-color: #FFC107 !important;
-    color: #000 !important;
+    font-weight: bold;
+    font-size: 1.2em;
 }
+
+:deep(.v-data-table) .v-data-table__tr>* {
+    border-bottom: none !important;
+    /* Supprime les séparations entre les lignes */
+}
+
+:deep(.v-data-table) .v-data-table__tr:nth-child(odd) {
+    background-color: #e1dfdf !important;
+    border-bottom: none !important;
+    /* Gris très clair pour les lignes impaires */
+}
+
+:deep(.v-data-table) .v-data-table__tr:nth-child(even) {
+    background-color: #ffffff !important;
+    border-bottom: none !important;
+    /* Blanc pour les lignes paires */
+}
+
 .v-card {
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

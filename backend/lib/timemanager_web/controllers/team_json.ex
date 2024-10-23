@@ -16,6 +16,17 @@ defmodule TimeManagerWeb.TeamJSON do
   end
 
   defp data(%Team{} = team, options \\ %{}) do
-    TimeManagerWeb.ModelToJson.serialize_data(team, options)
+    base_data = TimeManagerWeb.ModelToJson.serialize_data(team, options)
+
+    if options[:associations] do
+      # Ajout des clocks associés
+      Map.put(base_data, :clocks, serialize_clocks(team.clocks))
+    else
+      base_data
+    end
+  end
+
+  defp serialize_clocks(clocks) do
+    Enum.map(clocks, fn clock -> %{id: clock.id, status: clock.status, time: clock.time, user_id: clock.user_id } end)
   end
 end

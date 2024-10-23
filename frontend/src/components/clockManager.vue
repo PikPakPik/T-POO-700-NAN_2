@@ -1,6 +1,8 @@
 <template>
-  <div class=" bg-white shadow-md rounded-lg px-8 py-6 w-80 index-intro" data-title="Pointeur"
-    data-intro="Voici votre pointeur">
+  <div 
+    class=" bg-white shadow-md rounded-lg px-8 py-6 w-80 index-intro" 
+    data-title="Pointeur"
+    data-intro="Voici votre pointeur.">
     <div class="flex items-center justify-center gap-4">
       <div v-if="hasStarted" class="flex flex-col w-full text-center">
         <h3 class="text-black text-lg font-medium">
@@ -30,16 +32,26 @@
 </template>
 
 <script>
+//utils
 import ClockApi from '~/src/utils/api/clock';
+import useTeams from '~/src/utils/team/team';
+import useUsers from '../utils/user/user';
 import {
   useChronoStore
 } from '@/stores/chronoStore';
 
+const { clockTeam } = useTeams();
+const { getUser } = useUsers();
+
 export default {
   props: {
-    userId: {
+    id: {
       type: Number,
       required: true
+    },
+    isTeam: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -76,16 +88,18 @@ export default {
         }
         this.startTimer();
       }
-      this.clockApiService.clockInOrOut(this.userId);
+      if (this.isTeam) {
+        clockTeam(this.id);
+      } else {
+      this.clockApiService.clockInOrOut(this.id);
+      }
     },
-
     beforeDestroy() {
       clearInterval(this.timer);
     },
-
     async getClockStatus() {
       try {
-        const response = await this.clockApiService.getClock(this.userId);
+        const response = await this.clockApiService.getClock(this.id);
         const { status, time } = response.data[0];
         const startTime = new Date(time);
         const now = new Date();
@@ -101,9 +115,7 @@ export default {
         console.error('Erreur lors de la récupération de l\'état du chronomètre :', error);
       }
     },
-
     startTimer() {
-      console.log('startTimer');
       this.timer = setInterval(() => {
         const updatedTime = this.chronoStore.getTimeElapsed + 1;
         this.chronoStore.updateTimeElapsed(updatedTime);

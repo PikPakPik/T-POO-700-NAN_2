@@ -41,7 +41,7 @@ import deleteUser from '~/src/components/users/deleteUser.vue';
 //utils
 import useUsers from '~/src/utils/user/user';
 
-const { getUser, loading, error } = useUsers();
+const { getUser } = useUsers();
 
 export default {
   name: 'userProfile',
@@ -63,8 +63,8 @@ export default {
   methods: {
     async fetchUserData() {
       try {
-        const response = await getUser(this.userID);
-        this.userData = response;
+        //getUserID from localStorage
+        this.userData = await getUser(localStorage.getItem('userID'));
         this.loading = false;
       } catch (error) {
         this.error = 'Échec du chargement des données utilisateur';

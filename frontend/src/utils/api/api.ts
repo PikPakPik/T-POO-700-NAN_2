@@ -14,11 +14,15 @@ export class Api {
       },
       withCredentials: true // This ensures cookies are sent with the request
     })
-    // Ajouter le token XSRF aux headers des requêtes
+    // Add the XSRF token to the request headers
     this.instance.interceptors.request.use(
       (config) => {
         const authStore = useAuthStore();
-        const xsrfToken = authStore.xsrfToken;
+        let xsrfToken = authStore.xsrfToken;
+        if (!xsrfToken) {
+          xsrfToken = localStorage.getItem('xsrf_token');
+        }
+
         if (xsrfToken) {
           config.headers['c-xsrf-token'] = xsrfToken;
         }

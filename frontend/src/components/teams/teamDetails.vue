@@ -8,6 +8,13 @@
                 </h2>
                 <span class="text-xs text-gray-500">Consulter votre équipe</span>
             </v-col>
+            <v-col class="text-center">
+                <ClockManager 
+                    class="mx-auto max-w-screen-lg px-4 py-8 sm:px-8" 
+                    :id="this.teamId"
+                    :isTeam="true"
+                    v-if="currentUser.role && (currentUser.role.id == '1' || currentUser.role.id == '2')"/>
+            </v-col>
         </v-row>
         
         <v-row justify="start">
@@ -106,6 +113,8 @@
 </template>
 
 <script>
+//components 
+import ClockManager from './src/components/clockManager.vue';
 //utils
 import useTeams from '~/src/utils/team/team';
 import useUsers from '~/src/utils/user/user';
@@ -232,9 +241,12 @@ export default {
         this.showTeam();
         this.getUsers();
     },
+    components: {
+        ClockManager
+    },
     beforeDestroy() {
        window.removeEventListener('resize', this.detectMobile);
-    }
+    },
 };
 </script>
 
@@ -255,7 +267,27 @@ li {
 <style scoped>
 :deep(.v-data-table) thead {
     background-color: #FFC107 !important;
+    font-weight: bold;
+    font-size: 1.2em;
 }
+
+:deep(.v-data-table) .v-data-table__tr>* {
+    border-bottom: none !important;
+    /* Supprime les séparations entre les lignes */
+}
+
+:deep(.v-data-table) .v-data-table__tr:nth-child(odd) {
+    background-color: #e1dfdf !important;
+    border-bottom: none !important;
+    /* Gris très clair pour les lignes impaires */
+}
+
+:deep(.v-data-table) .v-data-table__tr:nth-child(even) {
+    background-color: #ffffff !important;
+    border-bottom: none !important;
+    /* Blanc pour les lignes paires */
+}
+
 .v-card {
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

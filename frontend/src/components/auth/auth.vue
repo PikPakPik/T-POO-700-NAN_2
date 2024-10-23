@@ -123,7 +123,6 @@ export default {
                     const { user, xsrf_token } = response.data;
                     const authStore = useAuthStore();
                     authStore.login(user, xsrf_token);
-                    console.log('response:', response);
                     // Redirection avec Nuxt router
                     this.$nuxt.$router.push({ name: 'index' }).catch(err => {
                         console.error('Erreur de redirection:', err);

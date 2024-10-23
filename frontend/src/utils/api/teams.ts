@@ -1,3 +1,4 @@
+import { tr } from "vuetify/locale";
 import { Api } from "./api";
 
 export class TeamsApi extends Api {
