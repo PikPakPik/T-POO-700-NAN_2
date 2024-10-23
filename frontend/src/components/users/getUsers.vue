@@ -21,36 +21,38 @@
                 <template v-slot:item.id="{ item }">
                     <span aria-label="User ID">{{ item.id }}</span>
                 </template>
-                
-                <template v-slot:item.username="{ item }">
-                <div class="flex items-center">
-                    <v-avatar class="h-10 w-10 flex-shrink-0">
-                    <img src="@/assets/batman-head.png" alt="User Avatar" class="w-10 h-10 rounded-full" />
-                    </v-avatar>
-                    <div class="ml-3">
-                    <p class="whitespace-no-wrap" aria-label="Username">{{ item.username }}</p>
-                    </div>
-                </div>
-                </template>
-
-                <template v-slot:item.role="{ item }">
-                    <span aria-label="User role">{{ item.role.name }}</span>
-                </template>
-                
                 <template v-slot:item.action="{ item }">
-                <v-row class="d-flex align-center flex-row no-gutters">
-                    <v-btn icon size="small" class="mr-2" @click="editRole(item)" aria-label="Edit role">
+                  <div v-if="isMobile">
+                    <v-btn icon class="icon-btn-mobile" @click="showBottomSheet(item)">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </div>
+                  <div v-else>
+                    <v-row class="d-flex align-center flex-row no-gutters">
+                      <v-btn icon size="small" class="mr-2" @click="editRole(item)" aria-label="Edit role">
                         <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-btn icon size="small" class="mr-2" @click="confirmDelete(item.id)" aria-label="Delete user">
+                      </v-btn>
+                      <v-btn icon size="small" class="mr-2" @click="confirmDelete(item.id)" aria-label="Delete user">
                         <v-icon>mdi-trash-can</v-icon>
-                    </v-btn>
-                </v-row>
+                      </v-btn>
+                    </v-row>
+                  </div>
                 </template>
-            </v-data-table>
-            </v-card>
-        </v-col>
-        </v-row>
+                </v-data-table>
+                </v-card>
+            </v-col>
+            </v-row>
+
+            <v-bottom-sheet v-model="bottomSheetVisible">
+                <v-list>
+                    <v-list-item @click="editRole(item)">
+                        <v-list-item-title>Modifier</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="confirmDelete(item.id)">
+                        <v-list-item-title>Supprimer</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-bottom-sheet>
 
         <!-- Confirmation dialog -->
         <v-dialog v-model="deleteDialog" max-width="400" aria-label="Delete confirmation dialog">
@@ -94,10 +96,10 @@ export default {
     data() {
         return {
             headers: [
-                { title: 'ID', text: 'ID', sortable: true, value: 'id' },
-                { title: 'Nom d\'utilisateur', text: 'Nom d\'utilisateur', sortable: true, value: 'username' },
-                { title: 'Rôle', text: 'Role', sortable: true, value: 'role.name' },
-                { title: 'Actions', text: 'Actions', sortable: false , value: 'action'}
+              { title: 'ID', text: 'ID', sortable: true, value: 'id', width: '10%' },
+              { title: 'Nom d\'utilisateur', text: 'Nom d\'utilisateur', sortable: true, value: 'username', width: '40%' },
+              { title: 'Rôle', text: 'Role', sortable: true, value: 'role.name', width: '30%' },
+              { title: 'Actions', text: 'Actions', sortable: false , value: 'action', width: '20%' }
             ],
             search: '',
             error: null,
@@ -111,7 +113,9 @@ export default {
             options: {
                 itemsPerPageOptions: [5, 10, 25, 50]
             },
-            roles: ['Employee', 'Manager', 'Admin'] 
+            roles: ['Employee', 'Manager', 'Admin'],
+            bottomSheetVisible: false,
+            isMobile: false
         };
     },
     computed: {
@@ -120,8 +124,13 @@ export default {
         },
     },
     mounted() {
+        this.detectMobile();
+        window.addEventListener('resize', this.detectMobile);
         this.fetchUserData();
     },
+     beforeDestroy() {
+        window.removeEventListener('resize', this.detectMobile);
+     },
     methods: {
         async fetchUserData() {
             try {
@@ -139,8 +148,12 @@ export default {
         async deleteSelectedUser(userId) {
             try {
                 await deleteUser(userId);
+                const userIndex = this.users.findIndex(user => user.id === userId);
+                if (userIndex !== -1) {
+                    this.users.splice(userIndex, 1);
+                }
                 this.deleteDialog = false;
-                this.fetchUserData();
+                this.bottomSheetVisible = false;
             } catch (error) {
                 console.error("Failed to delete user:", error);
             }
@@ -165,8 +178,12 @@ export default {
             try {
                 const roleID = this.formatUserRole(this.selectedUserRole);
                 await updateUserRole(this.selectedUser.id, roleID);
+                const userIndex = this.users.findIndex(user => user.id === this.selectedUser.id);
+                if (userIndex !== -1) {
+                    this.users[userIndex].role.name = this.selectedUserRole;
+                }
                 this.editDialog = false;
-                this.fetchUserData();
+                this.bottomSheetVisible = false;
             } catch (error) {
                 console.error("Failed to update user role:", error);
             }
@@ -180,6 +197,13 @@ export default {
             if (this.currentPage > 1) {
                 this.currentPage--;
             }
+        },
+        detectMobile() {
+            this.isMobile = window.innerWidth <= 950;
+        },
+        showBottomSheet(item) {
+          this.item = item;
+          this.bottomSheetVisible = true;
         }
     }
 };
@@ -212,5 +236,19 @@ export default {
 .v-card {
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.icon-btn-mobile {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  border: none !important;
+}
+
+.icon-btn-mobile {
+  font-size: 20px;
+  color: #000;
 }
 </style>

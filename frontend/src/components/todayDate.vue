@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2 index-intro" data-title="Date du jour" data-intro="Voici la date du jour">
+  <div class="flex flex-col gap-2 index-intro mb-8" data-title="Date du jour" data-intro="Voici la date du jour">
     <h1 class="text-4xl">
       Aujourd'hui
     </h1>

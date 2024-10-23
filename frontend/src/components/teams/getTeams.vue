@@ -50,45 +50,66 @@
                 </template>
 
                 <template v-slot:item.action="{ item, index }">
-                <v-row class="d-flex align-center flex-row no-gutters">
-                    <v-btn 
-                        icon size="small" 
-                        class="mr-2" 
-                        @click="editTeam(item)" 
-                        aria-label="Edit team" 
-                        v-if="user.role && (user.role.id == '1' || user.role.id == '2')" 
-                        :class="{ 'teams-intro': index === 0, 'mr-2': index >= 0 }"
-                        data-intro="Cliquez ici pour éditer l'équipe sélectionnée." 
-                        data-title="Éditer une équipe">
-                        <v-icon>mdi-pencil</v-icon>
+                  <div v-if="isMobile">
+                    <v-btn icon class="icon-btn-mobile" @click="showBottomSheet(item)">
+                      <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
-                    <v-btn 
-                        icon size="small" 
-                        class="mr-2" 
-                        @click="confirmDeleteFromTeam(item.id)" 
-                        aria-label="Delete team" 
-                        v-if="user.role && (user.role.id == '1' || user.role.id == '2')"
-                        :class="{ 'teams-intro': index === 0, 'mr-2': index >= 0 }"
-                        data-intro="Cliquez ici pour supprimer l'équipe sélectionnée." 
-                        data-title="Supprimer une équipe">
-                        <v-icon>mdi-trash-can</v-icon>
-                    </v-btn>
-                    <v-btn 
-                        icon size="small" 
-                        class="mr-2" 
-                        @click="viewTeamDetails(item.id)" 
-                        aria-label="View team details"
-                        :class="{ 'teams-intro': index === 0, 'mr-2': index >= 0 }"
-                        data-intro="Cliquez ici pour regarder le détail de l'équipe sélectionnée." 
-                        data-title="Montrer l'équipe">
-                        <v-icon>mdi-eye</v-icon>
-                    </v-btn>
-                </v-row>
+                  </div>
+                  <div v-else>
+                    <v-row class="d-flex align-center flex-row no-gutters">
+                        <v-btn
+                            icon size="small"
+                            class="mr-2"
+                            @click="editTeam(item)"
+                            aria-label="Edit team"
+                            v-if="user.role && (user.role.id == '1' || user.role.id == '2')"
+                            :class="{ 'teams-intro': index === 0, 'mr-2': index >= 0 }"
+                            data-intro="Cliquez ici pour éditer l'équipe sélectionnée."
+                            data-title="Éditer une équipe">
+                            <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                        <v-btn
+                            icon size="small"
+                            class="mr-2"
+                            @click="confirmDeleteFromTeam(item.id)"
+                            aria-label="Delete team"
+                            v-if="user.role && (user.role.id == '1' || user.role.id == '2')"
+                            :class="{ 'teams-intro': index === 0, 'mr-2': index >= 0 }"
+                            data-intro="Cliquez ici pour supprimer l'équipe sélectionnée."
+                            data-title="Supprimer une équipe">
+                            <v-icon>mdi-trash-can</v-icon>
+                        </v-btn>
+                        <v-btn
+                            icon size="small"
+                            class="mr-2"
+                            @click="viewTeamDetails(item.id)"
+                            aria-label="View team details"
+                            :class="{ 'teams-intro': index === 0, 'mr-2': index >= 0 }"
+                            data-intro="Cliquez ici pour regarder le détail de l'équipe sélectionnée."
+                            data-title="Montrer l'équipe">
+                            <v-icon>mdi-eye</v-icon>
+                        </v-btn>
+                    </v-row>
+                  </div>
                 </template>
             </v-data-table>
             </v-card>
         </v-col>
         </v-row>
+
+         <v-bottom-sheet v-model="bottomSheetVisible">
+            <v-list>
+                <v-list-item @click="editTeam(item)">
+                    <v-list-item-title>Modifier</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="confirmDeleteFromTeam(item.id)">
+                    <v-list-item-title>Supprimer</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="viewTeamDetails(item.id)">
+                    <v-list-item-title>Detail de l'équipe</v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-bottom-sheet>
 
         <!-- Confirmation dialog -->
         <v-dialog v-model="deleteDialog" max-width="400" aria-label="Delete confirmation dialog">
@@ -150,10 +171,10 @@ export default {
     data() {
         return {
             headers: [
-                { title: 'ID', text: 'ID', sortable: true, value: 'id' },
-                { title: 'Nom d\'équipe', text: 'Nom d\'équipe', sortable: true, value: 'name' },
-                { title: 'Manager', text: 'Manager', sortable: true, value: 'manager' },
-                { title: 'Actions', text: 'Actions', sortable: false, value: 'action'}
+                { title: 'ID', text: 'ID', sortable: true, value: 'id', width:'10%'},
+                { title: 'Nom d\'équipe', text: 'Nom d\'équipe', sortable: true, value: 'name', width:'40%' },
+                { title: 'Manager', text: 'Manager', sortable: true, value: 'manager', width:'30%' },
+                { title: 'Actions', text: 'Actions', sortable: false, value: 'action', width:'20%'}
             ],
             search: '',
             managers: {},
@@ -171,6 +192,8 @@ export default {
             options: {
                 itemsPerPageOptions: [5, 10, 25, 50]
             },
+            bottomSheetVisible: false,
+            isMobile: false
         };
     },
     computed: {
@@ -179,7 +202,12 @@ export default {
         },
     },
     mounted() {
+        this.detectMobile();
+        window.addEventListener('resize', this.detectMobile);
         this.fetchTeamData();
+    },
+    beforeDestroy() {
+       window.removeEventListener('resize', this.detectMobile);
     },
     methods: {
         async showManager(teamID) {
@@ -227,8 +255,12 @@ export default {
         async deleteSelectedTeam(teamId) {
             try {
                 await deleteTeam(teamId);
+                const teamIndex = this.teams.findIndex(team => team.id === teamId);
+                if (teamIndex !== -1) {
+                    this.teams.splice(teamIndex, 1);
+                }
                 this.deleteDialog = false;
-                this.fetchTeamData();
+                this.bottomSheetVisible = false;
             } catch (error) {
                 console.error("Failed to delete user:", error);
             }
@@ -251,8 +283,14 @@ export default {
         async updateTeam() {
             try {
                 await updateTeam(this.selectedTeam.id, this.selectedTeamName);
+
+                const teamIndex = this.teams.findIndex(team => team.id === this.selectedTeam.id);
+                if (teamIndex !== -1) {
+                    this.teams[teamIndex].name = this.selectedTeamName;
+                }
+
                 this.editDialog = false;
-                this.fetchTeamData();
+                this.bottomSheetVisible = false;
             } catch (error) {
                 console.error("Failed to update teams:", error);
             }
@@ -269,6 +307,13 @@ export default {
             if (this.currentPage > 1) {
                 this.currentPage--;
             }
+        },
+        detectMobile() {
+            this.isMobile = window.innerWidth <= 1080;
+        },
+        showBottomSheet(item) {
+          this.item = item;
+          this.bottomSheetVisible = true;
         }
     }
 };
@@ -301,5 +346,20 @@ export default {
 .v-card {
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.icon-btn-mobile {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  border: none !important;
+}
+
+.icon-btn-mobile .v-icon {
+  font-size: 20px;
+  color: #000;
 }
 </style>

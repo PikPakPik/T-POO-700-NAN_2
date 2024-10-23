@@ -52,32 +52,38 @@
             </template>
 
             <template v-slot:item.action="{ item, index }">
-                <v-row class="d-flex align-center flex-row no-gutters">
-                    <v-btn 
-                        icon size="small" 
-                        class="mr-2" 
-                        @click="confirmDeleteEmployeeFromTeam(item.id)" 
-                        aria-label="Delete user"
-                        v-if="index === 0"
-                        data-intro="Cliquez ici pour supprimer l'utilisateur de l'équipe." 
-                        data-title="Désassigner un utilisateur d'une équipe">
-                        <v-icon>mdi-trash-can</v-icon>
+                <div v-if="isMobile">
+                    <v-btn icon class="icon-btn-mobile" @click="showBottomSheet(item)">
+                      <v-icon>mdi-dots-vertical</v-icon>
                     </v-btn>
-                    <v-btn 
-                        icon size="small" 
-                        class="mr-2" 
-                        @click="confirmDeleteEmployeeFromTeam(item.id)" 
-                        aria-label="Delete user"
-                        v-else
-                        :class="{ 'teams-details-intro': index === 0 }">
-                        <v-icon>mdi-trash-can</v-icon>
-                    </v-btn>
-                </v-row>
+                </div>
+                <div v-else>
+                    <v-row class="d-flex align-center flex-row no-gutters">
+                        <v-btn
+                            icon size="small"
+                            class="mr-2"
+                            @click="confirmDeleteEmployeeFromTeam(item.id)"
+                            aria-label="Delete user"
+                            :class="{ 'teams-details-intro': index === 0, 'mr-2': index >= 0 }"
+                            data-intro="Cliquez ici pour supprimer l'utilisateur de l'équipe."
+                            data-title="Désassigner un utilisateur d'une équipe">
+                            <v-icon>mdi-trash-can</v-icon>
+                        </v-btn>
+                    </v-row>
+                </div>
             </template>
         </v-data-table>
             </v-card>
         </v-col>
         </v-row>
+
+        <v-bottom-sheet v-model="bottomSheetVisible">
+            <v-list>
+                <v-list-item @click="confirmDeleteEmployeeFromTeam(item.id)">
+                    <v-list-item-title>Supprimer l'employé de l'équipe</v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-bottom-sheet>
 
         <!-- Associate User Dialog -->
         <v-dialog v-model="associateDialog" max-width="500px" aria-label="Associate User Dialog">
@@ -128,8 +134,8 @@ export default {
     data() {
         return {
             headers: [
-                { title: 'ID', text: 'ID', sortable: true, value: 'id' },
-                { title: 'Employé(s)', text: 'Employee', sortable: true, value: 'username' },
+                { title: 'ID', text: 'ID', sortable: true, value: 'id', width:'24%' },
+                { title: 'Employé(s)', text: 'Employee', sortable: true, value: 'username', width:'33%' },
             ],
             teamManagers: [],
             teamMembers: [],
@@ -147,7 +153,9 @@ export default {
             associateDialog: false,
             selectedUser: null,
             currentUser: {},
-            availableUsers: []
+            availableUsers: [],
+            bottomSheetVisible: false,
+            isMobile: false
         };
     },
     methods: {
@@ -156,9 +164,11 @@ export default {
                 const currentUser = await getUser(1); //to change with auth to handle the user id dynamically (21 = admin) (1 = Manager) (7 = Employee)
                 this.currentUser = currentUser;
 
-                if (currentUser.role.id == '1' || currentUser.role.id == '2') {
-                    this.headers.push({ title: 'Action', text: 'Actions', sortable: false, value: 'action'});
-                }
+            const actionColumnExists = this.headers.some(header => header.value === 'action');
+
+            if ((currentUser.role.id == '1' || currentUser.role.id == '2') && !actionColumnExists) {
+                this.headers.push({ title: 'Action', text: 'Actions', sortable: false, value: 'action', width:'33%' });
+            }
 
                 const response = await showTeam(this.teamId); 
                 this.teamMembers = response.employees;
@@ -198,7 +208,11 @@ export default {
             }
             try {
                 await removeEmployeeFromTeam(this.teamId, employeeId);
-                this.showTeam();
+                const employeeIndex = this.teamMembers.findIndex(employee => employee.id === employeeId);
+                if (employeeIndex !== -1) {
+                    this.teamMembers.splice(employeeIndex, 1);
+                }
+                this.bottomSheetVisible = false;
             } catch (error) {
                 console.error('Error deleting employee from team:', error);
             }
@@ -213,14 +227,26 @@ export default {
             this.associateDialog = false;
             this.selectedUser = null;
         },
+        detectMobile() {
+            this.isMobile = window.innerWidth <= 960;
+        },
+        showBottomSheet(item) {
+          this.item = item;
+          this.bottomSheetVisible = true;
+        }
     },
     mounted() {
+        this.detectMobile();
+        window.addEventListener('resize', this.detectMobile);
         this.showTeam();
         this.getUsers();
     },
     components: {
         ClockManager
-    }
+    },
+    beforeDestroy() {
+       window.removeEventListener('resize', this.detectMobile);
+    },
 };
 </script>
 
@@ -265,5 +291,20 @@ li {
 .v-card {
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.icon-btn-mobile {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  border: none !important;
+}
+
+.icon-btn-mobile .v-icon {
+  font-size: 20px;
+  color: #000;
 }
 </style>
