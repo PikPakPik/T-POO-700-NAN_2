@@ -5,10 +5,6 @@
 <script>
 import workingTime from '@/src/components/workingTime.vue';
 
-definePageMeta({
-    middleware: ["manager"]
-})
-
 export default {
     components: {
         workingTime

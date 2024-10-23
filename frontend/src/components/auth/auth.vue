@@ -129,15 +129,7 @@ export default {
                     const { user, xsrf_token } = response.data;
                     const authStore = useAuthStore();
                     authStore.login(user, xsrf_token);
-                    console.log('response1:', response);
-                    // this.$router.push({ name: ('home') });
-                    this.$router.push('/home');
-                    console.log('route:', this.$router.getRoutes());
-                    // window.location.href = '/';
-                    // await router.push({ name: ('index') });
-                    // await router.got('/');
-                    // window.location.reload();
-                    // navigateTo('/1');
+                    this.$router.push('/');
                 }
             } catch (error) {
                 this.error = 'Échec de la connexion.';

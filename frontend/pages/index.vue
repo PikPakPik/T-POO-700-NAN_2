@@ -18,13 +18,11 @@ import workingTimeWeekVue from './src/components/workingTimeWeek.vue';
 import extraHour from './src/components/extraHour.vue';
 import todayDate from './src/components/todayDate.vue';
 
-definePageMeta({
-  middleware: ['nuxt-permissions'],
-  roles: ['Admin', 'Employee', 'Manager'],
-  name: 'home',
-  path: '/home',
-  // permissions: ['']
-})
+// definePageMeta({
+//   middleware: ['nuxt-permissions'],
+//   roles: ['Employee'], // Rôles requis pour accéder à cette page
+//   // permissions: ['read', 'write'], // Permissions requises pour accéder à cette page
+// })
 
 export default {
   components: {
