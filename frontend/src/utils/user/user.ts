@@ -5,6 +5,14 @@ export const useUsers = () => {
     const userApi = new UsersApi();
     let err: string | null = null;
 
+    const login = async (email: string, password: string) => {
+        const response = await userApi.login({ email, password });
+        if (response?.status !== 200) {
+            throw new Error('authentifation impossible');
+        }
+        return response;
+    }
+
     const getUsers = async () => {
         const response = await userApi.getUsers();
         if (response?.status !== 200) {
@@ -91,14 +99,15 @@ export const useUsers = () => {
         }
     }
 
-    return { 
+    return {
         err,
         getUsers,
         getUser,
         createUser,
         updateUser,
         updateUserRole,
-        deleteUser
+        deleteUser,
+        login,
     };
 }
 

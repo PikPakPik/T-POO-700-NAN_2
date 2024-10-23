@@ -13,7 +13,7 @@
       <span v-else class="text-black text-lg font-medium w-full">Démarrer le pointage</span>
       <button @click="togglePlay" class="bg-amber-400 p-4 flex items-center justify-center rounded-lg index-intro"
         data-title="Bouton on/off"
-        data-intro="Bouton pour déclancher le pointage au premier click et l'arrêter au second click.">
+        data-intro="Bouton pour déclencher le pointage au premier click et l'arrêter au second click.">
         <svg v-if="chronoStore.getIsPlaying" width="30" height="30" viewBox="0 0 45 45" fill="none"
           xmlns="http://www.w3.org/2000/svg">
           <rect width="45" height="45" rx="4" fill="black" />

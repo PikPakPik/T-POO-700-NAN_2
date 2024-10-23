@@ -4,9 +4,29 @@ defmodule TimeManager.Users do
   """
 
   import Ecto.Query, warn: false
+  alias Argon2
   alias TimeManager.Repo
   alias TimeManager.Roles.Role
   alias TimeManager.Users.User
+
+  def authenticate_user(email, plain_text_password) do
+    query = from(u in User, where: u.email == ^email)
+
+    case Repo.one(query) do
+      nil ->
+        Argon2.no_user_verify()
+        {:error, "Utilisateur et/ou mot de passe incorrect"}
+
+      user ->
+        user = Repo.preload(user, :role)
+
+        if Argon2.verify_pass(plain_text_password, user.password) do
+          {:ok, user}
+        else
+          {:error, "Utilisateur et/ou mot de passe incorrect"}
+        end
+    end
+  end
 
   @doc """
   Returns the list of users.
@@ -18,7 +38,7 @@ defmodule TimeManager.Users do
 
   """
   def list_users(params) do
-    query = from u in User
+    query = from(u in User)
 
     conditions = true
 
@@ -30,7 +50,7 @@ defmodule TimeManager.Users do
         end
       end)
 
-    Repo.all(from u in query, where: ^conditions)
+    Repo.all(from(u in query, where: ^conditions))
   end
 
   @doc """

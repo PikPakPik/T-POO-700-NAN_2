@@ -17,7 +17,7 @@ COPY --link . .
 RUN npm run build
 
 # Run
-FROM base
+FROM base as prod
 
 ENV PORT=$PORT
 ENV NODE_ENV=production

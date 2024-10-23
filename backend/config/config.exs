@@ -13,9 +13,13 @@ config :timemanager,
   generators: [timestamp_type: :utc_datetime]
 
 config :cors_plug,
-  origins: "*",
+  origin: [System.get_env("HTTP_ORIGIN", "http://localhost:3000")],
+  max_age: 86400,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  headers: ["authorization", "content-type"]
+  headers: ["Authorization", "Content-Type", "c-xsrf-token"],
+  credentials: true
+
+config :joken, default_signer: System.get_env("SECRET_KEY_BASE", "supersecret")
 
 # Configures the endpoint
 config :timemanager, TimeManagerWeb.Endpoint,
@@ -60,9 +64,10 @@ config :tailwind,
   ]
 
 # Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+# config :logger, :console,
+#   format: "$time $metadata[$level] $message\n",
+#   metadata: [:request_id]
+config :logger, level: :debug
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
@@ -74,6 +79,7 @@ config :timemanager, :phoenix_swagger,
       endpoint: TimeManagerWeb.Endpoint
     ]
   }
+
 config :phoenix_swagger, json_library: Jason
 
 # Import environment specific config. This must remain at the bottom

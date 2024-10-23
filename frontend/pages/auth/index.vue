@@ -1,5 +1,5 @@
 <template>
-        <auth />
+    <auth />
 </template>
 
 <script setup>
@@ -7,6 +7,6 @@
 import auth from '~/src/components/auth/auth.vue';
 
 definePageMeta({
-    layout: 'auth'
+    layout: 'auth',
 })
 </script>

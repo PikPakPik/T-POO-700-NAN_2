@@ -16,18 +16,20 @@ export default defineNuxtConfig({
       })
     },
     '@pinia/nuxt',
+    'nuxt-permissions',
   ],
 
   nitro: {
-    preset: 'static',
-    output: {
-      publicDir: path.join(__dirname, 'TimeManagerApp/www'),
-    }
+    preset: process.env.MODE === 'production' ? 'static' : undefined,
+    output: process.env.MODE === 'development' ? {
+        publicDir: path.join(__dirname, 'TimeManagerApp/www'),
+      }
+      : undefined,
   },
 
   hooks: {
     close: (nuxt) => {
-      if(!nuxt.options._prepare) process.exit()
+      if (!nuxt.options._prepare) process.exit()
     },
   },
 

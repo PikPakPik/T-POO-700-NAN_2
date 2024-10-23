@@ -6,11 +6,28 @@ defmodule TimeManagerWeb.UserController do
   alias TimeManager.Users.User
   alias TimeManager.Roles
   alias TimeManagerWeb.SwaggerDef
+  alias TimeManager.Auth
 
-  action_fallback TimeManagerWeb.FallbackController
+  action_fallback(TimeManagerWeb.FallbackController)
 
   def swagger_definitions do
     SwaggerDef.user_definitions()
+  end
+
+  def login(conn, %{"email" => email, "password" => password}) do
+    case Users.authenticate_user(email, password) do
+      {:ok, user} ->
+        {jwt, xsrf_token} = Auth.generate_jwt(user)
+
+        conn
+        |> put_resp_cookie("jwt", jwt, http_only: true, secure: true, same_site: "Lax")
+        |> json(%{xsrf_token: xsrf_token, user: user})
+
+      {:error, message} ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: message})
+    end
   end
 
   swagger_path(:index) do

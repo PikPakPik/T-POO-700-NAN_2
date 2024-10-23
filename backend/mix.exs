@@ -10,7 +10,7 @@ defmodule TimeManager.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers ++ [:phoenix_swagger],
+      compilers: [:phoenix, :gettext] ++ Mix.compilers() ++ [:phoenix_swagger]
     ]
   end
 
@@ -58,7 +58,11 @@ defmodule TimeManager.MixProject do
       {:phoenix_swagger, "~> 0.8"},
       {:ex_json_schema, "~> 0.5"},
       {:cors_plug, "~> 3.0"},
-      {:faker, "~> 0.18"}
+      {:faker, "~> 0.18"},
+      {:comeonin, "~> 5.5"},
+      {:argon2_elixir, "~> 4.0"},
+      {:joken, "~> 2.6"},
+      {:elixir_uuid, "~> 1.2"}
     ]
   end
 
