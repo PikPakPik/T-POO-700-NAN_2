@@ -23,9 +23,16 @@ defmodule TimeManager.ClocksTest do
     end
 
     test "create_clock/1 with valid data creates a clock" do
-      valid_role = %{name: "User"}
+      valid_role = %{name: "Employee", permissions: %{"clock" => ["read"]}}
       {:ok, role} = TimeManager.Roles.create_role(valid_role)
-      valid_user = %{username: "toto", email: "toto@mail.com", role_id: role.id}
+
+      valid_user = %{
+        username: "toto",
+        email: "toto@mail.com",
+        password: "password",
+        role_id: role.id
+      }
+
       assert {:ok, %User{} = user} = Users.create_user(valid_user)
       assert user.username == "toto"
       assert user.email == "toto@mail.com"

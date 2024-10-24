@@ -11,7 +11,8 @@ defmodule TimeManager.UsersFixtures do
     {:ok, role} =
       attrs
       |> Enum.into(%{
-        name: "employee"
+        name: "employee",
+        permissions: %{"working_time" => ["read"]}
       })
       |> TimeManager.Roles.create_role()
 
@@ -20,6 +21,7 @@ defmodule TimeManager.UsersFixtures do
       |> Enum.into(%{
         email: "toto@mail.com",
         username: "toto",
+        password: "password",
         role_id: role.id
       })
       |> TimeManager.Users.create_user()

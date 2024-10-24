@@ -8,7 +8,7 @@ defmodule TimeManager.TeamsTest do
 
     import TimeManager.TeamsFixtures
 
-    @invalid_attrs %{name: nil}
+    @invalid_attrs %{name: nil, permissions: nil}
 
     test "list_teams/0 returns all teams" do
       team = team_fixture()
@@ -21,7 +21,7 @@ defmodule TimeManager.TeamsTest do
     end
 
     test "create_team/1 with valid data creates a team" do
-      valid_attrs = %{name: "some name"}
+      valid_attrs = %{name: "some name", permissions: %{"working_time" => ["read"]}}
 
       assert {:ok, %Team{} = team} = Teams.create_team(valid_attrs)
       assert team.name == "some name"

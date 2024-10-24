@@ -5,7 +5,20 @@ defmodule TimeManagerWeb.WorkingTimeController do
   alias TimeManager.WorkingTimes
   alias TimeManager.WorkingTimes.WorkingTime
   alias TimeManagerWeb.SwaggerDef
+  alias TimeManagerWeb.Plugs.PermissionPlug
+
   action_fallback(TimeManagerWeb.FallbackController)
+
+  plug(PermissionPlug,
+    actions: [
+      show_user_time: %{"user" => ["read"]},
+      show_user_times: %{"user" => ["read"]},
+      create_user_time: %{"working_time" => ["create"]},
+      index: %{"working_time" => ["read"]},
+      update: %{"working_time" => ["update"]},
+      delete: %{"working_time" => ["delete"]}
+    ]
+  )
 
   def swagger_definitions do
     SwaggerDef.working_time_definitions()
@@ -16,6 +29,8 @@ defmodule TimeManagerWeb.WorkingTimeController do
     description("List all working times.")
 
     response(200, "OK", Schema.ref(:WorkingTimesResponse))
+
+    SwaggerDef.api_protected_path()
   end
 
   def index(conn, _params) do
@@ -26,6 +41,8 @@ defmodule TimeManagerWeb.WorkingTimeController do
   swagger_path(:create_user_time) do
     summary("Create user working time")
     description("Create a user working time entry.")
+
+    SwaggerDef.api_protected_path()
 
     parameter(:userID, :path, :integer, "User ID", required: true, example: 1)
 
@@ -53,6 +70,8 @@ defmodule TimeManagerWeb.WorkingTimeController do
     summary("List user working times")
     description("List working times of a given user.")
 
+    SwaggerDef.api_protected_path()
+
     parameter(:userID, :path, :integer, "User ID", required: true, example: 1)
 
     parameter(:start, :query, :string, "Period start (default to no limit)",
@@ -79,6 +98,8 @@ defmodule TimeManagerWeb.WorkingTimeController do
     summary("Show user working time")
     description("Show a specific user working time entry.")
 
+    SwaggerDef.api_protected_path()
+
     parameter(:userID, :path, :integer, "User ID", required: true, example: 1)
     parameter(:id, :path, :integer, "Working time ID", required: true, example: 2)
 
@@ -96,6 +117,8 @@ defmodule TimeManagerWeb.WorkingTimeController do
   swagger_path(:update) do
     summary("Update working time")
     description("Update a working time entry.")
+
+    SwaggerDef.api_protected_path()
 
     parameter(:id, :path, :integer, "Working time ID", required: true, example: 1)
 
@@ -119,6 +142,8 @@ defmodule TimeManagerWeb.WorkingTimeController do
   swagger_path(:delete) do
     summary("Delete Working time")
     description("Delete a working time by ID.")
+
+    SwaggerDef.api_protected_path()
 
     parameter(:id, :path, :integer, "Working time ID", required: true, example: 1)
 

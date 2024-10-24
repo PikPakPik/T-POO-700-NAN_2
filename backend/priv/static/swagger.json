@@ -66,6 +66,78 @@
       "title": "LogResponse",
       "type": "object"
     },
+    "ForbiddenResponse": {
+      "description": "Forbidden",
+      "properties": {
+        "reason": {
+          "description": "Error reason",
+          "type": "ErrorReason"
+        }
+      },
+      "title": "ForbiddenResponse",
+      "type": "object"
+    },
+    "UserResponse": {
+      "description": "Response schema for single user",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/UserDetailed",
+          "description": "The user details"
+        }
+      },
+      "title": "UserResponse",
+      "type": "object"
+    },
+    "TeamResponse": {
+      "description": "Response schema for single team",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/TeamDetailed",
+          "description": "The team details"
+        }
+      },
+      "title": "TeamResponse",
+      "type": "object"
+    },
+    "UserRequest": {
+      "description": "PUT body for updating a user",
+      "example": {
+        "user": {
+          "email": "john@doe.com",
+          "username": "JohnDoe"
+        }
+      },
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User",
+          "description": "The user details"
+        }
+      },
+      "title": "UserRequest",
+      "type": "object"
+    },
+    "BadRequestResponse": {
+      "description": "Bad request",
+      "properties": {
+        "reason": {
+          "description": "Error reason",
+          "type": "ErrorReason"
+        }
+      },
+      "title": "BadRequestResponse",
+      "type": "object"
+    },
+    "WorkingTimeResponse": {
+      "description": "Response schema for single working time",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/WorkingTime",
+          "description": "The working time details"
+        }
+      },
+      "title": "WorkingTimeResponse",
+      "type": "object"
+    },
     "RolesResponse": {
       "description": "Response schema for multiple roles",
       "properties": {
@@ -372,17 +444,6 @@
       "title": "TeamRequest",
       "type": "object"
     },
-    "TeamResponse": {
-      "description": "Response schema for single team",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/TeamDetailed",
-          "description": "The team details"
-        }
-      },
-      "title": "TeamResponse",
-      "type": "object"
-    },
     "TeamsResponse": {
       "description": "Response schema for multiple teams",
       "properties": {
@@ -479,32 +540,20 @@
       "title": "UserDetailed",
       "type": "object"
     },
-    "UserRequest": {
-      "description": "PUT body for updating a user",
-      "example": {
-        "user": {
-          "email": "john@doe.com",
-          "username": "JohnDoe"
-        }
-      },
+    "UserLogin": {
+      "description": "User login schema",
       "properties": {
-        "user": {
-          "$ref": "#/definitions/User",
-          "description": "The user details"
+        "email": {
+          "description": "Email address",
+          "format": "email",
+          "type": "string"
+        },
+        "password": {
+          "description": "Password",
+          "type": "string"
         }
       },
-      "title": "UserRequest",
-      "type": "object"
-    },
-    "UserResponse": {
-      "description": "Response schema for single user",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/UserDetailed",
-          "description": "The user details"
-        }
-      },
-      "title": "UserResponse",
+      "title": "UserLogin",
       "type": "object"
     },
     "UsersResponse": {
@@ -544,17 +593,6 @@
       "title": "UserWorkingTimeRequest",
       "type": "object"
     },
-    "WorkingTimeResponse": {
-      "description": "Response schema for single working time",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/WorkingTime",
-          "description": "The working time details"
-        }
-      },
-      "title": "WorkingTimeResponse",
-      "type": "object"
-    },
     "WorkingTimesResponse": {
       "description": "Response schema for multiple working times",
       "properties": {
@@ -576,6 +614,13 @@
   "produces": [
     "application/json"
   ],
+  "securityDefinitions": {
+    "csrf": {
+      "in": "header",
+      "name": "c-xsrf-token",
+      "type": "apiKey"
+    }
+  },
   "paths": {
     "/api/clocks": {
       "get": {
@@ -588,8 +633,19 @@
             "schema": {
               "$ref": "#/definitions/ClocksResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "List Clocks",
         "tags": [
           "Clock"
@@ -614,6 +670,12 @@
           "204": {
             "description": "No Content - Deleted Successfully"
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -621,6 +683,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Delete Clock",
         "tags": [
           "Clock"
@@ -647,8 +714,19 @@
             "schema": {
               "$ref": "#/definitions/ClockResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Show Clock",
         "tags": [
           "Clock"
@@ -679,8 +757,19 @@
             "schema": {
               "$ref": "#/definitions/ClockResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Clock in or out user",
         "tags": [
           "Clock"
@@ -698,8 +787,19 @@
             "schema": {
               "$ref": "#/definitions/LogsResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "List Logs",
         "tags": [
           "Log"
@@ -727,6 +827,12 @@
               "$ref": "#/definitions/LogResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -734,9 +840,266 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Show Log",
         "tags": [
           "Log"
+        ]
+      }
+    },
+    "/api/me": {
+      "delete": {
+        "description": "Delete the current user",
+        "operationId": "TimeManagerWeb.MeController.delete",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
+        "summary": "Delete current user",
+        "tags": [
+          "Me"
+        ]
+      },
+      "get": {
+        "description": "Get the current user",
+        "operationId": "TimeManagerWeb.MeController.index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
+        "summary": "Get current user",
+        "tags": [
+          "Me"
+        ]
+      },
+      "patch": {
+        "description": "Update the current user",
+        "operationId": "TimeManagerWeb.MeController.update",
+        "parameters": [
+          {
+            "description": "The user details",
+            "in": "body",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
+        "summary": "Update current user",
+        "tags": [
+          "Me"
+        ]
+      },
+      "put": {
+        "description": "Update the current user",
+        "operationId": "TimeManagerWeb.MeController.update",
+        "parameters": [
+          {
+            "description": "The user details",
+            "in": "body",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
+        "summary": "Update current user",
+        "tags": [
+          "Me"
+        ]
+      }
+    },
+    "/api/me/clock": {
+      "post": {
+        "description": "Clock in or out",
+        "operationId": "TimeManagerWeb.MeController.clock",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ClockResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
+        "summary": "Clock in or out",
+        "tags": [
+          "Me"
+        ]
+      }
+    },
+    "/api/me/teams": {
+      "get": {
+        "description": "Get teams where the current user is a member or a manager",
+        "operationId": "TimeManagerWeb.MeController.teams",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
+        "summary": "Get teams",
+        "tags": [
+          "Me"
+        ]
+      }
+    },
+    "/api/me/workingtimes": {
+      "get": {
+        "description": "Get working times",
+        "operationId": "TimeManagerWeb.MeController.working_times",
+        "parameters": [
+          {
+            "description": "Period start (default to no limit)",
+            "format": "utc_datetime",
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "type": "string",
+            "x-example": "2023-02-04 11:24:45"
+          },
+          {
+            "description": "Period end (default to no limit)",
+            "format": "utc_datetime",
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "type": "string",
+            "x-example": "2023-02-04 11:24:45"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/WorkingTimeResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
+        "summary": "Get working times",
+        "tags": [
+          "Me"
         ]
       }
     },
@@ -751,8 +1114,19 @@
             "schema": {
               "$ref": "#/definitions/RolesResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "List Roles",
         "tags": [
           "Role"
@@ -780,6 +1154,12 @@
               "$ref": "#/definitions/RoleResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -787,6 +1167,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Show role",
         "tags": [
           "Role"
@@ -804,8 +1189,19 @@
             "schema": {
               "$ref": "#/definitions/TeamsResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "List teams",
         "tags": [
           "Team"
@@ -831,8 +1227,19 @@
             "schema": {
               "$ref": "#/definitions/TeamResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Create team",
         "tags": [
           "Team"
@@ -857,6 +1264,12 @@
           "204": {
             "description": "No Content - Deleted Successfully"
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -864,6 +1277,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Delete team",
         "tags": [
           "Team"
@@ -889,6 +1307,12 @@
               "$ref": "#/definitions/TeamResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -896,6 +1320,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Show team",
         "tags": [
           "Team"
@@ -930,6 +1359,12 @@
               "$ref": "#/definitions/TeamResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -937,6 +1372,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Update team",
         "tags": [
           "Team"
@@ -971,6 +1411,12 @@
               "$ref": "#/definitions/TeamResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -978,6 +1424,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Update team",
         "tags": [
           "Team"
@@ -1013,6 +1464,12 @@
               "$ref": "#/definitions/TeamResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1020,6 +1477,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Add employee",
         "tags": [
           "Team"
@@ -1055,6 +1517,12 @@
               "$ref": "#/definitions/TeamResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1062,6 +1530,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Add manager",
         "tags": [
           "Team"
@@ -1089,6 +1562,12 @@
               "$ref": "#/definitions/TeamClockResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1096,6 +1575,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Clock team users",
         "tags": [
           "Team"
@@ -1131,6 +1615,12 @@
               "$ref": "#/definitions/TeamResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1138,6 +1628,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Remove employee",
         "tags": [
           "Team"
@@ -1173,6 +1668,12 @@
               "$ref": "#/definitions/TeamResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1180,6 +1681,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Remove manager",
         "tags": [
           "Team"
@@ -1225,6 +1731,12 @@
               "$ref": "#/definitions/TeamResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1232,6 +1744,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Get working times of a team",
         "tags": [
           "Team"
@@ -1264,8 +1781,19 @@
             "schema": {
               "$ref": "#/definitions/UsersResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "List Users",
         "tags": [
           "User"
@@ -1292,6 +1820,12 @@
               "$ref": "#/definitions/UserResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "422": {
             "description": "Unprocessable Entity",
             "schema": {
@@ -1299,7 +1833,38 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Create User",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/api/users/sign_in": {
+      "post": {
+        "description": "Login a user.",
+        "operationId": "TimeManagerWeb.UserController.login",
+        "parameters": [
+          {
+            "description": "User login",
+            "in": "body",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UserLogin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Login",
         "tags": [
           "User"
         ]
@@ -1323,6 +1888,12 @@
           "204": {
             "description": "No Content"
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1330,6 +1901,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Delete user",
         "tags": [
           "User"
@@ -1355,6 +1931,12 @@
               "$ref": "#/definitions/UserResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1362,6 +1944,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Show User",
         "tags": [
           "User"
@@ -1396,6 +1983,12 @@
               "$ref": "#/definitions/UserResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1409,6 +2002,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Update user",
         "tags": [
           "User"
@@ -1443,6 +2041,12 @@
               "$ref": "#/definitions/UserResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1456,6 +2060,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Update user",
         "tags": [
           "User"
@@ -1488,6 +2097,12 @@
           "200": {
             "description": "OK"
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1495,6 +2110,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Modify user role",
         "tags": [
           "User"
@@ -1512,8 +2132,19 @@
             "schema": {
               "$ref": "#/definitions/WorkingTimesResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "List Working times",
         "tags": [
           "WorkingTime"
@@ -1538,6 +2169,12 @@
           "204": {
             "description": "No Content - Deleted Successfully"
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1545,6 +2182,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Delete Working time",
         "tags": [
           "WorkingTime"
@@ -1579,6 +2221,12 @@
               "$ref": "#/definitions/WorkingTimeResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1586,6 +2234,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Update working time",
         "tags": [
           "WorkingTime"
@@ -1620,6 +2273,12 @@
               "$ref": "#/definitions/WorkingTimeResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1627,6 +2286,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Update working time",
         "tags": [
           "WorkingTime"
@@ -1671,8 +2335,19 @@
             "schema": {
               "$ref": "#/definitions/WorkingTimesResponse"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "List user working times",
         "tags": [
           "WorkingTime"
@@ -1707,6 +2382,12 @@
               "$ref": "#/definitions/WorkingTimeResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1714,6 +2395,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Create user working time",
         "tags": [
           "WorkingTime"
@@ -1749,6 +2435,12 @@
               "$ref": "#/definitions/WorkingTimeResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1756,6 +2448,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Show user working time",
         "tags": [
           "WorkingTime"

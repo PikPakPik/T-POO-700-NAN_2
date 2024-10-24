@@ -5,16 +5,24 @@ defmodule TimeManagerWeb.LogController do
   alias TimeManager.Logs
   alias TimeManager.Logs.Log
   alias TimeManagerWeb.SwaggerDef
-
-  action_fallback TimeManagerWeb.FallbackController
+  alias TimeManagerWeb.Plugs.PermissionPlug
+  action_fallback(TimeManagerWeb.FallbackController)
 
   def swagger_definitions do
     SwaggerDef.log_definitions()
   end
 
+  plug(PermissionPlug,
+    actions: [
+      index: %{"log" => ["read"]}
+    ]
+  )
+
   swagger_path(:index) do
     summary("List Logs")
     description("List all logs in the database.")
+
+    SwaggerDef.api_protected_path()
 
     response(200, "OK", Schema.ref(:LogsResponse))
   end
@@ -27,6 +35,9 @@ defmodule TimeManagerWeb.LogController do
   swagger_path(:show) do
     summary("Show Log")
     description("Show a log by ID.")
+
+    SwaggerDef.api_protected_path()
+
     parameter(:id, :path, :integer, "Log ID", required: true, example: 123)
 
     response(200, "OK", Schema.ref(:LogResponse))

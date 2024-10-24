@@ -3,6 +3,7 @@ defmodule TimeManager.Auth do
   require Logger
 
   alias TimeManager.Users
+  alias TimeManager.Repo
 
   @impl true
   def token_config do
@@ -53,5 +54,31 @@ defmodule TimeManager.Auth do
     exception ->
       Logger.error("Exception occurred: #{inspect(exception)}")
       {:error, :internal_server_error}
+  end
+
+  def get_user(conn) do
+    xsrf_token =
+      case List.keyfind(conn.req_headers, "c-xsrf-token", 0) do
+        nil -> nil
+        {_, token} -> token
+      end
+
+    result = TimeManager.Auth.verify_jwt(conn.cookies["jwt"], xsrf_token)
+
+    case result do
+      {:ok, claims} ->
+        user = Users.get_user!(claims["sub"]) |> Repo.preload(:role)
+        user
+
+      {:error, _} ->
+        nil
+    end
+  end
+
+  def get_user_id(conn) do
+    case get_user(conn) do
+      nil -> nil
+      user -> user.id
+    end
   end
 end

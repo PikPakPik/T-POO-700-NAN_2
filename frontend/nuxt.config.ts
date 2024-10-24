@@ -6,8 +6,6 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
 
-  css: ['~/assets/css/main.css'],
-
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
@@ -16,14 +14,23 @@ export default defineNuxtConfig({
       })
     },
     '@pinia/nuxt',
-    'nuxt-permissions',
+  ],
+
+  css: [
+    '~/assets/css/main.css',
+    'vue3-toastify/dist/index.css' // Add this line
+  ],
+
+  plugins: [
+    '~/plugins/permissions.ts',
+    '~/plugins/auth.ts'
   ],
 
   nitro: {
     preset: process.env.MODE === 'production' ? 'static' : undefined,
     output: process.env.MODE === 'development' ? {
-        publicDir: path.join(__dirname, 'TimeManagerApp/www'),
-      }
+      publicDir: path.join(__dirname, 'TimeManagerApp/www'),
+    }
       : undefined,
   },
 

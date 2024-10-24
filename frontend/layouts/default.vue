@@ -197,6 +197,13 @@ import 'intro.js/introjs.css';
 import { useChronoStore } from '@/stores/chronoStore'
 import { Howl } from 'howler';
 
+definePageMeta({
+  middleware: ['global-role'],
+  meta: {
+    roles: ['Admin', 'Manager', 'Employee'], // Rôles requis pour accéder à cette page
+  },
+})
+
 const { getUser } = useUsers();
 
 const headerStore = useHeaderFacadeStore()

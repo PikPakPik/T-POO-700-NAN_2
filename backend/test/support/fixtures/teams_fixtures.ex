@@ -10,12 +10,11 @@ defmodule TimeManager.TeamsFixtures do
   def team_fixture(attrs \\ %{}) do
     {:ok, team} =
       attrs
-      |> Enum.into(%{
-        name: "some name"
-      })
+      |> Enum.into(%{name: "default name", permissions: %{"default" => ["read"]}})
       |> TimeManager.Teams.create_team()
 
+    # Preload the clocks association
+    team = TimeManager.Repo.preload(team, :clocks)
     team
   end
-
 end

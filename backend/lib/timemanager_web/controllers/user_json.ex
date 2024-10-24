@@ -12,7 +12,7 @@ defmodule TimeManagerWeb.UserJSON do
   Renders a single user.
   """
   def show(%{user: user}) do
-    %{data: data(user, %{associations: true})}
+    %{data: data(user, %{associations: true, except: [:password_hash]})}
   end
 
   defp data(%User{} = user, options \\ %{}) do

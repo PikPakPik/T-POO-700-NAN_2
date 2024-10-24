@@ -3,6 +3,7 @@ defmodule TimeManagerWeb.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
+    plug(TimeManagerWeb.Plugs.Logger)
   end
 
   pipeline :protected do
@@ -10,43 +11,54 @@ defmodule TimeManagerWeb.Router do
   end
 
   scope "/api", TimeManagerWeb do
-    pipe_through(:api)
-    # Public routes
+    pipe_through([:api])
+
     post("/users/sign_in", UserController, :login)
-  end
 
-  scope "/api", TimeManagerWeb do
-    pipe_through([:api, :protected])
+    scope "/" do
+      pipe_through([:protected])
 
-    resources("/roles", RoleController, only: [:index, :show])
-    resources("/logs", LogController, only: [:index, :show])
+      resources("/roles", RoleController, only: [:index, :show])
+      resources("/logs", LogController, only: [:index, :show])
 
-    scope "/users" do
-      resources("/", UserController, except: [:new, :edit])
-      put("/:userID/role/:roleID", UserController, :set_role)
-    end
+      scope "/me" do
+        resources("/", MeController, only: [:index])
+        get("/workingtimes", MeController, :working_times)
+        get("/teams", MeController, :teams)
+        post("/clock", MeController, :clock)
+        put("/", MeController, :update)
+        patch("/", MeController, :update)
+        delete("/", MeController, :delete)
+      end
 
-    scope "/clocks" do
-      resources("/", ClockController, only: [:index, :delete])
-      post("/:userID", ClockController, :clock_in_out_user)
-      get("/:userID", ClockController, :get_user_clock)
-    end
+      scope "/users" do
+        resources("/", UserController, except: [:new, :edit])
+        get("/:id", UserController, :show)
+        put("/:userID/role/:roleID", UserController, :set_role)
+      end
 
-    scope "/workingtime" do
-      resources("/", WorkingTimeController, except: [:new, :show, :create, :edit])
-      get("/:userID", WorkingTimeController, :show_user_times)
-      get("/:userID/:id", WorkingTimeController, :show_user_time)
-      post("/:userID", WorkingTimeController, :create_user_time)
-    end
+      scope "/clocks" do
+        resources("/", ClockController, only: [:index, :delete])
+        post("/:userID", ClockController, :clock_in_out_user)
+        get("/:userID", ClockController, :get_user_clock)
+      end
 
-    scope "/teams" do
-      resources("/", TeamController, except: [:new, :edit])
-      post("/:teamID/workingtime", TeamController, :working_time_teams)
-      get("/:teamID/workingtimes", TeamController, :get_working_times)
-      put("/:teamID/add_employee/:employeeID", TeamController, :add_employee)
-      put("/:teamID/remove_employee/:employeeID", TeamController, :remove_employee)
-      put("/:teamID/add_manager/:managerID", TeamController, :add_manager)
-      put("/:teamID/remove_manager/:managerID", TeamController, :remove_manager)
+      scope "/workingtime" do
+        resources("/", WorkingTimeController, except: [:new, :show, :create, :edit])
+        get("/:userID", WorkingTimeController, :show_user_times)
+        get("/:userID/:id", WorkingTimeController, :show_user_time)
+        post("/:userID", WorkingTimeController, :create_user_time)
+      end
+
+      scope "/teams" do
+        resources("/", TeamController, except: [:new, :edit])
+        post("/:teamID/workingtime", TeamController, :working_time_teams)
+        get("/:teamID/workingtimes", TeamController, :get_working_times)
+        put("/:teamID/add_employee/:employeeID", TeamController, :add_employee)
+        put("/:teamID/remove_employee/:employeeID", TeamController, :remove_employee)
+        put("/:teamID/add_manager/:managerID", TeamController, :add_manager)
+        put("/:teamID/remove_manager/:managerID", TeamController, :remove_manager)
+      end
     end
   end
 
@@ -65,7 +77,14 @@ defmodule TimeManagerWeb.Router do
       },
       definitions: TimeManagerWeb.SwaggerDef.global_definitions(),
       consumes: ["application/json"],
-      produces: ["application/json"]
+      produces: ["application/json"],
+      securityDefinitions: %{
+        csrf: %{
+          type: "apiKey",
+          name: "c-xsrf-token",
+          in: "header"
+        }
+      }
     }
   end
 

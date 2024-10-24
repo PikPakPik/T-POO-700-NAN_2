@@ -8,71 +8,76 @@
         </v-row>
 
         <v-row justify="start">
-        <v-col cols="12">
-            <v-card class="transparent-card">
-            <v-card-title class="d-flex justify-space-between align-center">
-                <v-text-field v-model="search" class="search-bar" append-icon="mdi-magnify" label="Search"
-                single-line hide-details aria-label="Search users"></v-text-field>
-            </v-card-title>
-            <v-data-table :headers="headers" :items="users" :search="search" item-key="id"
-                class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage" items-per-page-text="Éléments par page"
-                :footer-props="customFooterProps" :items-per-page-options="options.itemsPerPageOptions" aria-label="User accounts table">
-                
-                <template v-slot:item.id="{ item }">
-                    <span aria-label="User ID">{{ item.id }}</span>
-                </template>
-                <template v-slot:item.action="{ item }">
-                  <div v-if="isMobile">
-                    <v-btn icon class="icon-btn-mobile" @click="showBottomSheet(item)">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </div>
-                  <div v-else>
-                    <v-row class="d-flex align-center flex-row no-gutters">
-                      <v-btn icon size="small" class="mr-2" @click="editRole(item)" aria-label="Edit role">
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                      <v-btn icon size="small" class="mr-2" @click="confirmDelete(item.id)" aria-label="Delete user">
-                        <v-icon>mdi-trash-can</v-icon>
-                      </v-btn>
-                    </v-row>
-                  </div>
-                </template>
-                </v-data-table>
+            <v-col cols="12">
+                <v-card class="transparent-card">
+                    <v-card-title class="d-flex justify-space-between align-center">
+                        <v-text-field v-model="search" class="search-bar" append-icon="mdi-magnify" label="Search"
+                            single-line hide-details aria-label="Search users"></v-text-field>
+                    </v-card-title>
+                    <v-data-table :headers="headers" :items="users" :search="search" item-key="id"
+                        class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage"
+                        items-per-page-text="Éléments par page" :footer-props="customFooterProps"
+                        :items-per-page-options="options.itemsPerPageOptions" aria-label="User accounts table">
+
+                        <template v-slot:item.id="{ item }">
+                            <span aria-label="User ID">{{ item.id }}</span>
+                        </template>
+
+                        <template v-slot:item.username="{ item }">
+                            <div class="flex items-center">
+                                <v-avatar class="h-10 w-10 flex-shrink-0">
+                                    <img src="@/assets/batman-head.png" alt="User Avatar"
+                                        class="w-10 h-10 rounded-full" />
+                                </v-avatar>
+                                <div class="ml-3">
+                                    <p class="whitespace-no-wrap" aria-label="Username">{{ item.username }}</p>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template v-slot:item.role="{ item }">
+                            <span aria-label="User role">{{ item.role.name }}</span>
+                        </template>
+
+                        <template v-slot:item.action="{ item }">
+                            <v-row class="d-flex align-center flex-row no-gutters">
+                                <v-btn icon size="small" class="mr-2" @click="editRole(item)" aria-label="Edit role">
+                                    <v-icon>mdi-pencil</v-icon>
+                                </v-btn>
+                                <v-btn icon size="small" class="mr-2" @click="confirmDelete(item.id)"
+                                    aria-label="Delete user">
+                                    <v-icon>mdi-trash-can</v-icon>
+                                </v-btn>
+                            </v-row>
+                        </template>
+                    </v-data-table>
                 </v-card>
             </v-col>
-            </v-row>
-
-            <v-bottom-sheet v-model="bottomSheetVisible">
-                <v-list>
-                    <v-list-item @click="editRole(item)">
-                        <v-list-item-title>Modifier</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="confirmDelete(item.id)">
-                        <v-list-item-title>Supprimer</v-list-item-title>
-                    </v-list-item>
-                </v-list>
-            </v-bottom-sheet>
+        </v-row>
 
         <!-- Confirmation dialog -->
         <v-dialog v-model="deleteDialog" max-width="400" aria-label="Delete confirmation dialog">
             <v-card>
                 <v-card-title class="text-h5">Confirmer la suppression</v-card-title>
-                <v-card-text>Es-tu sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.</v-card-text>
+                <v-card-text>Es-tu sûr de vouloir supprimer cet utilisateur ? Cette action est
+                    irréversible.</v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue-grey" text @click="deleteDialog = false" aria-label="Cancel delete">Annuler</v-btn>
-                    <v-btn color="red" text @click="deleteSelectedUser(selectedUserId)" aria-label="Confirm delete">Supprimer</v-btn>
+                    <v-btn color="blue-grey" text @click="deleteDialog = false"
+                        aria-label="Cancel delete">Annuler</v-btn>
+                    <v-btn color="red" text @click="deleteSelectedUser(selectedUserId)"
+                        aria-label="Confirm delete">Supprimer</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        
+
         <!-- Edit dialog -->
         <v-dialog v-model="editDialog" max-width="400" aria-label="Edit role dialog">
             <v-card>
                 <v-card-title class="text-h5">Modifier le rôle</v-card-title>
                 <v-card-text>
-                    <v-select v-model="selectedUserRole" :items="roles" label="Rôle" aria-label="Select user role"></v-select>
+                    <v-select v-model="selectedUserRole" :items="roles" label="Rôle"
+                        aria-label="Select user role"></v-select>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
@@ -81,13 +86,14 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        
+
     </v-container>
 </template>
 
 <script>
 //utils
 import useUsers from '~/src/utils/user/user';
+import { useAuthStore } from '@/stores/auth';
 
 const { getUsers, deleteUser, updateUserRole } = useUsers();
 
@@ -96,10 +102,9 @@ export default {
     data() {
         return {
             headers: [
-              { title: 'ID', text: 'ID', sortable: true, value: 'id', width: '10%' },
-              { title: 'Nom d\'utilisateur', text: 'Nom d\'utilisateur', sortable: true, value: 'username', width: '40%' },
-              { title: 'Rôle', text: 'Role', sortable: true, value: 'role.name', width: '30%' },
-              { title: 'Actions', text: 'Actions', sortable: false , value: 'action', width: '20%' }
+                { title: 'ID', text: 'ID', sortable: true, value: 'id' },
+                { title: 'Nom d\'utilisateur', text: 'Nom d\'utilisateur', sortable: true, value: 'username' },
+                { title: 'Rôle', text: 'Role', sortable: true, value: 'role.name' },
             ],
             search: '',
             error: null,
@@ -122,15 +127,28 @@ export default {
         totalPages() {
             return Math.ceil(this.users.length / this.itemsPerPage);
         },
+        isAdmin() {
+            const authStore = useAuthStore();
+            return authStore.getUserRoles.includes('Admin');
+        },
+        headersWithActions() {
+            if (this.isAdmin) {
+                return [
+                    ...this.headers,
+                    { title: 'Actions', text: 'Actions', sortable: false, value: 'action' }
+                ];
+            }
+            return this.headers;
+        }
     },
     mounted() {
         this.detectMobile();
         window.addEventListener('resize', this.detectMobile);
         this.fetchUserData();
     },
-     beforeDestroy() {
+    beforeDestroy() {
         window.removeEventListener('resize', this.detectMobile);
-     },
+    },
     methods: {
         async fetchUserData() {
             try {
@@ -164,14 +182,14 @@ export default {
         },
         formatUserRole(selectedUserRole) {
             switch (selectedUserRole) {
-            case 'Employee':
-                return 3;
-            case 'Manager':
-                return 2;
-            case 'Admin':
-                return 1;
-            default:
-                return 3;
+                case 'Employee':
+                    return 3;
+                case 'Manager':
+                    return 2;
+                case 'Admin':
+                    return 1;
+                default:
+                    return 3;
             }
         },
         async updateUserRole() {
@@ -202,8 +220,8 @@ export default {
             this.isMobile = window.innerWidth <= 950;
         },
         showBottomSheet(item) {
-          this.item = item;
-          this.bottomSheetVisible = true;
+            this.item = item;
+            this.bottomSheetVisible = true;
         }
     }
 };
@@ -237,18 +255,19 @@ export default {
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .icon-btn-mobile {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  width: auto !important;
-  height: auto !important;
-  min-width: 0 !important;
-  border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    border: none !important;
 }
 
 .icon-btn-mobile {
-  font-size: 20px;
-  color: #000;
+    font-size: 20px;
+    color: #000;
 }
 </style>

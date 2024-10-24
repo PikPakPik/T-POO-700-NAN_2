@@ -5,16 +5,25 @@ defmodule TimeManagerWeb.RoleController do
   alias TimeManager.Roles
   alias TimeManager.Roles.Role
   alias TimeManagerWeb.SwaggerDef
-
-  action_fallback TimeManagerWeb.FallbackController
+  alias TimeManagerWeb.Plugs.PermissionPlug
+  action_fallback(TimeManagerWeb.FallbackController)
 
   def swagger_definitions do
     SwaggerDef.role_definitions()
   end
 
+  plug(PermissionPlug,
+    actions: [
+      index: %{"role" => ["read"]},
+      show: %{"role" => ["read"]}
+    ]
+  )
+
   swagger_path(:index) do
     summary("List Roles")
     description("List all roles in the database.")
+
+    SwaggerDef.api_protected_path()
 
     response(200, "OK", Schema.ref(:RolesResponse))
   end
@@ -27,6 +36,9 @@ defmodule TimeManagerWeb.RoleController do
   swagger_path(:show) do
     summary("Show role")
     description("Show a role by ID.")
+
+    SwaggerDef.api_protected_path()
+
     parameter(:id, :path, :integer, "Role ID", required: true, example: 123)
 
     response(200, "OK", Schema.ref(:RoleResponse))

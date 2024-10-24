@@ -19,6 +19,7 @@ defmodule TimeManager.Teams do
   """
   def list_teams do
     Repo.all(Team)
+    |> Repo.preload([:clocks])
   end
 
   @doc """
@@ -143,12 +144,13 @@ defmodule TimeManager.Teams do
 
   def show_team_clocks(team_id) do
     Repo.all(
-      from c in TeamClock,
-      where: c.team_id == ^team_id
+      from(c in TeamClock,
+        where: c.team_id == ^team_id
+      )
     )
-    |> Repo.preload([:team, :clock])  # Précharge les associations
+    # Précharge les associations
+    |> Repo.preload([:team, :clock])
   end
-
 
   def create_team_clock(team_id, clock_id) do
     %TeamClock{}
@@ -158,5 +160,13 @@ defmodule TimeManager.Teams do
 
   def remove_team_clocks(team_id) do
     Repo.delete_all(from(c in TeamClock, where: c.team_id == ^team_id))
+  end
+
+  def get_employee_teams!(user_id) do
+    Repo.all(from(te in TeamEmployees, where: te.employee_id == ^user_id))
+  end
+
+  def get_managing_teams!(user_id) do
+    Repo.all(from(tm in TeamManagers, where: tm.manager_id == ^user_id))
   end
 end

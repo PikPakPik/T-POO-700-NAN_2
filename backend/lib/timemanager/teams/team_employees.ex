@@ -2,9 +2,11 @@ defmodule TimeManager.Teams.TeamEmployees do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [:id, :team_id, :employee_id, :inserted_at, :updated_at]}
+
   schema "team_employees" do
-    field :team_id, :id
-    field :employee_id, :id
+    field(:team_id, :id)
+    field(:employee_id, :id)
 
     timestamps(type: :utc_datetime)
   end

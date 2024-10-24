@@ -6,8 +6,24 @@ defmodule TimeManagerWeb.TeamController do
   alias TimeManager.Teams
   alias TimeManager.Teams.Team
   alias TimeManagerWeb.SwaggerDef
-
+  alias TimeManagerWeb.Plugs.PermissionPlug
   action_fallback(TimeManagerWeb.FallbackController)
+
+  plug(PermissionPlug,
+    actions: [
+      clock: %{"team" => ["clock"]},
+      get_working_times: %{"team" => ["read"]},
+      add_employee: %{"team" => ["update"]},
+      remove_employee: %{"team" => ["update"]},
+      add_manager: %{"team" => ["update"]},
+      remove_manager: %{"team" => ["update"]},
+      index: %{"team" => ["read"]},
+      show: %{"team" => ["read"]},
+      create: %{"team" => ["create"]},
+      update: %{"team" => ["update"]},
+      delete: %{"team" => ["delete"]}
+    ]
+  )
 
   def swagger_definitions do
     SwaggerDef.team_definitions()
@@ -16,6 +32,8 @@ defmodule TimeManagerWeb.TeamController do
   swagger_path(:index) do
     summary("List teams")
     description("List all teams in the database.")
+
+    SwaggerDef.api_protected_path()
 
     response(200, "OK", Schema.ref(:TeamsResponse))
   end
@@ -28,6 +46,8 @@ defmodule TimeManagerWeb.TeamController do
   swagger_path(:create) do
     summary("Create team")
     description("Create a team.")
+
+    SwaggerDef.api_protected_path()
 
     parameter(:team, :body, Schema.ref(:TeamRequest), "Team object", required: true)
 
@@ -48,6 +68,9 @@ defmodule TimeManagerWeb.TeamController do
   swagger_path(:show) do
     summary("Show team")
     description("Show a team by ID.")
+
+    SwaggerDef.api_protected_path()
+
     parameter(:id, :path, :integer, "Team ID", required: true, example: 1)
 
     response(200, "OK", Schema.ref(:TeamResponse))
@@ -59,10 +82,11 @@ defmodule TimeManagerWeb.TeamController do
     render(conn, :show, team: team)
   end
 
-
   swagger_path(:update) do
     summary("Update team")
     description("Update a team entry.\nScopes: team.update")
+
+    SwaggerDef.api_protected_path()
 
     parameter(:id, :path, :integer, "Team ID", required: true, example: 1)
     parameter(:team, :body, Schema.ref(:TeamRequest), "Team object", required: true)
@@ -84,6 +108,8 @@ defmodule TimeManagerWeb.TeamController do
     description("Delete a team by ID.")
     parameter(:id, :path, :integer, "Team ID", required: true, example: 1)
 
+    SwaggerDef.api_protected_path()
+
     response(204, "No Content - Deleted Successfully")
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
@@ -99,6 +125,8 @@ defmodule TimeManagerWeb.TeamController do
   swagger_path(:working_time_teams) do
     summary("Add working time team's users")
     description("Manager can add working time for all team's users.")
+
+    SwaggerDef.api_protected_path()
 
     parameter(:teamID, :path, :integer, "Team ID", required: true, example: 1)
     # parameter(:team, :body, Schema.ref(:TeamRequest), "Team object", required: true) il faut mettre des working times en paramètres
@@ -129,6 +157,8 @@ defmodule TimeManagerWeb.TeamController do
     summary("Add employee")
     description("Add a new user as a team employee.")
 
+    SwaggerDef.api_protected_path()
+
     parameter(:teamID, :path, :integer, "Team ID", required: true, example: 1)
     parameter(:employeeID, :path, :integer, "Employee ID (User ID)", required: true, example: 1)
 
@@ -150,6 +180,8 @@ defmodule TimeManagerWeb.TeamController do
     parameter(:teamID, :path, :integer, "Team ID", required: true, example: 1)
     parameter(:employeeID, :path, :integer, "Employee ID (User ID)", required: true, example: 1)
 
+    SwaggerDef.api_protected_path()
+
     response(200, "OK", Schema.ref(:TeamResponse))
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
@@ -164,6 +196,8 @@ defmodule TimeManagerWeb.TeamController do
   swagger_path(:add_manager) do
     summary("Add manager")
     description("Add a new user as a team manager.")
+
+    SwaggerDef.api_protected_path()
 
     parameter(:teamID, :path, :integer, "Team ID", required: true, example: 1)
     parameter(:managerID, :path, :integer, "Manager ID (User ID)", required: true, example: 1)
@@ -182,6 +216,8 @@ defmodule TimeManagerWeb.TeamController do
     summary("Remove manager")
     description("Remove a team manager.")
 
+    SwaggerDef.api_protected_path()
+
     parameter(:teamID, :path, :integer, "Team ID", required: true, example: 123)
     parameter(:managerID, :path, :integer, "Manager ID (User ID)", required: true, example: 123)
 
@@ -199,6 +235,8 @@ defmodule TimeManagerWeb.TeamController do
   swagger_path(:get_working_times) do
     summary("Get working times of a team")
     description("Get all working times of a team.")
+
+    SwaggerDef.api_protected_path()
 
     parameter(:teamID, :path, :integer, "Team ID", required: true, example: 1)
 
@@ -244,6 +282,8 @@ defmodule TimeManagerWeb.TeamController do
   swagger_path(:show_team_clocks) do
     summary("Show team clocks")
     description("Show all team clocks.")
+
+    SwaggerDef.api_protected_path()
 
     parameter(:team_id, :path, :integer, "Team ID", required: true, example: 1)
 

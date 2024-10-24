@@ -23,9 +23,16 @@ defmodule TimeManager.WorkingTimesTest do
     end
 
     test "create_working_time/1 with valid data creates a working_time" do
-      role_attrs = %{name: "User", description: "Standard user role"}
+      role_attrs = %{name: "Employee", permissions: %{"working_time" => ["read"]}}
       {:ok, role} = TimeManager.Roles.create_role(role_attrs)
-      user_attrs = %{username: "toto", email: "toto@mail.com", role_id: role.id}
+
+      user_attrs = %{
+        username: "toto",
+        email: "toto@mail.com",
+        password: "password",
+        role_id: role.id
+      }
+
       {:ok, user} = TimeManager.Users.create_user(user_attrs)
       assert user.username == "toto"
       assert user.email == "toto@mail.com"

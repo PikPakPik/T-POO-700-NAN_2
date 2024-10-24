@@ -3,11 +3,12 @@ defmodule TimeManager.Repo.Migrations.CreateRoles do
 
   def change do
     create table(:roles) do
-      add :name, :string
+      add(:name, :string)
+      add(:permissions, :map)
 
       timestamps(type: :utc_datetime)
     end
 
-    create unique_index(:roles, [:name])
+    create(unique_index(:roles, [:name]))
   end
 end

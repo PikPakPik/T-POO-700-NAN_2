@@ -4,17 +4,16 @@
             <v-col class="text-center">
                 <h2 class="font-semibold text-gray-700 underline" aria-label="Team Name">
                     {{ team.name }}
-                    <span v-if="teamManagers.length" class="text-sm text-gray-500">- {{ teamManagers[0].username }}</span>
+                    <span v-if="teamManagers.length" class="text-sm text-gray-500">- {{ teamManagers[0].username
+                        }}</span>
                 </h2>
                 <span class="text-xs text-gray-500">Consulter votre équipe</span>
             </v-col>
         </v-row>
         <v-row class="flex items-center justify-center pb-6">
             <v-col class="text-center">
-                <v-btn 
-                    class="mx-auto max-w-screen-lg px-4 py-8 sm:px-8" 
-                    @click="openWorkingTimeDialog"
-                    v-if="currentUser.role && (currentUser.role.id == '1' || currentUser.role.id == '2')">
+                <v-btn class="mx-auto max-w-screen-lg px-4 py-8 sm:px-8" @click="openWorkingTimeDialog"
+                    v-role-not="'Employee'">
                     Pointez pour vos employés
                 </v-btn>
             </v-col>
@@ -22,38 +21,29 @@
 
         <!-- Working Time Dialog -->
         <v-dialog v-model="workingTimeDialog" max-width="800px" aria-label="Working Time Dialog">
-            <Working-time 
-                :teamID="teamId"
-                @close="workingTimeDialog = false"
-            />
+            <Working-time :teamID="teamId" @close="workingTimeDialog = false" />
         </v-dialog>
 
         <v-row justify="start">
             <v-col cols="12">
                 <v-card class="transparent-card">
                     <v-card-title class="d-flex justify-space-between align-center">
-                        <v-text-field 
-                            v-model="search" 
-                            class="search-bar mr-4 teams-details-intro" 
-                            label="Recherche"
-                            single-line hide-details aria-label="Search user"
-                            data-intro="Rechercher ici votre équipe." 
+                        <v-text-field v-model="search" class="search-bar mr-4 teams-details-intro" label="Recherche"
+                            single-line hide-details aria-label="Search user" data-intro="Rechercher ici votre équipe."
                             data-title="Rechercher d'équipe">
                         </v-text-field>
-                        <v-btn 
-                            icon class="mr-2 yellow teams-details-intro" 
-                            @click="openAssociateDialog()" 
-                            aria-label="Add user" 
-                            v-if="currentUser.role && (currentUser.role.id == '1' || currentUser.role.id == '2')"
-                            data-intro="Cliquez ici pour assigner un utilisateur à l'équipe." 
+                        <v-btn icon class="mr-2 yellow teams-details-intro" @click="openAssociateDialog()"
+                            aria-label="Add user" v-role-not="'Employee'"
+                            data-intro="Cliquez ici pour assigner un utilisateur à l'équipe."
                             data-title="Assigner un utilisateur">
                             <v-icon>mdi-plus</v-icon>
                         </v-btn>
                     </v-card-title>
                     <v-data-table :headers="headers" :items="teamMembers" :search="search" item-key="id"
-                        class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage" items-per-page-text="Éléments par page"
-                        :footer-props="customFooterProps" :items-per-page-options="itemsPerPageOptions" aria-label="User accounts table">
-                        
+                        class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage"
+                        items-per-page-text="Éléments par page" :footer-props="customFooterProps"
+                        :items-per-page-options="itemsPerPageOptions" aria-label="User accounts table">
+
                         <template v-slot:item.id="{ item }">
                             <span aria-label="User ID">{{ item.id }}</span>
                         </template>
@@ -62,30 +52,27 @@
                             <span aria-label="Employee Name">{{ item.username }}</span>
                         </template>
 
-            <template v-slot:item.action="{ item, index }">
-                <div v-if="isMobile">
-                    <v-btn icon class="icon-btn-mobile" @click="showBottomSheet(item)">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                </div>
-                <div v-else>
-                    <v-row class="d-flex align-center flex-row no-gutters">
-                        <v-btn
-                            icon size="small"
-                            class="mr-2"
-                            @click="confirmDeleteEmployeeFromTeam(item.id)"
-                            aria-label="Delete user"
-                            :class="{ 'teams-details-intro': index === 0, 'mr-2': index >= 0 }"
-                            data-intro="Cliquez ici pour supprimer l'utilisateur de l'équipe."
-                            data-title="Désassigner un utilisateur d'une équipe">
-                            <v-icon>mdi-trash-can</v-icon>
-                        </v-btn>
-                    </v-row>
-                </div>
-            </template>
-        </v-data-table>
-            </v-card>
-        </v-col>
+                        <template v-slot:item.action="{ item, index }">
+                            <div v-if="isMobile">
+                                <v-btn icon class="icon-btn-mobile" @click="showBottomSheet(item)">
+                                    <v-icon>mdi-dots-vertical</v-icon>
+                                </v-btn>
+                            </div>
+                            <div v-else>
+                                <v-row class="d-flex align-center flex-row no-gutters">
+                                    <v-btn icon size="small" class="mr-2"
+                                        @click="confirmDeleteEmployeeFromTeam(item.id)" aria-label="Delete user"
+                                        :class="{ 'teams-details-intro': index === 0, 'mr-2': index >= 0 }"
+                                        data-intro="Cliquez ici pour supprimer l'utilisateur de l'équipe."
+                                        data-title="Désassigner un utilisateur d'une équipe">
+                                        <v-icon>mdi-trash-can</v-icon>
+                                    </v-btn>
+                                </v-row>
+                            </div>
+                        </template>
+                    </v-data-table>
+                </v-card>
+            </v-col>
         </v-row>
 
         <v-bottom-sheet v-model="bottomSheetVisible">
@@ -103,20 +90,14 @@
                     <span class="headline">Associer un utilisateur</span>
                 </v-card-title>
                 <v-card-text>
-                    <v-autocomplete
-                        v-model="selectedUser"
-                        :items="availableUsers"
-                        item-title="username"
-                        item-value="id"
-                        label="Sélectionner un utilisateur"
-                        required
-                        aria-label="Select a user"
-                    ></v-autocomplete>
+                    <v-autocomplete v-model="selectedUser" :items="availableUsers" item-title="username" item-value="id"
+                        label="Sélectionner un utilisateur" required aria-label="Select a user"></v-autocomplete>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="closeAssociateDialog" aria-label="Cancel">Annuler</v-btn>
-                    <v-btn color="blue darken-1" text @click="associateUserToTeam(selectedUser)" aria-label="Associate">Associer</v-btn>
+                    <v-btn color="blue darken-1" text @click="associateUserToTeam(selectedUser)"
+                        aria-label="Associate">Associer</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -129,6 +110,7 @@ import WorkingTime from './src/components/workingTime.vue';
 //utils
 import useTeams from '~/src/utils/team/team';
 import useUsers from '~/src/utils/user/user';
+import { useAuthStore } from '@/stores/auth';
 
 const { showTeam, associateEmployee, removeEmployeeFromTeam } = useTeams();
 const { getUsers, getUser } = useUsers();
@@ -144,8 +126,8 @@ export default {
     data() {
         return {
             headers: [
-                { title: 'ID', text: 'ID', sortable: true, value: 'id', width:'24%' },
-                { title: 'Employé(s)', text: 'Employee', sortable: true, value: 'username', width:'33%' },
+                { title: 'ID', text: 'ID', sortable: true, value: 'id', width: '24%' },
+                { title: 'Employé(s)', text: 'Employee', sortable: true, value: 'username', width: '33%' },
             ],
             teamManagers: [],
             teamMembers: [],
@@ -172,17 +154,13 @@ export default {
     methods: {
         async showTeam() {
             try {
-                //getUserID from localStorage
-                const currentUser = await getUser(localStorage.getItem('userID'));
-                this.currentUser = currentUser;
+                const authStore = useAuthStore();
 
-            const actionColumnExists = this.headers.some(header => header.value === 'action');
+                if (authStore.getUserRoles.includes('Admin') || authStore.getUserRoles.includes('Manager')) {
+                    this.headers.push({ title: 'Action', text: 'Actions', sortable: false, value: 'action', width: '33%' });
+                }
 
-            if ((currentUser.role.id == '1' || currentUser.role.id == '2') && !actionColumnExists) {
-                this.headers.push({ title: 'Action', text: 'Actions', sortable: false, value: 'action', width:'33%' });
-            }
-
-                const response = await showTeam(this.teamId); 
+                const response = await showTeam(this.teamId);
                 this.teamMembers = response.employees;
                 this.teamManagers = response.managers;
                 this.team = response;
@@ -197,7 +175,7 @@ export default {
                 this.availableUsers = response.filter(user => !this.teamMembers.find(member => member.id === user.id));
             } catch (error) {
                 console.error('Error fetching users:', error);
-                this.availableUsers = []; 
+                this.availableUsers = [];
             }
         },
         async associateUserToTeam(userId) {
@@ -207,8 +185,8 @@ export default {
             }
             try {
                 await associateEmployee(this.teamId, userId);
-                this.showTeam(); 
-                this.closeAssociateDialog(); 
+                this.showTeam();
+                this.closeAssociateDialog();
             } catch (error) {
                 console.error('Error associating user to team:', error);
             }
@@ -232,7 +210,7 @@ export default {
         openAssociateDialog() {
             this.associateDialog = true;
             if (this.availableUsers.length === 0) {
-                this.getUsers(); 
+                this.getUsers();
             }
         },
         closeAssociateDialog() {
@@ -243,8 +221,8 @@ export default {
             this.isMobile = window.innerWidth <= 960;
         },
         showBottomSheet(item) {
-          this.item = item;
-          this.bottomSheetVisible = true;
+            this.item = item;
+            this.bottomSheetVisible = true;
         },
         openWorkingTimeDialog() {
             this.workingTimeDialog = true;
@@ -270,10 +248,12 @@ h1 {
     font-size: 24px;
     margin-bottom: 20px;
 }
+
 ul {
     list-style-type: none;
     padding: 0;
 }
+
 li {
     margin: 5px 0;
 }
@@ -309,17 +289,17 @@ li {
 }
 
 .icon-btn-mobile {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  width: auto !important;
-  height: auto !important;
-  min-width: 0 !important;
-  border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    border: none !important;
 }
 
 .icon-btn-mobile .v-icon {
-  font-size: 20px;
-  color: #000;
+    font-size: 20px;
+    color: #000;
 }
 </style>

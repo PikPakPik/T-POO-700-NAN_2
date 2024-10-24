@@ -1,51 +1,51 @@
 <template>
   <v-container class="mx-auto max-w-screen-lg px-4 py-8 sm:px-8 intro-index" data-title="Espace analyse"
-                data-intro="Vous pourrez y retrouver des graphiques d'analyse de vos heures de travail">
-    
+    data-intro="Vous pourrez y retrouver des graphiques d'analyse de vos heures de travail">
+
     <v-row class="flex items-center justify-center pb-6">
-        <v-col class="text-center">
-            <h2 class="font-semibold text-gray-700">Analyse</h2>
-                <span class="text-xs text-gray-500">Afficher des graphiques d'analyse</span>
-            </v-col>
-        </v-row>
-        <v-row class="flex flex-col items-center justify-center pb-6 gap-4">
-            <h2 class="text-sm text-gray-500">Voir en :</h2>
-            <div class="flex gap-2" data-intro="Voir les heures de jour et de nuit par semaine, mois ou année">
-                <v-btn @click="setThisWeek" :variant="state.type === 'week' ? 'outlined' : 'text'">
-                    Semaine
-                </v-btn>
-                <v-btn @click="setThisMonth" :variant="state.type === 'month' ? 'outlined' : 'text'">
-                    Mois
-                </v-btn>
-                <v-btn @click="setThisYear" :variant="state.type === 'year' ? 'outlined' : 'text'"> 
-                    Année
-                </v-btn>
-            </div>
-            <div data-intro="Voir les semaines, mois ou années précédentes ou suivantes">
-                <div v-if="state.type === 'week'" class="flex gap-2">
-                    <v-btn @click="setPrevious">Semaine précédente</v-btn>
-                    <v-btn @click="setThisWeek">Cette semaine</v-btn>
-                    <v-btn @click="setNext">Semaine suivante</v-btn>
-                </div>
-                <div v-if="state.type === 'month'" class="flex gap-2">
-                    <v-btn @click="setPrevious">Mois précédent</v-btn>
-                    <v-btn @click="setThisMonth">Ce mois</v-btn>
-                    <v-btn @click="setNext">Mois suivant</v-btn>
-                </div>
-                <div v-if="state.type === 'year'" class="flex gap-2">
-                    <v-btn @click="setPrevious">Année précédente</v-btn>
-                    <v-btn @click="setThisYear">Cette année</v-btn>
-                    <v-btn @click="setNext">Année suivante</v-btn>
-                </div>
-            </div>
-        </v-row>
-        <v-row class="flex flex-col items-center justify-center pb-6">
-            <h2 class="text-sm text-gray-500">Dates affichées : {{ state.currentTypeDates.title }}</h2>
-            <v-col data-intro="Choisir le type de graphique">
-                <v-select v-model="selectedChartType" :items="chartTypes" label="Type de graphique" class="w-1/12"/>
-                <chartManager :type="selectedChartType" :datas="state.chartData" />
-            </v-col>
-        </v-row>
+      <v-col class="text-center">
+        <h2 class="font-semibold text-gray-700">Analyse</h2>
+        <span class="text-xs text-gray-500">Afficher des graphiques d'analyse</span>
+      </v-col>
+    </v-row>
+    <v-row class="flex flex-col items-center justify-center pb-6 gap-4">
+      <h2 class="text-sm text-gray-500">Voir en :</h2>
+      <div class="flex gap-2" data-intro="Voir les heures de jour et de nuit par semaine, mois ou année">
+        <v-btn @click="setThisWeek" :variant="state.type === 'week' ? 'outlined' : 'text'">
+          Semaine
+        </v-btn>
+        <v-btn @click="setThisMonth" :variant="state.type === 'month' ? 'outlined' : 'text'">
+          Mois
+        </v-btn>
+        <v-btn @click="setThisYear" :variant="state.type === 'year' ? 'outlined' : 'text'">
+          Année
+        </v-btn>
+      </div>
+      <div data-intro="Voir les semaines, mois ou années précédentes ou suivantes">
+        <div v-if="state.type === 'week'" class="flex gap-2">
+          <v-btn @click="setPrevious">Semaine précédente</v-btn>
+          <v-btn @click="setThisWeek">Cette semaine</v-btn>
+          <v-btn @click="setNext">Semaine suivante</v-btn>
+        </div>
+        <div v-if="state.type === 'month'" class="flex gap-2">
+          <v-btn @click="setPrevious">Mois précédent</v-btn>
+          <v-btn @click="setThisMonth">Ce mois</v-btn>
+          <v-btn @click="setNext">Mois suivant</v-btn>
+        </div>
+        <div v-if="state.type === 'year'" class="flex gap-2">
+          <v-btn @click="setPrevious">Année précédente</v-btn>
+          <v-btn @click="setThisYear">Cette année</v-btn>
+          <v-btn @click="setNext">Année suivante</v-btn>
+        </div>
+      </div>
+    </v-row>
+    <v-row class="flex flex-col items-center justify-center pb-6">
+      <h2 class="text-sm text-gray-500">Dates affichées : {{ state.currentTypeDates.title }}</h2>
+      <v-col data-intro="Choisir le type de graphique">
+        <v-select v-model="selectedChartType" :items="chartTypes" label="Type de graphique" class="w-1/12" />
+        <chartManager :type="selectedChartType" :datas="state.chartData" />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -59,6 +59,13 @@ import 'dayjs/locale/fr'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
 import { calculateWorkingHours } from '~/src/utils/workingtimes/calculateWorkingHours'
+
+definePageMeta({
+  middleware: ['global-role'],
+  meta: {
+    roles: ['Admin', 'Manager', 'Employee'], // Rôles requis pour accéder à cette page
+  },
+})
 
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
@@ -122,7 +129,7 @@ function getPeriodCount(startDate: Date, endDate: Date, periodType: 'day' | 'wee
 function getPeriodIndex(date: string, startDate: Date, periodType: 'day' | 'week' | 'month'): number {
   const currentDate = dayjs(date);
   const start = dayjs(startDate);
-  
+
   switch (periodType) {
     case 'day':
       return currentDate.diff(start, 'day');
@@ -138,7 +145,7 @@ function getPeriodIndex(date: string, startDate: Date, periodType: 'day' | 'week
 const setPeriod = (periodType: 'week' | 'month' | 'year', direction: 'this' | 'previous' | 'next') => {
   state.type = periodType
   let currentDate;
-  
+
   if (direction === 'this') {
     currentDate = dayjs();
   } else {
@@ -151,9 +158,9 @@ const setPeriod = (periodType: 'week' | 'month' | 'year', direction: 'this' | 'p
       currentDate = dayjs();
     }
   }
-  
+
   let startDate, endDate
-  
+
   if (direction === 'previous') {
     startDate = currentDate.subtract(1, periodType).startOf(periodType)
   } else if (direction === 'next') {
@@ -161,11 +168,11 @@ const setPeriod = (periodType: 'week' | 'month' | 'year', direction: 'this' | 'p
   } else {
     startDate = currentDate.startOf(periodType)
   }
-  
+
   endDate = startDate.endOf(periodType)
-  
+
   state.currentTypeDates.title = `${startDate.format('DD MMMM YYYY')} -> ${endDate.format('DD MMMM YYYY')}`
-  
+
   updateChartData(startDate.toDate(), endDate.toDate())
   updateLabelsByDateRange(startDate.toDate(), endDate.toDate())
 }
@@ -176,9 +183,9 @@ function updateLabelsByDateRange(startDate: Date, endDate: Date) {
   const dayDifference = endDay.diff(startDay, 'day') + 1
 
   state.chartData.labels = []
-  
+
   if (dayDifference <= 7) {
-    state.chartData.labels = Array.from({ length: dayDifference }, (_, i) => 
+    state.chartData.labels = Array.from({ length: dayDifference }, (_, i) =>
       startDay.add(i, 'day').format('DD/MM/YYYY')
     )
   } else if (dayDifference <= 31) {

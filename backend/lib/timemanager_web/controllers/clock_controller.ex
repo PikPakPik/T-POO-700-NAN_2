@@ -5,8 +5,18 @@ defmodule TimeManagerWeb.ClockController do
   alias TimeManager.Clocks
   alias TimeManager.Clocks.Clock
   alias TimeManagerWeb.SwaggerDef
+  alias TimeManagerWeb.Plugs.PermissionPlug
 
-  action_fallback TimeManagerWeb.FallbackController
+  action_fallback(TimeManagerWeb.FallbackController)
+
+  plug(PermissionPlug,
+    actions: [
+      get_user_clock: %{"user" => ["read"]},
+      clock_in_out_user: %{"user" => ["clock"]},
+      index: %{"clock" => ["read"]},
+      delete: %{"clock" => ["delete"]}
+    ]
+  )
 
   def swagger_definitions do
     SwaggerDef.clock_definitions()
@@ -15,6 +25,8 @@ defmodule TimeManagerWeb.ClockController do
   swagger_path(:index) do
     summary("List Clocks")
     description("List all clocks in the database.")
+
+    SwaggerDef.api_protected_path()
 
     response(200, "OK", Schema.ref(:ClocksResponse))
   end
@@ -27,6 +39,8 @@ defmodule TimeManagerWeb.ClockController do
   swagger_path(:clock_in_out_user) do
     summary("Clock in or out user")
     description("Clock in or out a user.")
+
+    SwaggerDef.api_protected_path()
 
     parameters do
       userID(:path, :integer, "User ID", required: true, example: 1)
@@ -49,7 +63,12 @@ defmodule TimeManagerWeb.ClockController do
   swagger_path(:get_user_clock) do
     summary("Show Clock")
     description("Show a clock by User ID.")
-    parameter(:userID, :path, :integer, "User ID", required: true, example: 3)
+
+    SwaggerDef.api_protected_path()
+
+    parameters do
+      userID(:path, :integer, "User ID", required: true, example: 3)
+    end
 
     response(200, "OK", Schema.ref(:ClockResponse))
   end
@@ -64,7 +83,12 @@ defmodule TimeManagerWeb.ClockController do
   swagger_path(:delete) do
     summary("Delete Clock")
     description("Delete a clock by ID.")
-    parameter(:id, :path, :integer, "Clock ID", required: true, example: 3)
+
+    SwaggerDef.api_protected_path()
+
+    parameters do
+      id(:path, :integer, "Clock ID", required: true, example: 3)
+    end
 
     response(204, "No Content - Deleted Successfully")
     response(404, "Not found", Schema.ref(:NotFoundResponse))

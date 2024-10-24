@@ -8,7 +8,7 @@ defmodule TimeManager.UsersTest do
 
     import TimeManager.UsersFixtures
 
-    @invalid_attrs %{username: nil, email: nil, role: nil}
+    @invalid_attrs %{username: nil, email: nil, role_id: 1, password: nil}
 
     test "list_users/0 returns all users" do
       user = user_fixture()
@@ -24,9 +24,15 @@ defmodule TimeManager.UsersTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      valid_role = %{name: "User"}
+      valid_role = %{name: "Employee", permissions: %{"working_time" => ["read"]}}
       {:ok, role} = TimeManager.Roles.create_role(valid_role)
-      valid_attrs = %{username: "toto", email: "toto@mail.com", role_id: role.id}
+
+      valid_attrs = %{
+        username: "toto",
+        email: "toto@mail.com",
+        password: "password",
+        role_id: role.id
+      }
 
       assert {:ok, %User{} = user} = Users.create_user(valid_attrs)
       assert user.username == "toto"
@@ -34,9 +40,9 @@ defmodule TimeManager.UsersTest do
       assert user.role_id == role.id
     end
 
-    # test "create_user/1 with invalid data returns error changeset" do
-    #   assert {:error, %Ecto.Changeset{}} = Users.create_user(@invalid_attrs)
-    # end
+    test "create_user/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Users.create_user(@invalid_attrs)
+    end
 
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
