@@ -8,49 +8,57 @@
         </v-row>
 
         <v-row justify="start">
-            <v-col cols="12">
-                <v-card class="transparent-card">
-                    <v-card-title class="d-flex justify-space-between align-center">
-                        <v-text-field v-model="search" class="search-bar" append-icon="mdi-magnify" label="Search"
-                            single-line hide-details aria-label="Search users"></v-text-field>
-                    </v-card-title>
-                    <v-data-table :headers="headers" :items="users" :search="search" item-key="id"
-                        class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage"
-                        items-per-page-text="Éléments par page" :footer-props="customFooterProps"
-                        :items-per-page-options="options.itemsPerPageOptions" aria-label="User accounts table">
-
-                        <template v-slot:item.id="{ item }">
-                            <span aria-label="User ID">{{ item.id }}</span>
-                        </template>
-
-                        <template v-slot:item.username="{ item }">
-                            <div class="flex items-center">
-                                <v-avatar class="h-10 w-10 flex-shrink-0">
-                                    <img src="@/assets/batman-head.png" alt="User Avatar"
-                                        class="w-10 h-10 rounded-full" />
-                                </v-avatar>
-                                <div class="ml-3">
-                                    <p class="whitespace-no-wrap" aria-label="Username">{{ item.username }}</p>
-                                </div>
-                            </div>
-                        </template>
-
-                        <template v-slot:item.role="{ item }">
-                            <span aria-label="User role">{{ item.role.name }}</span>
-                        </template>
-
-                        <template v-slot:item.action="{ item }">
-                            <v-row class="d-flex align-center flex-row no-gutters">
-                                <v-btn icon size="small" class="mr-2" @click="editRole(item)" aria-label="Edit role">
-                                    <v-icon>mdi-pencil</v-icon>
-                                </v-btn>
-                                <v-btn icon size="small" class="mr-2" @click="confirmDelete(item.id)"
-                                    aria-label="Delete user">
-                                    <v-icon>mdi-trash-can</v-icon>
-                                </v-btn>
-                            </v-row>
-                        </template>
-                    </v-data-table>
+        <v-col cols="12">
+            <v-card class="transparent-card">
+            <v-card-title class="d-flex justify-space-between align-center">
+                <v-text-field 
+                    v-model="search" 
+                    class="search-bar mr-4" 
+                    label="Search"
+                    single-line hide-details aria-label="Search users">
+                </v-text-field>
+                <v-btn 
+                    icon class="mr-2 yellow users-intro" 
+                    @click="openCreateDialog()" 
+                    data-intro="Cliquez ici pour ajouter un nouveau utilisateur." 
+                    data-title="Ajouter un utilisateur" aria-label="Add user"
+                    v-if="currentUser.role && (currentUser.role.id == '1')">
+                    <v-icon>mdi-plus</v-icon>
+                </v-btn>
+            </v-card-title>
+            <v-data-table :headers="headers" :items="users" :search="search" item-key="id"
+                class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage" items-per-page-text="Éléments par page"
+                :footer-props="customFooterProps" :items-per-page-options="options.itemsPerPageOptions" aria-label="User accounts table">
+                
+                <template v-slot:item.id="{ item }">
+                    <span aria-label="User ID">{{ item.id }}</span>
+                </template>
+                <template v-slot:item.action="{ item }">
+                  <div v-if="isMobile">
+                    <v-btn icon class="icon-btn-mobile" @click="showBottomSheet(item)">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </div>
+                  <div v-else>
+                    <v-row class="d-flex align-center flex-row no-gutters">
+                      <v-btn 
+                        icon 
+                        size="small" 
+                        class="mr-2" 
+                        @click="editRole(item)" 
+                        aria-label="Edit role"
+                        :class="{ 'users-intro': index === 0, 'mr-2': index >= 0 }"
+                        data-intro="Cliquez ici pour éditer l'utilisateur sélectionné."
+                        data-title="Éditer un utilisateur">
+                        <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                      <v-btn icon size="small" class="mr-2" @click="confirmDelete(item.id)" aria-label="Delete user">
+                        <v-icon>mdi-trash-can</v-icon>
+                      </v-btn>
+                    </v-row>
+                  </div>
+                </template>
+                </v-data-table>
                 </v-card>
             </v-col>
         </v-row>
@@ -87,6 +95,51 @@
             </v-card>
         </v-dialog>
 
+        <!-- Create dialog -->
+        <v-dialog v-model="createDialog" max-width="500" aria-label="Create user dialog">
+            <v-card>
+            <v-card-title class="text-h5">Ajouter un utilisateur</v-card-title>
+            <v-card-text>
+                <v-form>
+                <v-text-field 
+                    label="Nom d'utilisateur" 
+                    v-model="newUser.username" 
+                    :rules="[rules.required]" 
+                    outlined 
+                    aria-label="Nom d'utilisateur">
+                </v-text-field>
+                <v-text-field 
+                    label="Adresse Mail" 
+                    v-model="newUser.email" 
+                    :rules="[rules.required, rules.email]" 
+                    outlined 
+                    aria-label="Adresse Mail">
+                </v-text-field>
+                <v-text-field 
+                    label="Mot de passe" 
+                    v-model="newUser.password" 
+                    :rules="[rules.required]" 
+                    outlined 
+                    type="password" 
+                    aria-label="Mot de passe">
+                </v-text-field>
+                <v-select 
+                    v-model="newUser.role" 
+                    :items="roles" 
+                    label="Rôle" 
+                    outlined 
+                    aria-label="Rôle">
+                </v-select>
+                </v-form>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue-grey" text @click="createDialog = false" aria-label="Annuler">Annuler</v-btn>
+                <v-btn color="blue" text @click="createUser" aria-label="Ajouter">Ajouter</v-btn>
+            </v-card-actions>
+            </v-card>
+        </v-dialog>
+        
     </v-container>
 </template>
 
@@ -95,7 +148,7 @@
 import useUsers from '~/src/utils/user/user';
 import { useAuthStore } from '@/stores/auth';
 
-const { getUsers, deleteUser, updateUserRole } = useUsers();
+const { getUser, getUsers, deleteUser, updateUserRole, createUser } = useUsers();
 
 export default {
     name: 'userList',
@@ -110,10 +163,25 @@ export default {
             error: null,
             loading: true,
             users: [],
+            currentUser: {},
             deleteDialog: false,
             editDialog: false,
+            createDialog: false,
             selectedUser: null,
             selectedUserRole: null,
+            newUser: {
+                username: '',
+                email:'',
+                password:'',
+                role: 'Employee'
+            },
+            rules: {
+                required: value => !!value || 'Requis.',
+                email: value => {
+                    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return pattern.test(value) || 'Email non valide.';
+                },
+            },
             currentPage: 1,
             options: {
                 itemsPerPageOptions: [5, 10, 25, 50]
@@ -152,6 +220,14 @@ export default {
     methods: {
         async fetchUserData() {
             try {
+                //getUserID from localStorage
+                this.currentUser = await getUser(localStorage.getItem('userID'));
+
+                if (this.currentUser.role.id !== 1) {
+                    this.headers = this.headers.filter(header => header.value !== 'action');
+                }
+
+                //get all users
                 const response = await getUsers();
                 this.users = response;
             } catch (error) {
@@ -206,6 +282,17 @@ export default {
                 console.error("Failed to update user role:", error);
             }
         },
+        async createUser() {
+            try {
+                const roleID = this.formatUserRole(this.newUser.role);
+                const newUser = await createUser(this.newUser.username, this.newUser.email, this.newUser.password, roleID );
+                this.users.push(newUser);
+                this.createDialog = false;
+                this.newUser = { email: '', username: '', password: '', role: 'Employee' };
+            } catch (error) {
+                console.error("Failed to create user:", error);
+            }
+        },
         nextPage() {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
@@ -220,8 +307,11 @@ export default {
             this.isMobile = window.innerWidth <= 950;
         },
         showBottomSheet(item) {
-            this.item = item;
-            this.bottomSheetVisible = true;
+          this.item = item;
+          this.bottomSheetVisible = true;
+        },
+        openCreateDialog() {
+            this.createDialog = true;
         }
     }
 };

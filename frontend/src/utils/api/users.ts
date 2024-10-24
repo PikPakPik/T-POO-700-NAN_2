@@ -45,9 +45,11 @@ export class UsersApi extends Api {
         }
     }
 
-    async createUser(userData: { user: { username: string, email: string } }) {
+    async createUser(userData: { user: { username: string; email: string; password: string; role: string; }; }) {
         try {
+            console.log('userData2',userData);
             const response = await this.instance.post(`/users`, userData);
+            console.log('response:', response);
             return response;
         } catch (error) {
             console.error(error);

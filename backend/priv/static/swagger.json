@@ -1692,6 +1692,40 @@
         ]
       }
     },
+    "/api/teams/{teamID}/workingtime": {
+      "post": {
+        "description": "Manager can add working time for all team's users.",
+        "operationId": "TimeManagerWeb.TeamController.working_time_teams",
+        "parameters": [
+          {
+            "description": "Team ID",
+            "in": "path",
+            "name": "teamID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TeamClockResponse"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFoundResponse"
+            }
+          }
+        },
+        "summary": "Add working time team's users",
+        "tags": [
+          "Team"
+        ]
+      }
+    },
     "/api/teams/{teamID}/workingtimes": {
       "get": {
         "description": "Get all working times of a team.",

@@ -37,14 +37,17 @@ export const useUsers = () => {
         }
     }
 
-    const createUser = async (username: string, email: string) => {
+    const createUser = async (username: string, email: string, password: string, role: string) => {
         try {
             const userData = {
                 user: {
                     username: username,
-                    email: email
+                    email: email,
+                    password: password,
+                    role: role
                 }
             };
+            console.log('userData1', userData);
             const response = await userApi.createUser(userData);
             if (response?.status !== 201) {
                 throw new Error('Problem with server');
