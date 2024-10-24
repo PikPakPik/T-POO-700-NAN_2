@@ -80,7 +80,8 @@
 
 <script>
 import WorkingTime from '@/src/components/workingTime.vue';
-import { readWorkingTimes, deleteWorkingTime } from '@/src/utils/api/workingtime.ts'
+import { deleteWorkingTime } from '@/src/utils/api/workingtime.ts'
+import { meWorkingTimes } from '@/src/utils/api/me.ts'
 import moment from 'moment';
 
 export default {
@@ -159,7 +160,7 @@ export default {
 
     methods: {
         getWorkingTimes() {
-            readWorkingTimes(this.userID)
+            meWorkingTimes()
                 .then(response => {
                     this.workingTimes = response.data.map(workingTime => {
                         return {

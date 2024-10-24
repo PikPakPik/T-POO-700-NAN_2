@@ -142,8 +142,9 @@
 //utils
 import useTeams from '~/src/utils/team/team';
 import useUsers from '~/src/utils/user/user';
+import { meTeams } from '~/src/utils/api/me';
 
-const { getTeams, createTeams, deleteTeam, updateTeam, showTeam, associateManager } = useTeams();
+const { createTeams, deleteTeam, updateTeam, showTeam, associateManager } = useTeams();
 const { getUser } = useUsers();
 
 export default {
@@ -204,7 +205,7 @@ export default {
                 //getUserID from localStorage
                 this.user = await getUser(localStorage.getItem('userID'));
                 if (this.user.role.id == '1') {
-                    const response = await getTeams();
+                    const response = await meTeams();
                     this.teams = response;
 
                 } else if (this.user.role.id == '2') {

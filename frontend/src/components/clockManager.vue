@@ -34,6 +34,7 @@ import ClockApi from '~/src/utils/api/clock';
 import {
   useChronoStore
 } from '@/stores/chronoStore';
+import { meClockInOrOut } from '~/src/utils/api/me';
 
 export default {
   props: {
@@ -76,7 +77,8 @@ export default {
         }
         this.startTimer();
       }
-      this.clockApiService.clockInOrOut(this.userId);
+      // this.clockApiService.clockInOrOut(this.userId);
+      meClockInOrOut();
     },
 
     beforeDestroy() {
