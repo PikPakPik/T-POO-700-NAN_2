@@ -28,7 +28,7 @@ defmodule TimeManagerWeb.Plugs.PermissionPlug do
     |> put_resp_content_type("application/json")
     |> send_resp(
       403,
-      Jason.encode!(%{error: %{message: "The user has insufficient permissions"}})
+      Jason.encode!(%{error: %{message: "You are not authorized to access this resource"}})
     )
     |> halt()
   end

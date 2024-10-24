@@ -11,7 +11,7 @@ defmodule TimeManager.UsersTest do
     @invalid_attrs %{username: nil, email: nil, role_id: 1, password: nil}
 
     test "list_users/0 returns all users" do
-      user = user_fixture()
+      user = employee_fixture()
       params = %{toto: "toto", mail: "toto@mail.com"}
       assert Users.list_users(params) == [user]
       nilParams = %{}
@@ -19,7 +19,7 @@ defmodule TimeManager.UsersTest do
     end
 
     test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
+      user = employee_fixture()
       assert Users.get_user!(user.id) == user
     end
 
@@ -45,7 +45,7 @@ defmodule TimeManager.UsersTest do
     end
 
     test "update_user/2 with valid data updates the user" do
-      user = user_fixture()
+      user = employee_fixture()
       update_attrs = %{username: "titi", email: "titiEtGrominet@mail.com"}
 
       assert {:ok, %User{} = user} = Users.update_user(user, update_attrs)
@@ -54,20 +54,32 @@ defmodule TimeManager.UsersTest do
     end
 
     test "update_user/2 with invalid data returns error changeset" do
-      user = user_fixture()
+      user = employee_fixture()
       assert {:error, %Ecto.Changeset{}} = Users.update_user(user, @invalid_attrs)
       assert user == Users.get_user!(user.id)
     end
 
     test "delete_user/1 deletes the user" do
-      user = user_fixture()
+      user = employee_fixture()
       assert {:ok, %User{}} = Users.delete_user(user)
       assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
     end
 
     test "change_user/1 returns a user changeset" do
-      user = user_fixture()
+      user = employee_fixture()
       assert %Ecto.Changeset{} = Users.change_user(user)
+    end
+
+    test "create user/1 create antoher user with same mail due error" do
+      user = employee_fixture()
+
+      assert {:error, %Ecto.Changeset{}} =
+               Users.create_user(%{
+                 username: "toto",
+                 email: user.email,
+                 password: "password",
+                 role_id: user.role_id
+               })
     end
   end
 end

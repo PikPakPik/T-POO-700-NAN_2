@@ -16,14 +16,16 @@ defmodule TimeManagerWeb.Plugs.VerifyXSRFToken do
         Logger.error("JWT is missing")
 
         conn
-        |> send_resp(:unauthorized, "Invalid credentials")
+        |> put_resp_content_type("application/json")
+        |> send_resp(:unauthorized, "{\"error\": \"Invalid credentials\"}")
         |> halt()
 
       xsrf_token == nil ->
         Logger.error("XSRF Token is missing")
 
         conn
-        |> send_resp(:forbidden, "Missing XSRF token")
+        |> put_resp_content_type("application/json")
+        |> send_resp(:forbidden, "{\"error\": \"Missing XSRF token\"}")
         |> halt()
 
       true ->
@@ -33,14 +35,20 @@ defmodule TimeManagerWeb.Plugs.VerifyXSRFToken do
               conn
 
             {:error, reason} ->
+              Logger.error("JWT Verification Error: #{inspect(reason)}")
+
               conn
-              |> send_resp(:forbidden, "Invalid XSRF token")
+              |> put_resp_content_type("application/json")
+              |> send_resp(:forbidden, "{\"error\": \"Invalid XSRF token\"}")
               |> halt()
           end
         rescue
           exception ->
+            Logger.error("Exception occurred: #{inspect(exception)}")
+
             conn
-            |> send_resp(:internal_server_error, "Internal server error")
+            |> put_resp_content_type("application/json")
+            |> send_resp(:internal_server_error, "{\"error\": \"Internal server error\"}")
             |> halt()
         end
     end

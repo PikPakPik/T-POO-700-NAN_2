@@ -64,7 +64,6 @@ defmodule TimeManagerWeb.TeamController do
     end
   end
 
-
   swagger_path(:show) do
     summary("Show team")
     description("Show a team by ID.")
@@ -129,6 +128,7 @@ defmodule TimeManagerWeb.TeamController do
     SwaggerDef.api_protected_path()
 
     parameter(:teamID, :path, :integer, "Team ID", required: true, example: 1)
+
     # parameter(:team, :body, Schema.ref(:TeamRequest), "Team object", required: true) il faut mettre des working times en paramètres
 
     response(200, "OK", Schema.ref(:TeamClockResponse))
@@ -151,7 +151,6 @@ defmodule TimeManagerWeb.TeamController do
       false -> send_resp(conn, :unprocessable_entity, "Error creating working times")
     end
   end
-
 
   swagger_path(:add_employee) do
     summary("Add employee")

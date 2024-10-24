@@ -12,7 +12,8 @@ defmodule TimeManager.TeamsTest do
 
     test "list_teams/0 returns all teams" do
       team = team_fixture()
-      assert Teams.list_teams() == [team]
+      teams = Teams.list_teams() |> TimeManager.Repo.preload(:clocks)
+      assert teams == [team]
     end
 
     test "get_team!/1 returns the team with given id" do

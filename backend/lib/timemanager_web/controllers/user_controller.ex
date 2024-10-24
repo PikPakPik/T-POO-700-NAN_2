@@ -4,6 +4,7 @@ defmodule TimeManagerWeb.UserController do
 
   alias TimeManager.Users
   alias TimeManager.Users.User
+  alias TimeManager.WorkingTime
   alias TimeManager.Roles
   alias TimeManagerWeb.SwaggerDef
   alias TimeManagerWeb.Plugs.PermissionPlug

@@ -19,7 +19,6 @@ defmodule TimeManager.Teams do
   """
   def list_teams do
     Repo.all(Team)
-    |> Repo.preload([:clocks])
   end
 
   @doc """

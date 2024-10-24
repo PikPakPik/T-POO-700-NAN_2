@@ -670,12 +670,6 @@
           "204": {
             "description": "No Content - Deleted Successfully"
           },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/ForbiddenResponse"
-            }
-          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -683,11 +677,6 @@
             }
           }
         },
-        "security": [
-          {
-            "csrf": []
-          }
-        ],
         "summary": "Delete Clock",
         "tags": [
           "Clock"
@@ -1541,51 +1530,6 @@
         ]
       }
     },
-    "/api/teams/{teamID}/clock": {
-      "post": {
-        "description": "Clock all team users.",
-        "operationId": "TimeManagerWeb.TeamController.clock",
-        "parameters": [
-          {
-            "description": "Team ID",
-            "in": "path",
-            "name": "teamID",
-            "required": true,
-            "type": "integer",
-            "x-example": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/TeamClockResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/ForbiddenResponse"
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "schema": {
-              "$ref": "#/definitions/NotFoundResponse"
-            }
-          }
-        },
-        "security": [
-          {
-            "csrf": []
-          }
-        ],
-        "summary": "Clock team users",
-        "tags": [
-          "Team"
-        ]
-      }
-    },
     "/api/teams/{teamID}/remove_employee/{employeeID}": {
       "put": {
         "description": "Remove a team employee.",
@@ -1713,6 +1657,12 @@
               "$ref": "#/definitions/TeamClockResponse"
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -1720,6 +1670,11 @@
             }
           }
         },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
         "summary": "Add working time team's users",
         "tags": [
           "Team"

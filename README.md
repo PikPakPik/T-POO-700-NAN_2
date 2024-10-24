@@ -81,7 +81,7 @@ Run `./timemanager.sh -all` to launch the platform with Docker.
 
 | Role     | Username      | Password |
 |----------|---------------|----------|
-| Admin    | admin@nan2.fr | ......   |
-| Manager  | manager@nan2.fr| ......  |
-| Employee | employee@nan2.fr| ...... |
+| Admin    | admin@nan2.fr | admin    |
+| Manager  | manager@nan2.fr| manager  |
+| Employee | employee@nan2.fr| employee |
 

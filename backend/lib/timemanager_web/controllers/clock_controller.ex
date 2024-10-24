@@ -6,6 +6,7 @@ defmodule TimeManagerWeb.ClockController do
   alias TimeManager.Clocks.Clock
   alias TimeManagerWeb.SwaggerDef
   alias TimeManagerWeb.Plugs.PermissionPlug
+  alias TimeManager.Auth
 
   action_fallback(TimeManagerWeb.FallbackController)
 
@@ -51,6 +52,18 @@ defmodule TimeManagerWeb.ClockController do
   end
 
   def clock_in_out_user(conn, %{"userID" => userID}) do
+    user = Auth.get_user(conn)
+
+    if user.id != userID and user.role.name != "Admin" do
+      conn
+      |> put_resp_content_type("application/json")
+      |> send_resp(
+        403,
+        Jason.encode!(%{error: %{message: "You can only clock in or out yourself"}})
+      )
+      |> halt()
+    end
+
     with {status, {:ok, %Clock{} = clock}} <- Clocks.clock_in_out_user(userID) do
       case status do
         :created -> put_status(conn, :created)
@@ -74,6 +87,18 @@ defmodule TimeManagerWeb.ClockController do
   end
 
   def get_user_clock(conn, %{"userID" => user_id}) do
+    user = Auth.get_user(conn)
+
+    if user.role.name != "Admin" and user.id != user_id do
+      conn
+      |> put_resp_content_type("application/json")
+      |> send_resp(
+        403,
+        Jason.encode!(%{error: %{message: "You can only see your own clock"}})
+      )
+      |> halt()
+    end
+
     case clocks = Clocks.list_clocks_by_user_id(user_id) do
       [] -> {:error, :not_found}
       clocks -> render(conn, :index, clocks: clocks)
@@ -83,12 +108,7 @@ defmodule TimeManagerWeb.ClockController do
   swagger_path(:delete) do
     summary("Delete Clock")
     description("Delete a clock by ID.")
-
-    SwaggerDef.api_protected_path()
-
-    parameters do
-      id(:path, :integer, "Clock ID", required: true, example: 3)
-    end
+    parameter(:id, :path, :integer, "Clock ID", required: true, example: 3)
 
     response(204, "No Content - Deleted Successfully")
     response(404, "Not found", Schema.ref(:NotFoundResponse))
