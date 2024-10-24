@@ -52,6 +52,27 @@ export class WorkingTimeApi extends Api {
     }
 
     /**
+     * Creates a new working time entry for a team's users.
+     *
+     * @param end - The end time of the working period.
+     * @param start - The start time of the working period.
+     * @param team_id - The ID of the team for the users the working time is being created.
+     * @returns A promise that resolves to the response of the API request.
+     */
+        static async createWorkingTimeTeam(end: Date, start: Date, team_id: number) {
+            const workingTime = {
+                working_time: {
+                    end: end,
+                    start: start,
+                    // end: end.toISOString(),
+                    // start: start.toISOString(),
+                    team_id: team_id
+                }
+            };
+            return WorkingTimeApi.makeRequest('post', `/teams/${team_id}/workingtime`, workingTime);
+        }
+
+    /**
      * Updates the working time for a specific user.
      *
      * @param id - The ID of the working time entry to update.
@@ -98,4 +119,11 @@ export class WorkingTimeApi extends Api {
     }
 }
 
-export const { updateWorkingTime, createWorkingTime, deleteWorkingTime, readWorkingTime, readWorkingTimes } = WorkingTimeApi;
+export const { 
+    updateWorkingTime, 
+    createWorkingTime, 
+    deleteWorkingTime, 
+    readWorkingTime, 
+    readWorkingTimes,
+    createWorkingTimeTeam
+} = WorkingTimeApi;

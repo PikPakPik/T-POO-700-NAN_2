@@ -2,6 +2,7 @@ defmodule TimeManagerWeb.TeamController do
   use TimeManagerWeb, :controller
   use PhoenixSwagger
 
+  alias TimeManager.Repo
   alias TimeManager.Teams
   alias TimeManager.Teams.Team
   alias TimeManagerWeb.SwaggerDef
@@ -34,13 +35,15 @@ defmodule TimeManagerWeb.TeamController do
   end
 
   def create(conn, %{"team" => team_params}) do
-    with {:ok, %Team{} = team} <- Teams.create_team(team_params) do
+    with {:ok, %Team{} = team} <- Teams.create_team(team_params),
+         team <- Repo.preload(team, :clocks) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/teams/#{team}")
+      |> put_resp_header("location", ~p"/api/teams/#{team.id}")
       |> render(:show, team: team)
     end
   end
+
 
   swagger_path(:show) do
     summary("Show team")
@@ -93,38 +96,34 @@ defmodule TimeManagerWeb.TeamController do
     end
   end
 
-  swagger_path(:clock) do
-    summary("Clock team users")
-    description("Clock all team users.")
+  swagger_path(:working_time_teams) do
+    summary("Add working time team's users")
+    description("Manager can add working time for all team's users.")
 
     parameter(:teamID, :path, :integer, "Team ID", required: true, example: 1)
+    # parameter(:team, :body, Schema.ref(:TeamRequest), "Team object", required: true) il faut mettre des working times en paramètres
 
     response(200, "OK", Schema.ref(:TeamClockResponse))
     response(404, "Not found", Schema.ref(:NotFoundResponse))
   end
 
-  def clock(conn, %{"teamID" => team_id}) do
+  def working_time_teams(conn, %{"teamID" => team_id, "working_time" => working_time_params}) do
     team = TimeManager.Repo.preload(Teams.get_team!(team_id), :employees)
 
     results =
       team.employees
       |> Enum.map(fn employee ->
-        case TimeManager.Clocks.clock_in_out_user(employee.id) do
-          {:ok, %TimeManager.Clocks.Clock{} = clock} ->
-            TimeManagerWeb.ModelToJson.serialize_data(clock)
-            if Teams.show_team_clocks(team_id) do
-              Teams.remove_team_clocks(team_id)
-            else
-              Teams.create_team_clock(team_id, clock.id)
-            end
-            _error ->
-              # Handle error or return a meaningful message
-              %{}
-            end
-          end)
-    conn
-    |> json(%{data: results})
+        working_time_params
+        |> Map.put("user_id", "#{employee.id}")
+        |> TimeManager.WorkingTimes.create_working_time()
+      end)
+
+    case Enum.all?(results, &match?({:ok, _}, &1)) do
+      true -> send_resp(conn, :created, "Working times created successfully")
+      false -> send_resp(conn, :unprocessable_entity, "Error creating working times")
+    end
   end
+
 
   swagger_path(:add_employee) do
     summary("Add employee")

@@ -2,12 +2,7 @@
   <div class="flex flex-col ml-6 mr-6 mt-10">
     <div class="flex justify-between mb-10 mt-6 flex-col md:flex-row items-center">
       <todayDate/>
-      <template v-if="isTeamStarted">
-        <span>je suis là</span>
-      </template>
-      <template v-else>
-        <ClockManager :aria-disabled="isTeamStarted" :id="1"/>
-      </template>
+        <ClockManager :userId="userId" />
     </div>
     <div class="flex gap-8 flex-col md:flex-row items-center">
       <workingTimeWeekVue />
@@ -31,17 +26,15 @@ definePageMeta({
 })
 
 //utils
-import useTeams from '~/src/utils/team/team';
 import useUsers from '~/src/utils/user/user';
 
-const { showTeam } = useTeams();
 const { getUser } = useUsers();
 
 export default {
   data() {
     return {
       currentUser: {},
-      isTeamStarted: false,
+      userId: localStorage.getItem('userID'),
     };
   },
   components: {
@@ -50,27 +43,13 @@ export default {
     extraHour,
     todayDate
   }, 
-  methods: {    
+  methods: {
     async getCurrentUser() {
       try {
         //getUserID from localStorage
         this.currentUser = await getUser(localStorage.getItem('userID'));
-        this.teamStarted(); // Ensure teamStarted is called after currentUser is set
       } catch (error) {
         console.error('Failed to fetch user:', error);
-      }
-    },
-    async teamStarted() {
-      const user = this.currentUser;
-        const teams = user.teams;
-        for (let i = 0; i < teams.length; i++) {
-          const teamDetails = await showTeam(teams[i].id);
-          const teamClock = teamDetails.clocks
-          console.log(teamClock);
-          if (teamClock.length > 0) {
-            this.isTeamStarted = true;
-            break; // Exit loop if a teamClock is found
-          }
       }
     },
   },

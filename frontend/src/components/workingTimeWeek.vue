@@ -4,11 +4,16 @@
 </template>
 
 <script>
-import { readWorkingTimes } from '@/src/utils/api/workingtime.ts'
-import dashboardCard from './cards/dashboardCard.vue';
-import dayjs from 'dayjs';
 import isoweek from 'dayjs/plugin/isoWeek';
+import dayjs from 'dayjs';
+//utils
+import { readWorkingTimes } from '@/src/utils/api/workingtime.ts'
+import useUsers from '../utils/user/user';
+//cards
+import dashboardCard from './cards/dashboardCard.vue';
+
 dayjs.extend(isoweek);
+const { getUser } = useUsers();
 
 export default {
   data() {
@@ -30,8 +35,8 @@ export default {
       const startOfWeek = dayjs().isoWeekday(1).startOf('day');
       const endOfWeek = dayjs().isoWeekday(7).endOf('day');
       try {
-        // TODO recup de l'userId
-        const response = await readWorkingTimes(1, startOfWeek.toISOString(), endOfWeek.toISOString());
+        const user = await getUser(localStorage.getItem('userID'));
+        const response = await readWorkingTimes(user.id, startOfWeek.toISOString(), endOfWeek.toISOString());
         if (response && response.data) {
           this.workingTimes = response.data;
           this.calculateWeekHours();

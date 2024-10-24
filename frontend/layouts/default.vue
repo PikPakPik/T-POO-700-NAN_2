@@ -34,7 +34,7 @@
             </AppNavLink>
           </li>
           <li>
-            <AppNavLink to="/workingTimes/1" label="Historique" :active="route.path === '/workingTimes/6'"
+            <AppNavLink v-if="user" :to="'/workingTimes/' + user.id" label="Historique" :active="route.path === '/workingTimes/6'"
               :isOpen="isOpen">
               <svg width="23" height="23" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -289,7 +289,6 @@ const checkLoginTime = () => {
 };
 const getCurrentUser = async () => {
   //getUserID from localStorage
-  console.log(localStorage.getItem('userID'))
   user.value = await getUser(localStorage.getItem('userID'));
   console.log(user.value)
 }

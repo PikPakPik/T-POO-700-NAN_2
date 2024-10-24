@@ -8,48 +8,59 @@
                 </h2>
                 <span class="text-xs text-gray-500">Consulter votre équipe</span>
             </v-col>
+        </v-row>
+        <v-row class="flex items-center justify-center pb-6">
             <v-col class="text-center">
-                <ClockManager 
+                <v-btn 
                     class="mx-auto max-w-screen-lg px-4 py-8 sm:px-8" 
-                    :id="this.teamId"
-                    :isTeam="true"
-                    v-if="currentUser.role && (currentUser.role.id == '1' || currentUser.role.id == '2')"/>
+                    @click="openWorkingTimeDialog"
+                    v-if="currentUser.role && (currentUser.role.id == '1' || currentUser.role.id == '2')">
+                    Pointez pour vos employés
+                </v-btn>
             </v-col>
         </v-row>
-        
-        <v-row justify="start">
-        <v-col cols="12">
-            <v-card class="transparent-card">
-            <v-card-title class="d-flex justify-space-between align-center">
-                <v-text-field 
-                    v-model="search" 
-                    class="search-bar mr-4 teams-details-intro" 
-                    label="Recherche"
-                    single-line hide-details aria-label="Search user"
-                    data-intro="Rechercher ici votre équipe." 
-                    data-title="Rechercher d'équipe">
-                </v-text-field>
-                <v-btn 
-                    icon class="mr-2 yellow teams-details-intro" 
-                    @click="openAssociateDialog()" 
-                    aria-label="Add user" 
-                    v-if="currentUser.role && (currentUser.role.id == '1' || currentUser.role.id == '2')"
-                    data-intro="Cliquez ici pour assigner un utilisateur à l'équipe." 
-                    data-title="Assigner un utilisateur">
-                    <v-icon>mdi-plus</v-icon>
-                </v-btn>
-            </v-card-title>
-        <v-data-table :headers="headers" :items="teamMembers" :search="search" item-key="id"
-            class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage" items-per-page-text="Éléments par page"
-            :footer-props="customFooterProps" :items-per-page-options="itemsPerPageOptions" aria-label="User accounts table">
-                    
-            <template v-slot:item.id="{ item }">
-                <span aria-label="User ID">{{ item.id }}</span>
-            </template>
 
-            <template v-slot:item.employee="{ item }">
-                <span aria-label="Employee Name">{{ item.username }}</span>
-            </template>
+        <!-- Working Time Dialog -->
+        <v-dialog v-model="workingTimeDialog" max-width="800px" aria-label="Working Time Dialog">
+            <Working-time 
+                :teamID="teamId"
+                @close="workingTimeDialog = false"
+            />
+        </v-dialog>
+
+        <v-row justify="start">
+            <v-col cols="12">
+                <v-card class="transparent-card">
+                    <v-card-title class="d-flex justify-space-between align-center">
+                        <v-text-field 
+                            v-model="search" 
+                            class="search-bar mr-4 teams-details-intro" 
+                            label="Recherche"
+                            single-line hide-details aria-label="Search user"
+                            data-intro="Rechercher ici votre équipe." 
+                            data-title="Rechercher d'équipe">
+                        </v-text-field>
+                        <v-btn 
+                            icon class="mr-2 yellow teams-details-intro" 
+                            @click="openAssociateDialog()" 
+                            aria-label="Add user" 
+                            v-if="currentUser.role && (currentUser.role.id == '1' || currentUser.role.id == '2')"
+                            data-intro="Cliquez ici pour assigner un utilisateur à l'équipe." 
+                            data-title="Assigner un utilisateur">
+                            <v-icon>mdi-plus</v-icon>
+                        </v-btn>
+                    </v-card-title>
+                    <v-data-table :headers="headers" :items="teamMembers" :search="search" item-key="id"
+                        class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage" items-per-page-text="Éléments par page"
+                        :footer-props="customFooterProps" :items-per-page-options="itemsPerPageOptions" aria-label="User accounts table">
+                        
+                        <template v-slot:item.id="{ item }">
+                            <span aria-label="User ID">{{ item.id }}</span>
+                        </template>
+
+                        <template v-slot:item.employee="{ item }">
+                            <span aria-label="Employee Name">{{ item.username }}</span>
+                        </template>
 
             <template v-slot:item.action="{ item, index }">
                 <div v-if="isMobile">
@@ -114,13 +125,12 @@
 
 <script>
 //components 
-import ClockManager from './src/components/clockManager.vue';
+import WorkingTime from './src/components/workingTime.vue';
 //utils
 import useTeams from '~/src/utils/team/team';
 import useUsers from '~/src/utils/user/user';
 
 const { showTeam, associateEmployee, removeEmployeeFromTeam } = useTeams();
-
 const { getUsers, getUser } = useUsers();
 
 export default {
@@ -155,13 +165,15 @@ export default {
             currentUser: {},
             availableUsers: [],
             bottomSheetVisible: false,
-            isMobile: false
+            isMobile: false,
+            workingTimeDialog: false // Ajout de la donnée pour contrôler l'état de la modale
         };
     },
     methods: {
         async showTeam() {
             try {
-                const currentUser = await getUser(1); //to change with auth to handle the user id dynamically (21 = admin) (1 = Manager) (7 = Employee)
+                //getUserID from localStorage
+                const currentUser = await getUser(localStorage.getItem('userID'));
                 this.currentUser = currentUser;
 
             const actionColumnExists = this.headers.some(header => header.value === 'action');
@@ -233,7 +245,10 @@ export default {
         showBottomSheet(item) {
           this.item = item;
           this.bottomSheetVisible = true;
-        }
+        },
+        openWorkingTimeDialog() {
+            this.workingTimeDialog = true;
+        },
     },
     mounted() {
         this.detectMobile();
@@ -242,11 +257,11 @@ export default {
         this.getUsers();
     },
     components: {
-        ClockManager
-    },
-    beforeDestroy() {
-       window.removeEventListener('resize', this.detectMobile);
-    },
+        WorkingTime,
+        beforeDestroy() {
+            window.removeEventListener('resize', this.detectMobile);
+        },
+    }
 };
 </script>
 

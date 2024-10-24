@@ -223,7 +223,6 @@ export default {
             try {
                 //getUserID from localStorage
                 this.user = await getUser(localStorage.getItem('userID'));
-
                 if (this.user.role.id == '1') {
                     const response = await getTeams();
                     this.teams = response;

@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { updateWorkingTime, deleteWorkingTime, createWorkingTime, readWorkingTime } from '@/src/utils/api/workingtime.ts'
+import { updateWorkingTime, createWorkingTimeTeam, createWorkingTime, readWorkingTime } from '@/src/utils/api/workingtime.ts'
 
 export default {
   name: 'workingTime',
@@ -50,6 +50,10 @@ export default {
   props: {
     userID: {
       type: String,
+      default: '',
+    },
+    teamID: {
+      type: Number,
       default: '',
     },
     workingTimeID: {
@@ -77,7 +81,8 @@ export default {
       }
     },
     createWorkingTime() {
-      createWorkingTime(this.endDate, this.startDate, this.userID)
+      if (this.userID) {
+        createWorkingTime(this.endDate, this.startDate, this.userID)
         .then(response => {
           this.$emit('created', 'Working time ajouté');
         })
@@ -86,6 +91,17 @@ export default {
         }).finally(() => {
           this.$emit('close');
         });
+      } else if (this.teamID) {
+        createWorkingTimeTeam(this.endDate, this.startDate, this.teamID)
+        .then(response => {
+          this.$emit('created', 'Working time ajouté');
+        })
+        .catch(error => {
+          this.$emit('error', 'Erreur : impossible de créer le working time');
+        }).finally(() => {
+          this.$emit('close');
+        });
+      }
     },
     updateWorkingTime() {
       updateWorkingTime(this.workingTimeID, this.endDate, this.startDate, this.userID)
