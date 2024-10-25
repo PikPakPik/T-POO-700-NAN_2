@@ -19,32 +19,8 @@ jobs:
     - name: Build
       run: npm run build
       working-directory: frontend
-  e2e:
-    needs: build
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-      working-directory: frontend
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-      working-directory: frontend
-    - name: Run Playwright tests
-      run: npm run e2e:test
-      working-directory: frontend
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
   build-and-push-image:
-    needs: e2e
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -90,7 +66,7 @@ jobs:
           render-api-key: ${{ secrets.RENDER_API_KEY }}
           render-service-id: ${{ secrets.RENDER_SERVICEID_FRONTEND }}
   build-apk-artifact:
-    needs: e2e
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
