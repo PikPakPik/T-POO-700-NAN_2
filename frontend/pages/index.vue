@@ -2,7 +2,7 @@
   <div class="flex flex-col ml-6 mr-6 mt-10">
     <div class="flex justify-between mb-10 mt-6 flex-col md:flex-row items-center">
       <todayDate/>
-        <ClockManager :userId="userId" />
+        <ClockManager />
     </div>
     <div class="flex gap-8 flex-col md:flex-row items-center">
       <workingTimeWeekVue />
@@ -22,40 +22,16 @@ import todayDate from './src/components/todayDate.vue';
 definePageMeta({
   middleware: ['global-role'],
   meta: {
-    roles: ['Admin', 'Manager', 'Employee'], // Rôles requis pour accéder à cette page
+    roles: ['Admin', 'Manager', 'Employee'],
   },
 })
-
-//utils
-import useUsers from '~/src/utils/user/user';
-
-const { getUser } = useUsers();
-
+  
 export default {
-  data() {
-    return {
-      currentUser: {},
-      userId: localStorage.getItem('userID'),
-    };
-  },
   components: {
     ClockManager,
     workingTimeWeekVue,
     extraHour,
     todayDate
   }, 
-  methods: {
-    async getCurrentUser() {
-      try {
-        //getUserID from localStorage
-        this.currentUser = await getUser(localStorage.getItem('userID'));
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      }
-    },
-  },
-  async mounted() {
-    await this.getCurrentUser();
-  }
 };
 </script>

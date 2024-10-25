@@ -2,15 +2,18 @@
     <v-container class="mx-auto max-w-screen-lg px-4 py-8 sm:px-8">
         <v-row class="flex items-center justify-center pb-6">
             <v-col class="text-center">
+                <div class="d-flex align-center justify-center">
                 <h2 class="font-semibold text-gray-700 underline" aria-label="Team Name">
                     {{ team.name }}
-                    <span v-if="teamManagers.length" class="text-sm text-gray-500">- {{ teamManagers[0].username
-                        }}</span>
                 </h2>
+                <v-btn color="primary" class="ml-4" @click="editDialog = true" v-if="isManager">
+                    <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+                </div>
                 <span class="text-xs text-gray-500">Consulter votre équipe</span>
             </v-col>
         </v-row>
-        <v-row class="flex items-center justify-center pb-6">
+        <v-row class="flex items-center justify-center pb-6" v-if="isManager">
             <v-col class="text-center">
                 <v-btn class="mx-auto max-w-screen-lg px-4 py-8 sm:px-8" @click="openWorkingTimeDialog"
                     v-role-not="'Employee'">
@@ -39,11 +42,52 @@
                             <v-icon>mdi-plus</v-icon>
                         </v-btn>
                     </v-card-title>
-                    <v-data-table :headers="headers" :items="teamMembers" :search="search" item-key="id"
+                    <!-- Tableau pour les managers -->
+                    <v-data-table :headers="headers_managers" :items="teamManagers" :search="search" item-key="id"
                         class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage"
                         items-per-page-text="Éléments par page" :footer-props="customFooterProps"
-                        :items-per-page-options="itemsPerPageOptions" aria-label="User accounts table">
+                        :items-per-page-options="itemsPerPageOptions" aria-label="Manager accounts table"
+                        >
+                        <template v-slot:item.id="{ item }">
+                            <span aria-label="User ID">{{ item.id }}</span>
+                        </template>
 
+                        <template v-slot:item.employee="{ item }">
+                            <span aria-label="Manager Name">{{ item.username }}</span>
+                        </template>
+
+                        <template v-slot:item.action="{ item, index }">
+                            <div v-if="isMobile">
+                                <v-btn icon class="icon-btn-mobile" @click="showBottomSheetManager(item)">
+                                    <v-icon>mdi-dots-vertical</v-icon>
+                                </v-btn>
+                            </div>
+                            <div v-else>
+                                <v-row class="d-flex align-center flex-row no-gutters">
+                                    <v-btn icon size="small" class="mr-2"
+                                        @click="confirmDeleteManagerFromTeam(item.id)" aria-label="Delete user"
+                                        :class="{ 'teams-details-intro': index === 0, 'mr-2': index >= 0 }"
+                                        data-intro="Cliquez ici pour supprimer l'utilisateur de l'équipe."
+                                        data-title="Désassigner un utilisateur d'une équipe">
+                                        <v-icon>mdi-trash-can</v-icon>
+                                    </v-btn>
+                                    <v-btn icon size="small" class="mr-2"
+                                        @click="demoteToEmployee(item.id)" aria-label="Demote to employee"
+                                        :class="{ 'teams-details-intro': index === 0, 'mr-2': index >= 0 }"
+                                        data-intro="Cliquez ici pour rétrograder l'utilisateur en employé."
+                                        data-title="Rétrograder un utilisateur en employé">
+                                        <v-icon>mdi-shield-account</v-icon>
+                                    </v-btn>
+                                </v-row>
+                            </div>
+                        </template>
+                    </v-data-table>
+                    <!-- Tableau pour les employés -->
+                    <v-data-table :headers="headers_employees" :items="teamMembers" :search="search" item-key="id"
+                        class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage"
+                        items-per-page-text="Éléments par page" :footer-props="customFooterProps"
+                        :items-per-page-options="itemsPerPageOptions" aria-label="User accounts table"
+                       >
                         <template v-slot:item.id="{ item }">
                             <span aria-label="User ID">{{ item.id }}</span>
                         </template>
@@ -54,7 +98,7 @@
 
                         <template v-slot:item.action="{ item, index }">
                             <div v-if="isMobile">
-                                <v-btn icon class="icon-btn-mobile" @click="showBottomSheet(item)">
+                                <v-btn icon class="icon-btn-mobile" @click="showBottomSheetEmployee(item)">
                                     <v-icon>mdi-dots-vertical</v-icon>
                                 </v-btn>
                             </div>
@@ -67,6 +111,13 @@
                                         data-title="Désassigner un utilisateur d'une équipe">
                                         <v-icon>mdi-trash-can</v-icon>
                                     </v-btn>
+                                    <v-btn icon size="small" class="mr-2"
+                                        @click="promoteToManager(item.id)" aria-label="Promote to manager"
+                                        :class="{ 'teams-details-intro': index === 0, 'mr-2': index >= 0 }"
+                                        data-intro="Cliquez ici pour promouvoir l'utilisateur en manager."
+                                        data-title="Promouvoir un utilisateur en manager">
+                                        <v-icon>mdi-crown</v-icon>
+                                    </v-btn>
                                 </v-row>
                             </div>
                         </template>
@@ -75,10 +126,24 @@
             </v-col>
         </v-row>
 
-        <v-bottom-sheet v-model="bottomSheetVisible">
+        <v-bottom-sheet v-model="bottomSheetEmployeeVisible">
             <v-list>
                 <v-list-item @click="confirmDeleteEmployeeFromTeam(item.id)">
                     <v-list-item-title>Supprimer l'employé de l'équipe</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="promoteToManager(item.id)">
+                    <v-list-item-title>Promouvoir l'employé en manager</v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-bottom-sheet>
+
+        <v-bottom-sheet v-model="bottomSheetManagerVisible">
+            <v-list>
+                <v-list-item @click="confirmDeleteEmployeeFromTeam(item.id)">
+                    <v-list-item-title>Supprimer le manager de l'équipe</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="demoteToEmployee(item.id)">
+                    <v-list-item-title>Rétrograder le manager en employé</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-bottom-sheet>
@@ -101,69 +166,120 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <!-- Confirmation dialog -->
+        <v-dialog v-model="deleteDialog" max-width="400" aria-label="Delete confirmation dialog">
+            <v-card>
+                <v-card-title class="text-h5">Confirmer la suppression</v-card-title>
+                <v-card-text>Es-tu sûr de vouloir supprimer cet utilisateur ? Cette action est
+                    irréversible.</v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue-grey" text @click="deleteDialog = false" aria-label="Cancel delete">Annuler
+                    </v-btn>
+                    <v-btn color="red" text @click="deleteSelectedEmployeeFromTeam()" aria-label="Confirm delete">
+                        Supprimer</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+         <!-- Edit dialog -->
+        <v-dialog v-model="editDialog" max-width="400" aria-label="Edit team name dialog">
+            <v-card>
+                <v-card-title class="text-h5">Modifier le nom de l'équipe</v-card-title>
+                <v-card-text>
+                    <v-text-field v-model="selectedTeamName" label="Nom de l'équipe" aria-label="Team name">
+                    </v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue-grey" text @click="editDialog = false" aria-label="Cancel edit">Annuler</v-btn>
+                    <v-btn color="blue" text @click="updateTeamConfirmation" aria-label="Save team name">Enregistrer</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
 <script>
-//components 
+// Importing components and utilities
 import WorkingTime from './src/components/workingTime.vue';
-//utils
-import useTeams from '~/src/utils/team/team';
-import useUsers from '~/src/utils/user/user';
 import { useAuthStore } from '@/stores/auth';
+import { useTeams } from '~/src/utils/team/team';
+import { useUsers } from '~/src/utils/user/user';
 
-const { showTeam, associateEmployee, removeEmployeeFromTeam } = useTeams();
+const { showTeam, associateEmployee, removeEmployeeFromTeam, removeManagerFromTeam, associateManager, updateTeam } = useTeams();
 const { getUsers, getUser } = useUsers();
 
 export default {
     name: 'TeamDetails',
+    components: { WorkingTime },
     props: {
-        teamId: {
-            type: Number,
-            required: true
-        }
+        teamId: { type: Number, required: true }
     },
     data() {
         return {
-            headers: [
-                { title: 'ID', text: 'ID', sortable: true, value: 'id', width: '24%' },
-                { title: 'Employé(s)', text: 'Employee', sortable: true, value: 'username', width: '33%' },
-            ],
-            teamManagers: [],
-            teamMembers: [],
+            // Initial data setup
             team: {},
-            itemsPerPage: 10,
-            currentPage: 1,
+            teamMembers: [],
+            teamManagers: [],
+            availableUsers: [],
             search: '',
+            isMobile: false,
+            workingTimeDialog: false,
+            associateDialog: false,
+            selectedUser: null,
+            // Table configurations
+            headers_employees: [],
+            headers_managers: [],
+            itemsPerPageOptions: [5, 10, 25, 50],
             customFooterProps: {
-                'items-per-page-options': [5, 10, 25, 50],
+                'items-per-page-options': this.itemsPerPageOptions,
                 'show-current-page': true,
                 'show-first-last-page': true,
                 'show-items-per-page': true,
             },
-            itemsPerPageOptions: [5, 10, 25, 50],
-            associateDialog: false,
-            selectedUser: null,
-            currentUser: {},
-            availableUsers: [],
-            bottomSheetVisible: false,
-            isMobile: false,
-            workingTimeDialog: false // Ajout de la donnée pour contrôler l'état de la modale
+            currentPage: 1,
+            deleteDialog: false,
+            itemsPerPage: 10,
+            bottomSheetEmployeeVisible: false,
+            bottomSheetManagerVisible: false,
+            editDialog: false,
+            selectedTeamName: '',
+            isManager: false,
         };
     },
+    computed: {
+        filteredUsers() {
+            return this.availableUsers.filter(user => !this.teamMembers.some(member => member.id === user.id));
+        },
+    },
     methods: {
-        async showTeam() {
+        initTableHeaders(type) {
+            return [
+                { title: 'ID', text: 'ID', sortable: true, value: 'id', width: '24%' },
+                { title: `${type}(s)`, text: type, sortable: true, value: 'username', width: '33%' },
+                ...(this.isManager ? [{ title: 'Action', text: 'Action', sortable: false, value: 'action', width: '43%' }] : [])
+            ];
+        },
+        async updateTeamConfirmation() {
             try {
-                const authStore = useAuthStore();
-
-                if (authStore.getUserRoles.includes('Admin') || authStore.getUserRoles.includes('Manager')) {
-                    this.headers.push({ title: 'Action', text: 'Actions', sortable: false, value: 'action', width: '33%' });
-                }
-
+                await updateTeam(this.team.id, this.selectedTeamName);
+                this.editDialog = false;
+                this.showTeamInfo();
+            } catch (error) {
+                console.error("Failed to update teams:", error);
+            }
+        },
+        async showTeamInfo() {
+            try {
                 const response = await showTeam(this.teamId);
+                this.team = response;
                 this.teamMembers = response.employees;
                 this.teamManagers = response.managers;
-                this.team = response;
+                this.checkIfManager();
+                this.headers_employees = this.initTableHeaders('Employee');
+                this.headers_managers = this.initTableHeaders('Manager');
             } catch (error) {
                 console.error('Error fetching team members:', error);
             }
@@ -171,7 +287,6 @@ export default {
         async getUsers() {
             try {
                 const response = await getUsers();
-                // Filter out users that are already in the team
                 this.availableUsers = response.filter(user => !this.teamMembers.find(member => member.id === user.id));
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -185,7 +300,7 @@ export default {
             }
             try {
                 await associateEmployee(this.teamId, userId);
-                this.showTeam();
+                this.showTeamInfo();
                 this.closeAssociateDialog();
             } catch (error) {
                 console.error('Error associating user to team:', error);
@@ -196,13 +311,14 @@ export default {
                 console.error('No employee selected');
                 return;
             }
+            this.deleteDialog = true;
+            this.selectedEmployeeId = employeeId;
+        },
+        async deleteSelectedEmployeeFromTeam() {
             try {
-                await removeEmployeeFromTeam(this.teamId, employeeId);
-                const employeeIndex = this.teamMembers.findIndex(employee => employee.id === employeeId);
-                if (employeeIndex !== -1) {
-                    this.teamMembers.splice(employeeIndex, 1);
-                }
-                this.bottomSheetVisible = false;
+                await removeEmployeeFromTeam(this.teamId, this.selectedEmployeeId);
+                this.teamMembers = this.teamMembers.filter(member => member.id !== this.selectedEmployeeId);
+                this.deleteDialog = false;
             } catch (error) {
                 console.error('Error deleting employee from team:', error);
             }
@@ -220,25 +336,48 @@ export default {
         detectMobile() {
             this.isMobile = window.innerWidth <= 960;
         },
-        showBottomSheet(item) {
+        showBottomSheetEmployee(item) {
             this.item = item;
-            this.bottomSheetVisible = true;
+            this.bottomSheetEmployeeVisible = true;
+        },
+        showBottomSheetManager(item) {
+            this.item = item;
+            this.bottomSheetManagerVisible = true;
         },
         openWorkingTimeDialog() {
             this.workingTimeDialog = true;
+        },
+        async promoteToManager(employeeId) {
+            await removeEmployeeFromTeam(this.teamId, employeeId);
+            await associateManager(this.teamId, employeeId);
+            this.showTeamInfo();
+        },
+        async demoteToEmployee(userId) {
+            await removeManagerFromTeam(this.teamId, userId);
+            await associateEmployee(this.teamId, userId);
+            this.showTeamInfo();
+        },
+        checkIfManager() {
+            const authStore = useAuthStore();
+            // Vérifiez que authStore et authStore.user sont définis avant d'accéder à leurs propriétés
+            if (authStore && authStore.user) {
+                this.isManager = this.teamManagers.some(manager => manager.id === authStore.user.id) || authStore.isAdmin;
+            } else {
+                this.isManager = false;
+            }
+            this.isManager ? this.isManager : authStore.isAdmin
+            console.log(this.isManager);
+            return this.isManager;
         },
     },
     mounted() {
         this.detectMobile();
         window.addEventListener('resize', this.detectMobile);
-        this.showTeam();
+        this.showTeamInfo();
         this.getUsers();
     },
-    components: {
-        WorkingTime,
-        beforeDestroy() {
-            window.removeEventListener('resize', this.detectMobile);
-        },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.detectMobile);
     }
 };
 </script>
@@ -302,4 +441,17 @@ li {
     font-size: 20px;
     color: #000;
 }
+
+.highlight-row {
+    background-color: #FFEB3B; /* Jaune */
+}
 </style>
+
+
+
+
+
+
+
+
+

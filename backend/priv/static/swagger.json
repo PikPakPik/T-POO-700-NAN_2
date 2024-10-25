@@ -2158,12 +2158,6 @@
           "204": {
             "description": "No Content - Deleted Successfully"
           },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/ForbiddenResponse"
-            }
-          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -2171,11 +2165,6 @@
             }
           }
         },
-        "security": [
-          {
-            "csrf": []
-          }
-        ],
         "summary": "Delete Working time",
         "tags": [
           "WorkingTime"
@@ -2210,12 +2199,6 @@
               "$ref": "#/definitions/WorkingTimeResponse"
             }
           },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/ForbiddenResponse"
-            }
-          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -2223,11 +2206,6 @@
             }
           }
         },
-        "security": [
-          {
-            "csrf": []
-          }
-        ],
         "summary": "Update working time",
         "tags": [
           "WorkingTime"
@@ -2262,12 +2240,6 @@
               "$ref": "#/definitions/WorkingTimeResponse"
             }
           },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/ForbiddenResponse"
-            }
-          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -2275,11 +2247,6 @@
             }
           }
         },
-        "security": [
-          {
-            "csrf": []
-          }
-        ],
         "summary": "Update working time",
         "tags": [
           "WorkingTime"
@@ -2324,19 +2291,8 @@
             "schema": {
               "$ref": "#/definitions/WorkingTimesResponse"
             }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/ForbiddenResponse"
-            }
           }
         },
-        "security": [
-          {
-            "csrf": []
-          }
-        ],
         "summary": "List user working times",
         "tags": [
           "WorkingTime"
@@ -2424,12 +2380,6 @@
               "$ref": "#/definitions/WorkingTimeResponse"
             }
           },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/ForbiddenResponse"
-            }
-          },
           "404": {
             "description": "Not found",
             "schema": {
@@ -2437,11 +2387,6 @@
             }
           }
         },
-        "security": [
-          {
-            "csrf": []
-          }
-        ],
         "summary": "Show user working time",
         "tags": [
           "WorkingTime"

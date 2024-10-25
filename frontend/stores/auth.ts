@@ -55,5 +55,8 @@ export const useAuthStore = defineStore('auth', {
         getXsrfToken: (state: AuthState) => state.xsrfToken,
         getUserRoles: (state: AuthState) => state.roles,
         getUserPermissions: (state: AuthState) => state.permissions,
+        isAdmin: (state: AuthState) => state.roles.includes('Admin'),
+        isManager: (state: AuthState) => state.roles.includes('Manager' || 'Admin'),
+        isEmployee: (state: AuthState) => state.roles.includes('Employee' || 'Manager' || 'Admin'),
     },
 });

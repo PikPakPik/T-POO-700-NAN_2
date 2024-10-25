@@ -17,7 +17,8 @@ defmodule TimeManagerWeb.MeController do
       update: %{"me" => ["update"]},
       delete: %{"me" => ["delete"]},
       clock: %{"me" => ["clock"]},
-      teams: %{"me" => ["read"]}
+      teams: %{"me" => ["read"]},
+      get_clock: %{"me" => ["clock"]}
     ]
   )
 
@@ -89,6 +90,19 @@ defmodule TimeManagerWeb.MeController do
     with {:ok, _} <- TimeManager.Users.delete_user(user) do
       conn |> put_status(:no_content) |> text("")
     end
+  end
+
+  swagger_path(:get_clock) do
+    summary("Get current user clock")
+    description("Get the current user clock")
+
+    SwaggerDef.api_protected_path()
+  end
+
+  def get_clock(conn, _params) do
+    user = Auth.get_user(conn)
+    clock = TimeManager.Clocks.get_user_clock(user.id)
+    conn |> json(%{clock: clock})
   end
 
   swagger_path(:clock) do

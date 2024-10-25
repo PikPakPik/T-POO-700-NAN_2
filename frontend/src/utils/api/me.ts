@@ -33,7 +33,16 @@ export class MeApi extends Api {
     static async meClockInOrOut(): Promise<any> {
         return MeApi.makeRequest('post', `/me/clock`);
     }
-    static async meWorkingTimes(): Promise<any> {
+    static async meGetClock(): Promise<any> {
+        return MeApi.makeRequest('get', `/me/clock`);
+    }
+    static async meWorkingTimesDated(start: string, end: string): Promise<any> {
+        const startQuery = start ? `&start=${start}` : '';
+        const endQuery = end ? `&end=${end}` : '';
+        return MeApi.makeRequest('get', `/me/workingtimes?${startQuery}${endQuery}`);
+    }
+
+    static async meReadWorkingTimes(): Promise<void> {
         return MeApi.makeRequest('get', `/me/workingtimes`);
     }
     static async meTeams(): Promise<any> {
@@ -53,9 +62,11 @@ export class MeApi extends Api {
 
 export const {
     meClockInOrOut,
-    meWorkingTimes,
+    meWorkingTimesDated,
+    meReadWorkingTimes,
     meTeams,
     meGetUser,
+    meGetClock,
     mePutUser,
     meDeleteUser
 } = MeApi;

@@ -70,8 +70,6 @@ defmodule TimeManagerWeb.WorkingTimeController do
     summary("List user working times")
     description("List working times of a given user.")
 
-    SwaggerDef.api_protected_path()
-
     parameter(:userID, :path, :integer, "User ID", required: true, example: 1)
 
     parameter(:start, :query, :string, "Period start (default to no limit)",
@@ -98,8 +96,6 @@ defmodule TimeManagerWeb.WorkingTimeController do
     summary("Show user working time")
     description("Show a specific user working time entry.")
 
-    SwaggerDef.api_protected_path()
-
     parameter(:userID, :path, :integer, "User ID", required: true, example: 1)
     parameter(:id, :path, :integer, "Working time ID", required: true, example: 2)
 
@@ -117,8 +113,6 @@ defmodule TimeManagerWeb.WorkingTimeController do
   swagger_path(:update) do
     summary("Update working time")
     description("Update a working time entry.")
-
-    SwaggerDef.api_protected_path()
 
     parameter(:id, :path, :integer, "Working time ID", required: true, example: 1)
 
@@ -142,8 +136,6 @@ defmodule TimeManagerWeb.WorkingTimeController do
   swagger_path(:delete) do
     summary("Delete Working time")
     description("Delete a working time by ID.")
-
-    SwaggerDef.api_protected_path()
 
     parameter(:id, :path, :integer, "Working time ID", required: true, example: 1)
 

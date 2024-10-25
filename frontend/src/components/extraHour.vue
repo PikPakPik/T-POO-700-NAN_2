@@ -8,13 +8,12 @@
 import dayjs from 'dayjs';
 import isoweek from 'dayjs/plugin/isoWeek';
 //utils
-import { readWorkingTimes } from '@/src/utils/api/workingtime.ts'
-import useUsers from '../utils/user/user';
+import { meWorkingTimesDated } from '@/src/utils/api/me.ts'
 //cards
 import dashboardCard from './cards/dashboardCard.vue';
 
 dayjs.extend(isoweek);
-const { getUser } = useUsers();
+
 
 export default {
   data() {
@@ -34,10 +33,9 @@ export default {
   methods: {
     async recupExtraHour() {
       try {
-        const user = await getUser(localStorage.getItem('userID'));
         const startOfWeek = dayjs().isoWeekday(1).startOf('day');
         const endOfWeek = dayjs().isoWeekday(7).endOf('day');
-        const response = await readWorkingTimes(user.id, startOfWeek.toISOString(), endOfWeek.toISOString());
+        const response = await meWorkingTimesDated(startOfWeek.toISOString(), endOfWeek.toISOString());
         if (response && response.data) {
           this.workingTimes = response.data;
           this.calculateExtraHours();
