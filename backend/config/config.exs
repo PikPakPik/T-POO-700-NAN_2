@@ -13,7 +13,11 @@ config :timemanager,
   generators: [timestamp_type: :utc_datetime]
 
 config :cors_plug,
-  origin: [System.get_env("HTTP_ORIGIN", "http://localhost:3000"), "https://localhost"],
+  origin: [
+    System.get_env("HTTP_ORIGIN", "http://localhost:3000"),
+    "https://localhost",
+    "https://time-manager-front-nan-2-main.onrender.com"
+  ],
   max_age: 86400,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   headers: ["Authorization", "Content-Type", "c-xsrf-token"],
