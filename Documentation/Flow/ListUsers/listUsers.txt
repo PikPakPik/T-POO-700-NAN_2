@@ -1,0 +1,15 @@
+graph TD
+    A[L'utilisateur arrive sur la page des membres] 
+        --> B[Initier l'état de l'user] 
+        --> C{Récupérer le 'role' du user}
+
+    C -->|Employee ou Manager| D[Peut uniquement voir la liste des utilisateurs]
+    D --> F[Cacher les boutons de création, suppression, modification]
+
+    C -->|Admin| E[Peut voir, créer, supprimer, ou modifier le rôle d'un utilisateur]
+    E --> G[Afficher les boutons de création, suppression, modification]
+    
+    G --> H{Action de l'admin}
+    H -->|Créer un utilisateur| I[Ouvrir une modale pour entrer le username, mail, password du nouvel utilisateur]
+    H -->|Modifier un utilisateur| J[Ouvrir une modale pour modifier le rôle de l'utilisateur sélectionné]
+    H -->|Supprimer un utilisateur| K[Ouvrir une modale pour confirmer la suppression de l'utilisateur]

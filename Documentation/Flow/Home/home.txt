@@ -1,0 +1,13 @@
+graph TD
+    A[L'utilisateur arrive sur la page d'accueil] --> B[Initier l'état de l'user, son clock et ses working times de la semaine]
+    B --> C{User, clock & working time actuels}
+    C --> M{Statut de la clock}
+    M -->|True| O[Affiche le temps depuis lequel il est activé avec un bouton 'stop']
+    M -->|False| Q[Affiche un bouton 'play']
+    Q --> N[L'utilisateur pointe et lance sa clock]
+    N --> R{Actualise le statut de la clock vers 'true'}
+    R --> O
+    O --> D[L'utilisateur arrête sa clock]
+    D --> E{Passe le statut de la clock à 'false'}
+    E --> F{Récupère le working Time et actualise les heures de la semaines ainsi que les heures supplémentaires}
+

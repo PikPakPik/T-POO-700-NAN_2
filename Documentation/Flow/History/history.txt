@@ -1,0 +1,13 @@
+graph TD
+    A[L'utilisateur arrive sur la page 'historique']
+        --> B[Initier l'état de l'user et des working times] 
+
+    B --> C[Filtrer pour afficher uniquement les working times de l'utilisateur]
+    
+    C --> D[Peut voir la liste de ses working times]
+
+    D --> E{Actions possibles sur ses working times}
+    
+    E -->|Modifier un working time| F[Ouvrir une modale avec deux calendriers pour sélectionner la date de début et de fin]
+    E -->|Ajouter un working time| G[Ouvrir une modale avec deux calendriers pour entrer la date de début et de fin]
+    E -->|Supprimer un working time| H[Ouvrir une modale de confirmation pour supprimer le working time]

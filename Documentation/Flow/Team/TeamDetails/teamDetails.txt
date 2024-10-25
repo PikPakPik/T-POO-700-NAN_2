@@ -1,0 +1,14 @@
+graph TD
+    A[Utilisateur arrive sur la page de détail d'une équipe]
+        --> B[Initier l'état de l'user et de l'équipe sélectionné] 
+        --> C{Récupérer le 'role' du user}
+    B -->L[Récupère tous les membres de l'équipe]
+    C -->|Employee| D[Peut voir les membres de l'équipe, le manager et le nom de l'équipe]
+    
+    C -->|Manager ou Admin| E[Peut voir les membres, le manager et le nom de l'équipe]
+    E --> F[Afficher les boutons pour les actions supplémentaires]
+
+    F --> G{Actions pour Manager ou Admin}
+    G -->|Ajouter un working time| H[Ouvrir une modale avec deux calendriers pour sélectionner la date de début et de fin]
+    G -->|Ajouter un utilisateur| I[Ouvrir une modale pour ajouter un utilisateur à l'équipe]
+    G -->|Supprimer un utilisateur| J[Ouvrir une modale de confirmation pour supprimer un utilisateur de l'équipe]

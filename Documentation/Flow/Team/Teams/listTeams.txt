@@ -1,0 +1,21 @@
+graph TD
+    A[L'utilisateur arrive sur la page des équipes] 
+        --> B[Initier l'état de l'user et des équipes] 
+        --> C{Récupérer le 'role' du user}
+
+    C -->|Employé| D[Filtrer pour n'afficher que les équipes auxquelles l'employé appartient]
+    C -->|Manager| E[Filtrer pour n'afficher que les équipes auxquelles le manager appartient, avec actions autorisées]
+    C -->|Admin| F[Afficher toutes les équipes sans filtrage]
+
+    D & E & F --> G[Voir les détails des équipes]
+
+    D --> H[Cacher les boutons de création, modification, suppression]
+    E & F --> I[Afficher les boutons de création, modification, suppression]
+
+    G --> J[Voir les détails d'une équipe sélectionnée]
+    J --> K[Redirection vers la page de l'équipe]
+
+    I --> L{Actions disponibles pour Manager/Admin}
+    L -->|Créer une équipe| M[Ouvrir une modale pour entrer le nom de la nouvelle équipe]
+    L -->|Modifier une équipe| N[Ouvrir une modale pour modifier le nom de l'équipe sélectionnée]
+    L -->|Supprimer une équipe| O[Ouvrir une modale de confirmation de suppression de l'équipe]
