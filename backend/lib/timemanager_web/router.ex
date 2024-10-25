@@ -26,6 +26,7 @@ defmodule TimeManagerWeb.Router do
         resources("/", MeController, only: [:index])
         get("/workingtimes", MeController, :working_times)
         get("/teams", MeController, :teams)
+        get("/clock", MeController, :get_clock)
         post("/clock", MeController, :clock)
         put("/", MeController, :update)
         patch("/", MeController, :update)

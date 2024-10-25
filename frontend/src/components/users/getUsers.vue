@@ -26,7 +26,7 @@
                     <v-icon>mdi-plus</v-icon>
                 </v-btn>
             </v-card-title>
-            <v-data-table :headers="headers" :items="users" :search="search" item-key="id"
+            <v-data-table :headers="headersWithActions" :items="users" :search="search" item-key="id"
                 class="elevation-1 custom-data-table" :items-per-page="itemsPerPage" :page.sync="currentPage" items-per-page-text="Éléments par page"
                 :footer-props="customFooterProps" :items-per-page-options="options.itemsPerPageOptions" aria-label="User accounts table">
                 
@@ -82,15 +82,37 @@
         <!-- Edit dialog -->
         <v-dialog v-model="editDialog" max-width="400" aria-label="Edit role dialog">
             <v-card>
-                <v-card-title class="text-h5">Modifier le rôle</v-card-title>
+                <v-card-title class="text-h5">Modifier l'utilisateur</v-card-title>
                 <v-card-text>
-                    <v-select v-model="selectedUserRole" :items="roles" label="Rôle"
-                        aria-label="Select user role"></v-select>
+                    <v-form>
+                        <v-text-field 
+                            label="Nom d'utilisateur" 
+                            v-model="selectedUser.username" 
+                            :rules="[rules.required]" 
+                            outlined 
+                            aria-label="Nom d'utilisateur">
+                        </v-text-field>
+                        <v-text-field 
+                            label="Adresse Mail" 
+                            v-model="selectedUser.email" 
+                            :rules="[rules.required, rules.email]" 
+                            outlined 
+                            aria-label="Adresse Mail">
+                        </v-text-field>
+                        <v-select 
+                            v-model="selectedUserRole" 
+                            :items="roles" 
+                            label="Rôle" 
+                            outlined 
+                            :rules="[rules.roleRequired]"
+                            aria-label="Rôle">
+                        </v-select>
+                    </v-form>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue-grey" text @click="editDialog = false" aria-label="Cancel edit">Annuler</v-btn>
-                    <v-btn color="blue" text @click="updateUserRole" aria-label="Save role">Enregistrer</v-btn>
+                    <v-btn color="blue" text @click="updateUser" aria-label="Save changes">Enregistrer</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -128,6 +150,7 @@
                     :items="roles" 
                     label="Rôle" 
                     outlined 
+                    :rules="[rules.roleRequired]"
                     aria-label="Rôle">
                 </v-select>
                 </v-form>
@@ -148,7 +171,7 @@
 import useUsers from '~/src/utils/user/user';
 import { useAuthStore } from '@/stores/auth';
 
-const { getUser, getUsers, deleteUser, updateUserRole, createUser } = useUsers();
+const { getUser, getUsers, deleteUser, updateUserRole, createUser, updateUser } = useUsers();
 
 export default {
     name: 'userList',
@@ -181,6 +204,7 @@ export default {
                     const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     return pattern.test(value) || 'Email non valide.';
                 },
+                roleRequired: value => !!value || 'Le rôle est requis.'
             },
             currentPage: 1,
             options: {
@@ -197,7 +221,7 @@ export default {
         },
         isAdmin() {
             const authStore = useAuthStore();
-            return authStore.getUserRoles.includes('Admin');
+            return authStore.isAdmin;
         },
         headersWithActions() {
             if (this.isAdmin) {
@@ -258,14 +282,14 @@ export default {
         },
         formatUserRole(selectedUserRole) {
             switch (selectedUserRole) {
-                case 'Employee':
-                    return 3;
-                case 'Manager':
-                    return 2;
                 case 'Admin':
                     return 1;
-                default:
+                case 'Manager':
+                    return 2;
+                case 'Employee':
                     return 3;
+                default:
+                    return 3; 
             }
         },
         async updateUserRole() {
@@ -284,11 +308,11 @@ export default {
         },
         async createUser() {
             try {
-                const roleID = this.formatUserRole(this.newUser.role);
-                const newUser = await createUser(this.newUser.username, this.newUser.email, this.newUser.password, roleID );
+                const roleID = this.formatUserRole(this.newUser.role || 'Employee');
+                const newUser = await createUser(this.newUser.username, this.newUser.email, this.newUser.password, roleID);
                 this.users.push(newUser);
                 this.createDialog = false;
-                this.newUser = { email: '', username: '', password: '', role: 'Employee' };
+                this.newUser = { username: '', email: '', password: '', role: 'Employee' };
             } catch (error) {
                 console.error("Failed to create user:", error);
             }
@@ -312,6 +336,20 @@ export default {
         },
         openCreateDialog() {
             this.createDialog = true;
+        },
+        async updateUser() {
+            try {
+                const roleID = this.formatUserRole(this.selectedUserRole || 'Employee');
+                await updateUserRole(this.selectedUser.id, roleID);
+                await updateUser(this.selectedUser.id, this.selectedUser.username, this.selectedUser.email);
+                const userIndex = this.users.findIndex(user => user.id === this.selectedUser.id);
+                if (userIndex !== -1) {
+                    this.users[userIndex] = { ...this.users[userIndex], ...this.selectedUser, role: { name: this.selectedUserRole || 'Employee' } };
+                }
+                this.editDialog = false;
+            } catch (error) {
+                console.error("Failed to update user:", error);
+            }
         }
     }
 };
@@ -361,3 +399,6 @@ export default {
     color: #000;
 }
 </style>
+
+
+

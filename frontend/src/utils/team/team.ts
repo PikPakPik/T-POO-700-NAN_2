@@ -108,6 +108,18 @@ export const useTeams = () => {
         }
     }
 
+    const removeManagerFromTeam = async (teamId: string, managerId: string) => {
+        const response = await teamApi.removeManagerFromTeam(teamId, managerId);
+        if (response?.status !== 200) {
+            throw new Error('Équipe introuvable ou problème serveur');
+        }
+        if (response && response.data && response.data.data) {
+            return response.data.data;
+        } else {
+            throw new Error('Data not found');
+        }
+    }
+
     const clockTeam = async (teamId: string) => {
         const response = await teamApi.clockTeam(teamId);
         if (response?.status !== 200) {
@@ -130,6 +142,7 @@ export const useTeams = () => {
         associateManager,
         associateEmployee,
         removeEmployeeFromTeam,
+        removeManagerFromTeam,
         clockTeam,
     };
 }

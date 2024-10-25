@@ -18,9 +18,10 @@ defmodule TimeManager.Roles.Default do
         name: "Manager",
         permissions:
           base_permissions()
-                    |> Map.put("user", ["clock"])
-                    |> Map.put("team", ["create", "read", "update", "delete", "clock"])
-                    |> Map.put("clock", ["read"])
+          |> Map.put("user", ["clock"])
+          |> Map.put("team", ["create", "read", "update", "delete", "clock"])
+          |> Map.put("clock", ["read"])
+          |> Map.put("working_time", ["create", "read", "update", "delete"])
       },
       %{
         name: "Employee",

@@ -54,7 +54,9 @@ defmodule TimeManagerWeb.ClockController do
   def clock_in_out_user(conn, %{"userID" => userID}) do
     user = Auth.get_user(conn)
 
-    if user.id != userID and user.role.name != "Admin" do
+    user_id = String.to_integer(userID)
+
+    if user.id != user_id and user.role.name != "Admin" do
       conn
       |> put_resp_content_type("application/json")
       |> send_resp(
@@ -88,6 +90,8 @@ defmodule TimeManagerWeb.ClockController do
 
   def get_user_clock(conn, %{"userID" => user_id}) do
     user = Auth.get_user(conn)
+
+    user_id = String.to_integer(user_id)
 
     if user.role.name != "Admin" and user.id != user_id do
       conn

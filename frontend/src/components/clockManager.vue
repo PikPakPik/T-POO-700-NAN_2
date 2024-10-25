@@ -34,20 +34,15 @@ import ClockApi from '~/src/utils/api/clock';
 import {
   useChronoStore
 } from '@/stores/chronoStore';
-import { meClockInOrOut } from '~/src/utils/api/me';
+import { meClockInOrOut, meGetClock } from '~/src/utils/api/me';
+import dayjs from 'dayjs';
+import { startInterval, stopInterval } from '~/src/utils/intervalManager';
 
 export default {
-  props: {
-    userId: {
-      type: Number,
-      required: true
-    }
-  },
   data() {
     return {
       clockApiService: new ClockApi(),
       hasStarted: false,
-      timer: null,
     };
   },
   computed: {
@@ -64,57 +59,56 @@ export default {
   methods: {
     togglePlay() {
       if (this.chronoStore.getIsPlaying) {
-        clearInterval(this.timer);
-        this.timer = null;
+        stopInterval();
         this.chronoStore.reset();
         this.formattedTime = '00H 00m 00s';
-        if (this.hasStarted) {
-          this.hasStarted = false;
-        }
+        this.hasStarted = false;
       } else {
-        if (!this.hasStarted) {
-          this.hasStarted = true;
-        }
-        this.startTimer();
+        this.hasStarted = true;
+        startInterval(this.updateTime, 1000);
       }
-      // this.clockApiService.clockInOrOut(this.userId);
       meClockInOrOut();
     },
 
+    updateTime() {
+      const updatedTime = this.chronoStore.getTimeElapsed + 1;
+      this.chronoStore.updateTimeElapsed(updatedTime);
+    },
+
     beforeDestroy() {
-      clearInterval(this.timer);
+      stopInterval();
     },
 
     async getClockStatus() {
       try {
-        const response = await this.clockApiService.getClock(this.userId);
-        const { status, time } = response.data[0];
-        const startTime = new Date(time);
-        const now = new Date();
-        const utcOffset = now.getTimezoneOffset() * 60000; // décalage UTC en millisecondes
-        const localStartTime = new Date(startTime.getTime() - utcOffset); // convertir l'heure de début en heure locale
-        const timeDifference = Math.floor((now - localStartTime) / 1000);
-        this.chronoStore.updateTimeElapsed(timeDifference);
-        this.hasStarted = status;
-        if (status) {
-          this.startTimer();
+        const response = await meGetClock();
+        if (response && response.clock) {
+          const { status, time } = response.clock;
+          const startTime = dayjs(time);
+          const now = dayjs();
+          const timeDifference = now.diff(startTime, 'second');
+          this.chronoStore.updateTimeElapsed(timeDifference);
+          this.hasStarted = status;
+          if (status) {
+            startInterval(this.updateTime, 1000);
+          }
         }
       } catch (error) {
         console.error('Erreur lors de la récupération de l\'état du chronomètre :', error);
       }
     },
-
-    startTimer() {
-      this.timer = setInterval(() => {
-        const updatedTime = this.chronoStore.getTimeElapsed + 1;
-        this.chronoStore.updateTimeElapsed(updatedTime);
-      }, 1000);
-      this.chronoStore.updateIsPlaying(true);
-    },
   },
-
   mounted() {
     this.getClockStatus();
+  },
+  activated() {
+    if (this.hasStarted) {
+      startInterval(this.updateTime, 1000);
+    }
+  },
+  deactivated() {
+    stopInterval();
   }
 };
 </script>
+
