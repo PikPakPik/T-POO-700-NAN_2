@@ -18,22 +18,27 @@
           <v-form ref="form" v-model="valid" lazy-validation>
 
             <small id="username-helper" class="text-gray-500">Entrez votre nom d'utilisateur mis à jour.</small>
-            <v-text-field
-              v-model="localUser.username"
-              label="Nom d'utilisateur"
-              required
-              aria-label="Nom d'utilisateur"
-            ></v-text-field>
+            <v-text-field v-model="localUser.username" label="Nom d'utilisateur" required
+              aria-label="Nom d'utilisateur"></v-text-field>
 
             <small id="email-helper" class="text-gray-500">Entrez votre adresse mail mise à jour.</small>
-            <v-text-field
-              v-model="localUser.email"
-              label="Email"
-              type="email"
-              required
-              aria-label="Email"
-            ></v-text-field>
-            
+            <v-text-field v-model="localUser.email" label="Email" type="email" required
+              aria-label="Email"></v-text-field>
+
+            <v-btn class="mb-3" color="secondary" @click="togglePasswordFields" aria-label="Modifier son mot de passe">
+              Modifier son mot de passe
+            </v-btn>
+
+            <div v-if="showPasswordFields">
+              <small id="new-password-helper" class="text-gray-500">Entrez votre nouveau mot de passe.</small>
+              <v-text-field v-model="newPassword" label="Nouveau mot de passe" type="password"
+                aria-label="Nouveau mot de passe"></v-text-field>
+
+              <small id="confirm-password-helper" class="text-gray-500">Confirmez votre nouveau mot de passe.</small>
+              <v-text-field v-model="confirmPassword" label="Confirmer le mot de passe" type="password"
+                aria-label="Confirmer le mot de passe"></v-text-field>
+            </div>
+
             <v-alert v-if="error" type="error" class="mt-4" role="alert">
               {{ error }}
             </v-alert>
@@ -64,9 +69,7 @@
 
 <script>
 //utils
-import useUsers from '~/src/utils/user/user';
-
-const { updateUser } = useUsers();
+import { mePutUser } from '~/src/utils/api/me';
 
 export default {
   name: 'updateUser',
@@ -81,7 +84,10 @@ export default {
       showModal: false,
       valid: false,
       error: null,
-      localUser: { ...this.user }
+      localUser: { ...this.user },
+      showPasswordFields: false,
+      newPassword: '',
+      confirmPassword: ''
     };
   },
   methods: {
@@ -89,13 +95,25 @@ export default {
       this.localUser = { ...this.user };
       this.showModal = true;
     },
+    togglePasswordFields() {
+      this.showPasswordFields = !this.showPasswordFields;
+    },
     async updateUser() {
       this.error = null;
       try {
-        // Appel API pour mettre à jour l'utilisateur
-        await updateUser(this.user.id, this.localUser.username, this.localUser.email);
+        if (this.newPassword !== '' && this.confirmPassword !== '') {
+          if (this.newPassword !== this.confirmPassword) {
+            this.error = "Les mots de passe ne correspondent pas.";
+            return;
+          }
+          // Appel API pour mettre à jour l'utilisateur
+          await mePutUser(this.user.id, this.localUser.username, this.localUser.email, this.newPassword);
+        } else {
+          // Appel API pour mettre à jour l'utilisateur
+          await mePutUser(this.user.id, this.localUser.username, this.localUser.email);
+        }
         this.showModal = false;
-        window.location.reload(); 
+        window.location.reload();
       } catch (error) {
         console.error('Error updating user:', error);
         this.error = "Échec de la mise à jour de l'utilisateur.";

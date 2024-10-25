@@ -14,6 +14,7 @@ defmodule TimeManagerWeb.Router do
     pipe_through([:api])
 
     post("/users/sign_in", UserController, :login)
+    post("/users/sign_out", UserController, :logout)
 
     scope "/" do
       pipe_through([:protected])

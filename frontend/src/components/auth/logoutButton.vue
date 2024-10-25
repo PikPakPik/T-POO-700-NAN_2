@@ -6,6 +6,9 @@
 
 <script lang="ts">
 import { useAuthStore } from '@/stores/auth';
+import useUsers from '~/src/utils/user/user';
+
+const { logout } = useUsers();
 
 export default {
     name: 'LogoutButton',
@@ -13,6 +16,7 @@ export default {
         async logout(event: Event) {
             try {
                 event.preventDefault();
+                await logout();
                 const authStore = useAuthStore();
                 authStore.logout();
                 this.$router.push('/auth');

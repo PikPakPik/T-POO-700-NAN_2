@@ -8,7 +8,15 @@ export const useUsers = () => {
     const login = async (email: string, password: string) => {
         const response = await userApi.login({ email, password });
         if (response?.status !== 200) {
-            throw new Error('authentifation impossible');
+            throw new Error('authentification impossible');
+        }
+        return response;
+    }
+
+    const logout = async () => {
+        const response = await userApi.logout();
+        if (response?.status !== 204) {
+            throw new Error('déconnexion impossible');
         }
         return response;
     }
@@ -65,7 +73,7 @@ export const useUsers = () => {
             const userData = {
                 user: {
                     username: username,
-                    email: email
+                    email: email,
                 }
             };
             const response = await userApi.updateUser(userId, userData);
@@ -111,6 +119,7 @@ export const useUsers = () => {
         updateUserRole,
         deleteUser,
         login,
+        logout,
     };
 }
 

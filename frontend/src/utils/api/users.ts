@@ -15,6 +15,16 @@ export class UsersApi extends Api {
         }
     }
 
+    async logout() {
+        try {
+            const response = await this.instance.post(`/users/sign_out`);
+            return response;
+        } catch (error) {
+            console.error('Error in UsersApi logout:', error);
+            throw error; // Re-throw the error to be caught in the calling function
+        }
+    }
+
     async getUsers() {
         try {
             const response = await this.instance.get(`/users`);
@@ -47,7 +57,7 @@ export class UsersApi extends Api {
 
     async createUser(userData: { user: { username: string; email: string; password: string; role: string; }; }) {
         try {
-            console.log('userData2',userData);
+            console.log('userData2', userData);
             const response = await this.instance.post(`/users`, userData);
             console.log('response:', response);
             return response;

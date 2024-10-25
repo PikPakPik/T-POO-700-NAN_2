@@ -42,8 +42,25 @@ export class MeApi extends Api {
     static async meGetUser(): Promise<any> {
         return MeApi.makeRequest('get', `/me`);
     }
-    static async mePutUser(): Promise<any> {
-        return MeApi.makeRequest('put', `/me`);
+    static async mePutUser(userId: string, username: string, email: string, password: string | null): Promise<any> {
+        let userData;
+        if (password === null) {
+            userData = {
+                user: {
+                    username: username,
+                    email: email,
+                }
+            };
+        } else {
+            userData = {
+                user: {
+                    username: username,
+                    email: email,
+                    password: password,
+                }
+            };
+        }
+        return MeApi.makeRequest('put', `/me`, userData);
     }
     static async meDeleteUser(): Promise<any> {
         return MeApi.makeRequest('delete', `/me`);

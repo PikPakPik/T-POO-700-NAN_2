@@ -54,6 +54,19 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
+  swagger_path(:logout) do
+    summary("Logout")
+    description("Logout a user by deleting the JWT cookie.")
+
+    response(204, "No Content")
+  end
+
+  def logout(conn, _params) do
+    conn
+    |> delete_resp_cookie("jwt")
+    |> send_resp(:no_content, "")
+  end
+
   swagger_path(:index) do
     summary("List Users")
     description("List all users in the database.")
