@@ -42,6 +42,7 @@ defmodule TimeManagerWeb.Router do
       scope "/clocks" do
         resources("/", ClockController, only: [:index, :delete])
         post("/:userID", ClockController, :clock_in_out_user)
+        post("/:userID/time", ClockController, :clock_in_out_with_time)
         get("/:userID", ClockController, :get_user_clock)
       end
 

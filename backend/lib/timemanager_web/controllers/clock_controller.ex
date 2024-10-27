@@ -14,6 +14,7 @@ defmodule TimeManagerWeb.ClockController do
     actions: [
       get_user_clock: %{"user" => ["read"]},
       clock_in_out_user: %{"user" => ["clock"]},
+      clock_in_out_with_time: %{"user" => ["clock"]},
       index: %{"clock" => ["read"]},
       delete: %{"clock" => ["delete"]}
     ]
@@ -123,6 +124,51 @@ defmodule TimeManagerWeb.ClockController do
 
     with {:ok, %Clock{}} <- Clocks.delete_clock(clock) do
       send_resp(conn, :no_content, "")
+    end
+  end
+
+  swagger_path(:clock_in_out_with_time) do
+    summary("Clock in or out user with specified time")
+    description("Clock in or out a user at a specified time.")
+
+    SwaggerDef.api_protected_path()
+
+    parameters do
+      userID(:path, :integer, "User ID", required: true, example: 1)
+      time(:query, :string, "Clock time in ISO8601 format", required: true, example: "2024-10-27T15:00:00Z")
+    end
+
+    response(200, "OK", Schema.ref(:ClockResponse))
+    response(201, "Created Successfully", Schema.ref(:ClockResponse))
+  end
+
+  def clock_in_out_with_time(conn, %{"userID" => userID, "time" => time}) do
+    user = Auth.get_user(conn)
+
+    if user.id != userID and user.role.name != "Admin" do
+      conn
+      |> put_resp_content_type("application/json")
+      |> send_resp(
+           403,
+           Jason.encode!(%{error: %{message: "You can only clock in or out yourself"}})
+         )
+      |> halt()
+    end
+
+    case DateTime.from_iso8601(time) do
+      {:ok, datetime, _offset} ->
+        with {status, {:ok, %Clock{} = clock}} <- Clocks.clock_in_out_with_time(userID, datetime) do
+          case status do
+            :created -> put_status(conn, :created)
+            _ -> put_status(conn, 200)
+          end
+          |> render(:show, clock: clock)
+        end
+
+      :error ->
+        conn
+        |> put_resp_content_type("application/json")
+        |> send_resp(400, Jason.encode!(%{error: %{message: "Invalid time format"}}))
     end
   end
 end

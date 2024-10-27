@@ -164,4 +164,30 @@ defmodule TimeManager.Clocks do
       {:updated, update_clock(clock, %{status: !clock.status, time: now})}
     end
   end
+
+  @doc """
+  Clock in or out a user at a specified datetime.
+  """
+  def clock_in_out_with_time(userID, datetime) do
+    case get_user_clock(userID) do
+      nil ->
+        {:created, create_clock(%{user_id: userID, status: true, time: datetime})}
+
+      %Clock{} = clock ->
+        case clock.status do
+          false ->
+            {:updated, update_clock(clock, %{status: !clock.status, time: datetime})}
+
+          true ->
+            with {:ok, %WorkingTime{} = _} <-
+                   WorkingTimes.create_working_time(%{
+                     user_id: userID,
+                     start: clock.time,
+                     end: datetime
+                   }) do
+              {:updated, update_clock(clock, %{status: !clock.status, time: datetime})}
+            end
+        end
+    end
+  end
 end
