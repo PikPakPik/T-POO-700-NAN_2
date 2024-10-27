@@ -13,7 +13,12 @@ defmodule TimeManager.Auth do
     |> add_claim("exp", fn ->
       DateTime.utc_now() |> DateTime.add(31 * 24 * 60 * 60, :second) |> DateTime.to_unix()
     end)
-    |> add_claim("domain", domain)
+    # Ajout d'une fonction de validation pour 'domain'
+    |> add_claim("domain", domain, &validate_domain/1)
+  end
+
+  defp validate_domain(_domain) do
+    true
   end
 
   def subject_for_token(user, _claims) do

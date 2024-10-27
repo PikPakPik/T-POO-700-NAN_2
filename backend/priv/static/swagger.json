@@ -765,6 +765,59 @@
         ]
       }
     },
+    "/api/clocks/{userID}/time": {
+      "post": {
+        "description": "Clock in or out a user at a specified time.",
+        "operationId": "TimeManagerWeb.ClockController.clock_in_out_with_time",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "userID",
+            "required": true,
+            "type": "integer",
+            "x-example": 1
+          },
+          {
+            "description": "Clock time in ISO8601 format",
+            "in": "query",
+            "name": "time",
+            "required": true,
+            "type": "string",
+            "x-example": "2024-10-27T15:00:00Z"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ClockResponse"
+            }
+          },
+          "201": {
+            "description": "Created Successfully",
+            "schema": {
+              "$ref": "#/definitions/ClockResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
+        "summary": "Clock in or out user with specified time",
+        "tags": [
+          "Clock"
+        ]
+      }
+    },
     "/api/logs": {
       "get": {
         "description": "List all logs in the database.",
