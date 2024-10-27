@@ -64,8 +64,12 @@ export default {
         this.chronoStore.reset();
         this.formattedTime = '00H 00m 00s';
         this.hasStarted = false;
+          this.chronoStore.updateIsPlaying(false)
+
       } else {
         this.hasStarted = true;
+          this.chronoStore.updateIsPlaying(true)
+        
         startInterval(this.updateTime, 1000);
       }
       meClockInOrOut();
@@ -89,11 +93,11 @@ export default {
           const now = dayjs();
           const timeDifference = now.diff(startTime, 'second');
           this.chronoStore.updateTimeElapsed(timeDifference);
-          this.chronoStore.updateIsPlaying(status);
           this.hasStarted = status;
           if (status) {
             startInterval(this.updateTime, 1000);
           }
+          this.chronoStore.updateIsPlaying(status)
         }
       } catch (error) {
         console.error('Erreur lors de la récupération de l\'état du chronomètre :', error);
