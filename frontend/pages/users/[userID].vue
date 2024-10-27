@@ -1,6 +1,6 @@
 <template>
     <div>
-        <getUser />
+        <getUser :userID="$route.params.userID"/>
     </div>
 </template>
 
@@ -11,7 +11,7 @@ import getUser from '~/src/components/users/getUser.vue';
 definePageMeta({
     middleware: ['global-role'],
     meta: {
-        roles: ['Admin', 'Manager', 'Employee'], // Rôles requis pour accéder à cette page
+        roles: ['Admin', 'Manager'], // Rôles requis pour accéder à cette page
     },
 })
 

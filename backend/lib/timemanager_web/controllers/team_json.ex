@@ -27,6 +27,8 @@ defmodule TimeManagerWeb.TeamJSON do
   end
 
   defp serialize_clocks(clocks) do
-    Enum.map(clocks, fn clock -> %{id: clock.id, status: clock.status, time: clock.time, user_id: clock.user_id } end)
+    Enum.map(clocks, fn clock ->
+      %{id: clock.id, status: clock.status, time: clock.time, user_id: clock.user_id}
+    end)
   end
 end

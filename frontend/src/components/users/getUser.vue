@@ -45,6 +45,12 @@ const { getUser } = useUsers();
 
 export default {
   name: 'userProfile',
+  props: {
+    userID: {
+      type: Number,
+      required: true
+    }
+  },
   components: {
     updateUser,
     deleteUser
@@ -54,7 +60,7 @@ export default {
       userData: null,
       error: null,
       loading: true,
-      userID: this.$route.params.users[0],
+      _userID: this.userID,
     };
   },
   mounted() {
@@ -63,8 +69,7 @@ export default {
   methods: {
     async fetchUserData() {
       try {
-        //getUserID from localStorage
-        this.userData = await getUser(localStorage.getItem('userID'));
+        this.userData = await getUser(this._userID);
         this.loading = false;
       } catch (error) {
         this.error = 'Échec du chargement des données utilisateur';

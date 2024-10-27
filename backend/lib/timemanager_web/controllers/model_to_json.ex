@@ -43,6 +43,7 @@ defmodule TimeManagerWeb.ModelToJson do
     do: {field, handle_field(entity, field, type, opts)}
 
   # `show_field?/4` détermine si un champ doit être affiché, sauf pour les champs `inserted_at` et `updated_at`.
+  defp show_field?(_entity, :password, _type, _opts), do: false
   defp show_field?(_entity, :inserted_at, _type, _opts), do: false
   defp show_field?(_entity, :updated_at, _type, _opts), do: false
   defp show_field?(_entity, _field, _type, _opts), do: true

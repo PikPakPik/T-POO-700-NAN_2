@@ -11,7 +11,7 @@ import getUsers from '~/src/components/users/getUsers.vue';
 definePageMeta({
     middleware: ['global-role'],
     meta: {
-        roles: ['Admin', 'Manager', 'Employee'], // Rôles requis pour accéder à cette page
+        roles: ['Admin', 'Manager'],
     },
 })
 

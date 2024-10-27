@@ -58,6 +58,12 @@
                     </v-row>
                   </div>
                 </template>
+                <template v-if="isAdmin" v-slot:item.username="{ item, index }">
+                    <span aria-label="User Name" @click="redirectToUser(item.id)" class="link-style">{{ item.username }}</span>
+                </template>
+                <template v-else v-slot:item.username="{ item, index }">
+                    <span aria-label="User Name">{{ item.username }}</span>
+                </template>
                 </v-data-table>
                 </v-card>
             </v-col>
@@ -350,6 +356,9 @@ export default {
             } catch (error) {
                 console.error("Failed to update user:", error);
             }
+        },
+        redirectToUser(id) {
+            this.$router.push(`/users/${id}`);
         }
     }
 };
@@ -398,7 +407,15 @@ export default {
     font-size: 20px;
     color: #000;
 }
+
+.link-style {
+    cursor: pointer;
+    color: #1976D2; /* Couleur bleue pour indiquer la possibilité de cliquer */
+    text-decoration: underline;
+}
 </style>
+
+
 
 
 

@@ -12,5 +12,6 @@ export interface AuthState {
     user: User | null;
     xsrfToken: string | null;
     roles: string[]; // Ajoutez les rôles
-    permissions: string[]; // Ajoutez les permissions
+    permissions: string[]; // Ajoutez les permissions`
+    loginTimestamp: string | null;
 }

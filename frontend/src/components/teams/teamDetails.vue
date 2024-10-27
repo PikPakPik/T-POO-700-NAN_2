@@ -52,7 +52,11 @@
                             <span aria-label="User ID">{{ item.id }}</span>
                         </template>
 
-                        <template v-slot:item.employee="{ item }">
+                        <template v-if="authStore.isAdmin" v-slot:item.username="{ item, index }">
+                            <span aria-label="Manager Name" @click="redirectToUser(item.id)" class="link-style">{{ item.username }}</span>
+                        </template>
+
+                        <template v-else v-slot:item.username="{ item, index }">
                             <span aria-label="Manager Name">{{ item.username }}</span>
                         </template>
 
@@ -92,7 +96,11 @@
                             <span aria-label="User ID">{{ item.id }}</span>
                         </template>
 
-                        <template v-slot:item.employee="{ item }">
+                        <template v-if="authStore.isAdmin" v-slot:item.username="{ item, index }">
+                            <span aria-label="Employee Name" @click="redirectToUser(item.id)" class="link-style">{{ item.username }}</span>
+                        </template>
+
+                        <template v-else v-slot:item.username="{ item, index }">
                             <span aria-label="Employee Name">{{ item.username }}</span>
                         </template>
 
@@ -204,10 +212,9 @@
 <script>
 // Importing components and utilities
 import WorkingTime from './src/components/workingTime.vue';
-import { useAuthStore } from '@/stores/auth';
 import { useTeams } from '~/src/utils/team/team';
 import { useUsers } from '~/src/utils/user/user';
-
+import { useAuthStore } from '~/stores/auth';
 const { showTeam, associateEmployee, removeEmployeeFromTeam, removeManagerFromTeam, associateManager, updateTeam } = useTeams();
 const { getUsers, getUser } = useUsers();
 
@@ -217,6 +224,10 @@ export default {
     props: {
         teamId: { type: Number, required: true }
     },
+    setup() {
+            const authStore = useAuthStore();
+            return { authStore };
+        },
     data() {
         return {
             // Initial data setup
@@ -366,8 +377,10 @@ export default {
                 this.isManager = false;
             }
             this.isManager ? this.isManager : authStore.isAdmin
-            console.log(this.isManager);
             return this.isManager;
+        },
+        redirectToUser(userId) {
+            this.$router.push(`/users/${userId}`);
         },
     },
     mounted() {
@@ -445,7 +458,14 @@ li {
 .highlight-row {
     background-color: #FFEB3B; /* Jaune */
 }
+
+.link-style {
+    cursor: pointer;
+    color: #1976D2; /* Couleur bleue pour indiquer la possibilité de cliquer */
+    text-decoration: underline;
+}
 </style>
+
 
 
 

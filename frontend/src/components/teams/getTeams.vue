@@ -201,11 +201,14 @@
                 }
             },
             async fetchTeamDetails() {
-                // Ensure fetchTeamDetails handles empty teams array gracefully
                 const me_teams = await meTeams();
                 this.employee_teams = me_teams.employee_teams.data;
                 this.managed_teams = me_teams.managing_teams.data;
-                await this.fetchManagers();
+
+                // Vérifiez si l'utilisateur est dans au moins une équipe avant de chercher les détails des managers
+                if (this.employee_teams.length > 0 || this.managed_teams.length > 0) {
+                    await this.fetchManagers();
+                }
             },
             async fetchManagers() {
                 for (let team of this.teams) {
