@@ -89,6 +89,7 @@ export default {
           const now = dayjs();
           const timeDifference = now.diff(startTime, 'second');
           this.chronoStore.updateTimeElapsed(timeDifference);
+          this.chronoStore.updateIsPlaying(status);
           this.hasStarted = status;
           if (status) {
             startInterval(this.updateTime, 1000);

@@ -8,7 +8,6 @@ export const useChronoStore = defineStore('chrono', {
   actions: {
     updateTimeElapsed(time : number) {
       this.timeElapsed = time;
-      this.isPlaying = true;
     },
     updateIsPlaying(value : boolean){
       this.isPlaying = value;

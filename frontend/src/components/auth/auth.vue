@@ -26,19 +26,43 @@
                     </v-card-title>
 
                     <v-card-text class="mt-8">
-                        <v-form>
+                        <v-form @submit.prevent="login" v-model="form">
                             <small id="email-helper" class="text-gray-500">Entrez votre adresse mail.</small>
-                            <v-text-field v-model="email" label="Adresse Mail" name="email" id="email" class="text-xs"
-                                outlined :rules="[rules.required, rules.email]" required aria-label="Adresse Mail"
-                                aria-describedby="email-helper"></v-text-field>
+
+                             <v-text-field
+                                v-model="email"
+                                :readonly="loading"
+                                :rules="[rules.required, rules.email]"
+                                class="mb-2"
+                                label="Email"
+                                clearable
+                            ></v-text-field>
+
 
                             <small id="password-helper" class="text-gray-500">Entrez votre mot de passe.</small>
-                            <v-text-field v-model="password" label="Mot de passe" name="password" id="password"
-                                class="text-xs" type="password" outlined :rules="[rules.required]"
-                                aria-label="Mot de passe" aria-describedby="password-helper"></v-text-field>
-
-                            <v-btn class="mt-6 w-full" color="blue" @click="login" aria-label="Connexion">
-                                Connexion
+                             <v-text-field
+                                v-model="password"
+                                :readonly="loading"
+                                :rules="[rules.required]"
+                                label="Password"
+                                placeholder="Enter your password"
+                                type="password"
+                                name="password"
+                                clearable
+                                aria-label="Mot de passe" aria-describedby="password-helper"
+                                @keyup.enter="login"></v-text-field>
+                                
+                                <p class="text-red-500 mb-2">{{ error }}</p>
+                            <v-btn
+                                :disabled="!form"
+                                :loading="loading"
+                                color="success"
+                                size="large"
+                                type="submit"
+                                variant="elevated"
+                                block
+        >
+                                Se connecter
                             </v-btn>
                         </v-form>
 
@@ -57,24 +81,25 @@ import gotham from '~/assets/GothamCity.webp';
 import useUsers from '~/src/utils/user/user';
 import { useAuthStore } from '@/stores/auth';
 
-const { createUser, login } = useUsers();
+const { login } = useUsers();
 
 
 export default {
     name: 'auth',
     data() {
         return {
+            form: false,
             gotham,
+            loading: false,
             logo,
-            valid: false,
-            email: '',
-            password: '',
+            email: null,
+            password: null,
             error: null,
             rules: {
                 required: value => !!value || 'Requis.',
                 email: value => {
-                    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    return pattern.test(value) || 'Email non valide.';
+                    const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                    return pattern.test(value) || 'Invalid e-mail.';
                 },
             },
         };
@@ -82,6 +107,8 @@ export default {
     methods: {
         async login() {
             this.error = null;
+            this.loading = true;
+            if (!this.form) return;
             try {
                 const response = await login(this.email, this.password);
                 if (response && response.data) {
@@ -94,9 +121,16 @@ export default {
                     });
                 }
             } catch (error) {
-                this.error = 'Échec de la connexion.';
+                if (error.response && error.response.status === 401) {
+                    this.error = 'Accès refusé : Vérifiez vos identifiants.';
+                } else {
+                    this.error = 'Échec de la connexion.';
+                }
+            } finally {
+                this.loading = false;
             }
         },
     },
 };
 </script>
+
