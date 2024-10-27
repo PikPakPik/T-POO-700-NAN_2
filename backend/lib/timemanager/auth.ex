@@ -7,10 +7,13 @@ defmodule TimeManager.Auth do
 
   @impl true
   def token_config do
+    domain = if Mix.env() == :prod, do: [".onrender.com", "atressel.fr"], else: nil
+
     default_claims()
     |> add_claim("exp", fn ->
-      DateTime.utc_now() |> DateTime.add(30 * 24 * 60 * 60, :second) |> DateTime.to_unix()
+      DateTime.utc_now() |> DateTime.add(31 * 24 * 60 * 60, :second) |> DateTime.to_unix()
     end)
+    |> add_claim("domain", domain)
   end
 
   def subject_for_token(user, _claims) do
