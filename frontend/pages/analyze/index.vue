@@ -52,13 +52,14 @@
 <script setup lang="ts">
 import { reactive, onMounted } from 'vue'
 import chartManager from '~/src/components/chartManager.vue'
-import { UsersApi } from '~/src/utils/api/users'
 import type { IChartData } from '~/src/types/chart'
 import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
 import { calculateWorkingHours } from '~/src/utils/workingtimes/calculateWorkingHours'
+import { meWorkingTimesDated } from '~/src/utils/api/me'
+
 
 definePageMeta({
   middleware: ['global-role'],
@@ -74,9 +75,8 @@ dayjs.locale('fr')
 const chartTypes = ['bar', 'line', 'pie', 'radar']
 const selectedChartType = ref('bar')
 
-const monthNames = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 
-const userApi = new UsersApi()
+const monthNames = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 
 const state = reactive({
   chartData: { labels: [], datasets: [] } as IChartData,
@@ -85,9 +85,9 @@ const state = reactive({
 })
 
 async function updateChartData(startDate: Date, endDate: Date) {
-  const rawData = await userApi.getUserWorkingTimes("1", dayjs(startDate).utc().toISOString(), dayjs(endDate).utc().toISOString());
+  const rawData = await meWorkingTimesDated(dayjs(startDate).utc().toISOString(), dayjs(endDate).utc().toISOString());
 
-  const { dayHours, nightHours } = processWorkingHours(rawData?.data?.data, startDate, endDate);
+  const { dayHours, nightHours } = processWorkingHours(rawData?.data, startDate, endDate);
 
   state.chartData.datasets = [
     { label: 'Heures de jour', data: dayHours, backgroundColor: 'rgba(75, 192, 192, 0.2)' },

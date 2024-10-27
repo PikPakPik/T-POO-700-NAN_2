@@ -5,6 +5,7 @@ export class Api {
   protected instance: AxiosInstance;
 
   constructor() {
+    axios.defaults.withCredentials = true
     this.instance = axios.create({
       baseURL: import.meta.env.MODE === 'development' ?
                import.meta.env.VITE_BACKEND_URL + '/api' :
@@ -12,8 +13,7 @@ export class Api {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-      },
-      withCredentials: true // This ensures cookies are sent with the request
+      }
     })
     // Add the XSRF token to the request headers
     this.instance.interceptors.request.use(
@@ -39,7 +39,7 @@ export class Api {
           return Promise.reject(new Error('Pas de réseau, la requête est stockée.'));
         }
 
-        if (config.method.toLowerCase() === 'post' && config.url.includes('/clocks/')) {
+        if (config.method?.toLowerCase() === 'post' && config.url?.includes('/clocks/')) {
           this.handleClockRequest(config);
         }
 
@@ -49,10 +49,13 @@ export class Api {
     );
   }
 
-  private handleClockRequest(config) {
+  private handleClockRequest(config: any) {
     const userId = this.extractUserIdFromUrl(config.url);
+    if (!userId) {
+      return;
+    }
     const pendingRequests = JSON.parse(localStorage.getItem('pendingRequests') || '[]');
-    const existingClock = pendingRequests.find((req) => req.url.includes(`/clocks/${userId}/time`));
+    const existingClock = pendingRequests.find((req: any) => req.url.includes(`/clocks/${userId}/time`));
 
     if (existingClock) {
       const startTime = new Date(existingClock.timestamp);
@@ -81,17 +84,16 @@ export class Api {
       };
       pendingRequests.push(clockRequest);
     }
-e
     localStorage.setItem('pendingRequests', JSON.stringify(pendingRequests));
   }
 
-  private extractUserIdFromUrl(url) {
+  private extractUserIdFromUrl(url: string) {
     const match = url.match(/\/clocks\/(\d+)/);
     return match ? parseInt(match[1], 10) : null;
   }
 
-  private storeOfflineRequest(config) {
-    if (config.method.toLowerCase() === 'get') {
+  private storeOfflineRequest(config: any) {
+    if (config.method?.toLowerCase() === 'get') {
       return;
     }
 

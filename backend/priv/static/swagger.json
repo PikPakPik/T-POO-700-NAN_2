@@ -984,6 +984,28 @@
       }
     },
     "/api/me/clock": {
+      "get": {
+        "description": "Get the current user clock",
+        "operationId": "TimeManagerWeb.MeController.get_clock",
+        "parameters": [],
+        "responses": {
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ForbiddenResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "csrf": []
+          }
+        ],
+        "summary": "Get current user clock",
+        "tags": [
+          "Me"
+        ]
+      },
       "post": {
         "description": "Clock in or out",
         "operationId": "TimeManagerWeb.MeController.clock",
@@ -1854,6 +1876,22 @@
           }
         },
         "summary": "Login",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/api/users/sign_out": {
+      "post": {
+        "description": "Logout a user by deleting the JWT cookie.",
+        "operationId": "TimeManagerWeb.UserController.logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "summary": "Logout",
         "tags": [
           "User"
         ]
